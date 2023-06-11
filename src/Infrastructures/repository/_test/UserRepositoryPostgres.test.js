@@ -1,8 +1,8 @@
-const UsersTableTestHelper = require('../../../../../tests/UsersTableTestHelper');
-const InvariantError = require('../../../../Commons/exceptions/InvariantError');
-const CreateUser = require('../../../../Domains/CreateUser');
-const CreatedUser = require('../../../../Domains/CreatedUser');
-const pool = require('../../postgres/pool');
+const pool = require('../../database/postgres/pool');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const CreateUser = require('../../../Domains/CreateUser');
+const CreatedUser = require('../../../Domains/CreatedUser');
 const UserRepositoryPostgres = require('../UserRepositoryPostgres');
 
 describe('UserRepositoryPostgres', () => {
