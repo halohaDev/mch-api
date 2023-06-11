@@ -33,7 +33,7 @@ describe('CreateUser entities', () => {
     };
 
     // Action and Assert
-    expect(() => new CreateUser(payload)).toThrowError('CREATE_USER.EMAIL_NOT_VALID');
+    expect(() => new CreateUser(payload)).toThrowError('CREATE_USER.EMAIL_IS_NOT_VALID');
   });
 
   it('should create CreateUser object correctly', () => {

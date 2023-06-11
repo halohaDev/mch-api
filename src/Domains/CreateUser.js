@@ -19,7 +19,7 @@ class CreateUser {
     }
 
     if (!this._verifyEmail(email)) {
-      throw new Error('CREATE_USER.EMAIL_NOT_VALID');
+      throw new Error('CREATE_USER.EMAIL_IS_NOT_VALID');
     }
   }
 

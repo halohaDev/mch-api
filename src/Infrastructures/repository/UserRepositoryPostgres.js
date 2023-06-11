@@ -18,7 +18,7 @@ class UserRepositoryPostgres extends UserRepository {
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError('email tidak tersedia');
+      throw new InvariantError('tidak dapat membuat user baru karena email sudah digunakan');
     }
   }
 
