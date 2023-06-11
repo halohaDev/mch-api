@@ -1,10 +1,6 @@
 /* istanbul ignore file */
 
-// const { createContainer } = require('instances-container');
-// awilix import
-const {
-  createContainer, asClass, asValue, InjectionMode,
-} = require('awilix');
+const { createContainer } = require('instances-container');
 
 // external
 const bcrypt = require('bcrypt');
@@ -20,22 +16,56 @@ const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
 const UserRepository = require('../Domains/users/UserRepository');
 const PasswordHash = require('../Applications/security/PasswordHash');
 
-// creating container
-const container = createContainer({
-  injectionMode: InjectionMode.CLASSIC,
-});
+const container = createContainer();
 
-// registering services
-container.register({
-  userRepository: asClass(UserRepository).singleton(),
-  passwordHash: asClass(PasswordHash).singleton(),
-  addUserUseCase: asClass(AddUserUseCase).singleton(),
-  userRepositoryPostgres: asClass(UserRepositoryPostgres).singleton(),
-  bcryptPasswordHash: asClass(BcryptPasswordHash).singleton(),
-});
+container.register([
+  {
+    key: UserRepository.name,
+    Class: UserRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
 
-container.register({
-  pool: asValue(pool),
-  idGenerator: asValue(nanoid),
-  bcrypt: asValue(bcrypt),
-});
+  {
+    key: PasswordHash.name,
+    Class: BcryptPasswordHash,
+    parameter: {
+      dependencies: [
+        {
+          concrete: bcrypt,
+        },
+      ],
+    },
+  },
+]);
+
+// use case
+container.register([
+  {
+    key: AddUserUseCase.name,
+    Class: AddUserUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'userRepository',
+          internal: UserRepository.name,
+        },
+        {
+          name: 'passwordHash',
+          internal: PasswordHash.name,
+        },
+      ],
+    },
+  },
+]);
+
+module.exports = container;
