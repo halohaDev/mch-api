@@ -136,5 +136,43 @@ describe('HTTP server', () => {
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('tidak dapat membuat user baru karena email sudah digunakan');
     });
+
+    it('should handle server error correctly', async () => {
+      // Arrange
+      const payload = {
+        email: 'user@mail.com',
+        password: 'password',
+        name: 'user test',
+      };
+
+      const server = await createServer({});
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(500);
+      expect(responseJson.status).toEqual('error');
+      expect(responseJson.message).toEqual('Maaf, terjadi kegagalan pada server kami.');
+    });
+
+    it('should response 404 when request unregistered route', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/unregisteredRoute',
+      });
+
+      // Assert
+      expect(response.statusCode).toEqual(404);
+    });
   });
 });
