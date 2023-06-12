@@ -25,6 +25,30 @@ class AuthUseCase {
       refreshToken,
     });
   }
+
+  async refreshToken(useCasePayload) {
+    this._verifyRefreshTokenPayload(useCasePayload);
+
+    const { refreshToken } = useCasePayload;
+
+    await this._authRepository.verifyRefreshToken(refreshToken);
+    await this._tokenManager.verifyRefreshToken(refreshToken);
+
+    const { userId } = await this._tokenManager.decodePayload(refreshToken);
+
+    return this._tokenManager.createAccessToken({ userId });
+  }
+
+  _verifyRefreshTokenPayload(payload) {
+    const { refreshToken } = payload;
+    if (!refreshToken) {
+      throw new Error('REFRESH_TOKEN_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+    }
+
+    if (typeof refreshToken !== 'string') {
+      throw new Error('REFRESH_TOKEN_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+  }
 }
 
 module.exports = AuthUseCase;

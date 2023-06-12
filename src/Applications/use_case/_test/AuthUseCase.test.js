@@ -58,4 +58,73 @@ describe('AuthUseCase interface', () => {
       expect(mockAuthRepository.addRefreshToken).toBeCalledWith(expectedAuth.refreshToken);
     });
   });
+
+  describe('refreshToken use case', () => {
+    it('should return error if refresh token not in payload', async () => {
+      // Arrange
+      const useCasePayload = {};
+
+      // mock dependency
+      const mockAuthRepository = new AuthRepository();
+
+      // use case instance
+      const authUseCase = new AuthUseCase({
+        authRepository: mockAuthRepository,
+      });
+
+      // Action & Assert
+      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('REFRESH_TOKEN_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+    });
+
+    it('sould return error if refresh token not string', async () => {
+      // Arrange
+      const useCasePayload = {
+        refreshToken: 123,
+      };
+
+      // mock dependency
+      const mockAuthRepository = new AuthRepository();
+
+      // use case instance
+      const authUseCase = new AuthUseCase({
+        authRepository: mockAuthRepository,
+      });
+
+      // Action & Assert
+      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('REFRESH_TOKEN_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+    });
+
+    it('should orchestrating action correctly', async () => {
+      // Arrange
+      const useCasePayload = {
+        refreshToken: 'refresh_token',
+      };
+
+      // mock dependency
+      const mockAuthRepository = new AuthRepository();
+      const mockAuthTokenManager = new AuthTokenManager();
+
+      // mock function
+      mockAuthRepository.verifyRefreshToken = jest.fn(() => Promise.resolve());
+      mockAuthTokenManager.verifyRefreshToken = jest.fn(() => Promise.resolve());
+      mockAuthTokenManager.decodePayload = jest.fn(() => Promise.resolve({ userId: 'user-123' }));
+      mockAuthTokenManager.createAccessToken = jest.fn(() => Promise.resolve('access_token'));
+
+      // use case instance
+      const authUseCase = new AuthUseCase({
+        authRepository: mockAuthRepository,
+        tokenManager: mockAuthTokenManager,
+      });
+
+      // Action
+      const accessToken = await authUseCase.refreshToken(useCasePayload);
+
+      // Assert
+      expect(mockAuthRepository.verifyRefreshToken).toBeCalledWith(useCasePayload.refreshToken);
+      expect(mockAuthTokenManager.verifyRefreshToken).toBeCalledWith(useCasePayload.refreshToken);
+      expect(mockAuthTokenManager.decodePayload).toBeCalledWith(useCasePayload.refreshToken);
+      expect(mockAuthTokenManager.createAccessToken).toBeCalledWith({ userId: 'user-123' });
+      expect(accessToken).toEqual('access_token');
+    });
+  });
 });
