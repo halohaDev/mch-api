@@ -30,7 +30,7 @@ describe('AuthRepositoryPostgres', () => {
       await AuthenticationsTableTestHelper.addToken('refresh_token');
 
       // Action & Assert
-      await expect(authRepositoryPostgres.addRefreshToken('refresh_token')).rejects.toThrowError('refresh token sudah ada');
+      await expect(authRepositoryPostgres.addRefreshToken('refresh_token')).rejects.toThrowError('REFRESH_TOKEN_REPOSITORY.REFRESH_TOKEN_ALREADY_EXISTS');
     });
   });
 
@@ -40,7 +40,7 @@ describe('AuthRepositoryPostgres', () => {
       const authRepositoryPostgres = new AuthRepositoryPostgres(pool);
 
       // Action & Assert
-      await expect(authRepositoryPostgres.verifyRefreshToken('refresh_token')).rejects.toThrowError('refresh token tidak ditemukan');
+      await expect(authRepositoryPostgres.verifyRefreshToken('refresh_token')).rejects.toThrowError('REFRESH_TOKEN_REPOSITORY.NOT_FOUND');
     });
 
     it('should not throw InvariantError when refresh token found', async () => {
@@ -49,7 +49,7 @@ describe('AuthRepositoryPostgres', () => {
       await AuthenticationsTableTestHelper.addToken('refresh_token');
 
       // Action & Assert
-      await expect(authRepositoryPostgres.verifyRefreshToken('refresh_token')).resolves.not.toThrowError('refresh token tidak ditemukan');
+      await expect(authRepositoryPostgres.verifyRefreshToken('refresh_token')).resolves.not.toThrowError('REFRESH_TOKEN_REPOSITORY.NOT_FOUND');
     });
   });
 });

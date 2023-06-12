@@ -1,4 +1,5 @@
 const AuthRepository = require('../../Domains/auth/AuthRepository');
+const InvariantError = require('../../Commons/exceptions/InvariantError');
 
 class AuthRepositoryPostgres extends AuthRepository {
   constructor(pool) {
@@ -15,7 +16,7 @@ class AuthRepositoryPostgres extends AuthRepository {
     const result = await this._pool.query(findQuery);
 
     if (result.rowCount) {
-      throw new Error('REFRESH_TOKEN_REPOSITORY.REFRESH_TOKEN_ALREADY_EXISTS');
+      throw new InvariantError('REFRESH_TOKEN_REPOSITORY.REFRESH_TOKEN_ALREADY_EXISTS');
     }
 
     const query = {
@@ -35,7 +36,7 @@ class AuthRepositoryPostgres extends AuthRepository {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new Error('REFRESH_TOKEN_REPOSITORY.NOT_FOUND');
+      throw new InvariantError('REFRESH_TOKEN_REPOSITORY.NOT_FOUND');
     }
   }
 }
