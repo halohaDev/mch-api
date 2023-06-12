@@ -1,5 +1,5 @@
 const InvariantError = require('../../Commons/exceptions/InvariantError');
-const CreatedUser = require('../../Domains/CreatedUser');
+const CreatedUser = require('../../Domains/users/entities/CreatedUser');
 const UserRepository = require('../../Domains/users/UserRepository');
 
 class UserRepositoryPostgres extends UserRepository {

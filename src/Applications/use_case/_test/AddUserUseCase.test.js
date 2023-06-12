@@ -1,5 +1,5 @@
-const CreatedUser = require('../../../Domains/CreatedUser');
-const CreateUser = require('../../../Domains/CreateUser');
+const CreatedUser = require('../../../Domains/users/entities/CreatedUser');
+const CreateUser = require('../../../Domains/users/entities/CreateUser');
 const UserRepository = require('../../../Domains/users/UserRepository');
 const PasswordHash = require('../../security/PasswordHash');
 const AddUserUseCase = require('../AddUserUseCase');
