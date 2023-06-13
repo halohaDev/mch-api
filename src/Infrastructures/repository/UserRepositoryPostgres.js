@@ -35,6 +35,32 @@ class UserRepositoryPostgres extends UserRepository {
 
     return new CreatedUser({ ...result.rows[0] });
   }
+
+  async getPasswordByEmail(email) {
+    const query = {
+      text: 'SELECT password FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows[0].password;
+  }
+
+  async getIdByEmail(email) {
+    const query = {
+      text: 'SELECT id FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('email yang anda masukkan salah');
+    }
+
+    return result.rows[0].id;
+  }
 }
 
 module.exports = UserRepositoryPostgres;
