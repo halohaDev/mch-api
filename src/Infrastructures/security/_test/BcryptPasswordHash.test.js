@@ -30,7 +30,7 @@ describe('BcryptPasswordHash', () => {
       const result = await bcryptPasswordHash.comparePassword('plain_password', encryptedPassword);
 
       // Assert
-      expect(spyCompare).toBeCalledWith('plain_password', 'encrypted_password');
+      expect(spyCompare).toBeCalledWith('plain_password', encryptedPassword);
       expect(result).toEqual(true);
     });
 
@@ -39,7 +39,7 @@ describe('BcryptPasswordHash', () => {
       const bcryptPasswordHash = new BcryptPasswordHash(bcrypt);
 
       // Action & Assert
-      await expect(bcryptPasswordHash.comparePassword('plain_password', 'wrong_encrypted_password')).rejects.toThrowError('Nilai hash tidak sesuai');
+      await expect(bcryptPasswordHash.comparePassword('plain_password', 'wrong_encrypted_password')).rejects.toThrowError('kredensial yang Anda masukkan salah');
     });
   });
 });

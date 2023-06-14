@@ -82,7 +82,7 @@ describe('UserRepositoryPostgres', () => {
       const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(userRepositoryPostgres.getIdByEmail('invalid@email.com')).rejects.toThrowError('email yang anda masukkan salah');
+      await expect(userRepositoryPostgres.getIdByEmail('invalid@email.com')).rejects.toThrowError('email yang anda masukkan tidak ditemukan');
     });
 
     it('should return id correctly', async () => {
@@ -111,6 +111,14 @@ describe('UserRepositoryPostgres', () => {
 
       // Assert
       expect(password).toStrictEqual(payload.password);
+    });
+
+    it('should throw InvariantError when user not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getPasswordByEmail('user-test@mail.com')).rejects.toThrowError('email yang anda masukkan tidak ditemukan');
     });
   });
 });

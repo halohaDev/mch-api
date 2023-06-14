@@ -1,4 +1,5 @@
 const PasswordHash = require('../../Applications/security/PasswordHash');
+const AuthenticationError = require('../../Commons/exceptions/AuthenticationError');
 
 class BcryptPasswordHash extends PasswordHash {
   constructor(bcrypt, saltRound = 10) {
@@ -15,8 +16,10 @@ class BcryptPasswordHash extends PasswordHash {
     const comparisonResult = await this._bcrypt.compare(password, hashedPassword);
 
     if (!comparisonResult) {
-      throw new Error('Nilai hash tidak sesuai');
+      throw new AuthenticationError('kredensial yang Anda masukkan salah');
     }
+
+    return comparisonResult;
   }
 }
 

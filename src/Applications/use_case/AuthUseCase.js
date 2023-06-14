@@ -11,6 +11,8 @@ class AuthUseCase {
   }
 
   async login(useCasePayload) {
+    this._verifyEmailAndPasswordPayload(useCasePayload);
+
     const { email, password } = useCasePayload;
     const hashedPassword = await this._userRepository.getPasswordByEmail(email);
     await this._passwordHash.comparePassword(password, hashedPassword);
@@ -42,11 +44,22 @@ class AuthUseCase {
   _verifyRefreshTokenPayload(payload) {
     const { refreshToken } = payload;
     if (!refreshToken) {
-      throw new Error('REFRESH_TOKEN_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      throw new Error('AUTH_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
     }
 
     if (typeof refreshToken !== 'string') {
-      throw new Error('REFRESH_TOKEN_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      throw new Error('AUTH_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+  }
+
+  _verifyEmailAndPasswordPayload(payload) {
+    const { email, password } = payload;
+    if (!email || !password) {
+      throw new Error('AUTH_USE_CASE.NOT_CONTAIN_EMAIL_OR_PASSWORD');
+    }
+
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      throw new Error('AUTH_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
   }
 }

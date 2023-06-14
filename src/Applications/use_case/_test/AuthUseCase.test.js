@@ -57,6 +57,45 @@ describe('AuthUseCase interface', () => {
       expect(mockUserRepository.getIdByEmail).toBeCalledWith(useCasePayload.email);
       expect(mockAuthRepository.addRefreshToken).toBeCalledWith(expectedAuth.refreshToken);
     });
+
+    it('should throw error if use case payload not contain email or password', async () => {
+      // Arrange
+      const useCasePayload = {
+        email: 'user@mail.com',
+      };
+
+      // mock dependency
+      const mockAuthRepository = new AuthRepository();
+      const mockUserRepository = new UserRepository();
+
+      // use case instance
+      const authUseCase = new AuthUseCase({
+        authRepository: mockAuthRepository,
+        userRepository: mockUserRepository,
+      });
+
+      // Action & Assert
+      await expect(authUseCase.login(useCasePayload)).rejects.toThrowError('AUTH_USE_CASE.NOT_CONTAIN_EMAIL_OR_PASSWORD');
+    });
+
+    it('should throw error when data not meet data type specification', async () => {
+      // Arrange
+      const useCasePayload = {
+        email: 1234,
+        password: 'password',
+      };
+
+      // mock dependency
+      const mockAuthRepository = new AuthRepository();
+
+      // use case instance
+      const authUseCase = new AuthUseCase({
+        authRepository: mockAuthRepository,
+      });
+
+      // Action & Assert
+      await expect(authUseCase.login(useCasePayload)).rejects.toThrowError('AUTH_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+    });
   });
 
   describe('refreshToken use case', () => {
@@ -73,7 +112,7 @@ describe('AuthUseCase interface', () => {
       });
 
       // Action & Assert
-      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('REFRESH_TOKEN_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('AUTH_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
     });
 
     it('sould return error if refresh token not string', async () => {
@@ -91,7 +130,7 @@ describe('AuthUseCase interface', () => {
       });
 
       // Action & Assert
-      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('REFRESH_TOKEN_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      await expect(authUseCase.refreshToken(useCasePayload)).rejects.toThrowError('AUTH_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
     });
 
     it('should orchestrating action correctly', async () => {

@@ -16,6 +16,7 @@ describe('CreatedUser', () => {
     const payload = {
       email: 123,
       name: 123,
+      id: 11,
     };
 
     // Action and Assert
@@ -27,6 +28,7 @@ describe('CreatedUser', () => {
     const payload = {
       email: 'user_test@mail.com',
       name: 'user_test',
+      id: 'user-123',
     };
 
     // Action
@@ -35,5 +37,6 @@ describe('CreatedUser', () => {
     // Assert
     expect(createdUser.email).toEqual(payload.email);
     expect(createdUser.name).toEqual(payload.name);
+    expect(createdUser.id).toEqual(payload.id);
   });
 });
