@@ -14,7 +14,7 @@ class CreateUser {
         break;
     }
 
-    this.role = role || 'mother';
+    this.role = role;
     this.email = email;
     this.password = password;
     this.name = name;
