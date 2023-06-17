@@ -1,5 +1,5 @@
 const InvariantError = require('../../Commons/exceptions/InvariantError');
-const CreatedUser = require('../../Domains/CreatedUser');
+const CreatedUser = require('../../Domains/users/entities/CreatedUser');
 const UserRepository = require('../../Domains/users/UserRepository');
 
 class UserRepositoryPostgres extends UserRepository {
@@ -34,6 +34,36 @@ class UserRepositoryPostgres extends UserRepository {
     const result = await this._pool.query(query);
 
     return new CreatedUser({ ...result.rows[0] });
+  }
+
+  async getPasswordByEmail(email) {
+    const query = {
+      text: 'SELECT password FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('email yang anda masukkan tidak ditemukan');
+    }
+
+    return result.rows[0].password;
+  }
+
+  async getIdByEmail(email) {
+    const query = {
+      text: 'SELECT id FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('email yang anda masukkan tidak ditemukan');
+    }
+
+    return result.rows[0].id;
   }
 }
 

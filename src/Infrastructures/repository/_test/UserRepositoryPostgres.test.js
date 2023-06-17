@@ -1,8 +1,8 @@
 const pool = require('../../database/postgres/pool');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
-const CreateUser = require('../../../Domains/CreateUser');
-const CreatedUser = require('../../../Domains/CreatedUser');
+const CreateUser = require('../../../Domains/users/entities/CreateUser');
+const CreatedUser = require('../../../Domains/users/entities/CreatedUser');
 const UserRepositoryPostgres = require('../UserRepositoryPostgres');
 
 describe('UserRepositoryPostgres', () => {
@@ -73,6 +73,52 @@ describe('UserRepositoryPostgres', () => {
         email: createUser.email,
         name: createUser.name,
       }));
+    });
+  });
+
+  describe('getIdByEmail function', () => {
+    it('should throw InvariantError when user not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getIdByEmail('invalid@email.com')).rejects.toThrowError('email yang anda masukkan tidak ditemukan');
+    });
+
+    it('should return id correctly', async () => {
+      // Arrange
+      const payload = { email: 'user@mail.com', id: 'user-123' };
+      await UsersTableTestHelper.addUser(payload);
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const id = await userRepositoryPostgres.getIdByEmail(payload.email);
+
+      // Assert
+      expect(id).toStrictEqual(payload.id);
+    });
+  });
+
+  describe('getPasswordByEmail function', () => {
+    it('should return password correctly', async () => {
+      // Arrange
+      const payload = { email: 'user@mail.com', password: 'password' };
+      await UsersTableTestHelper.addUser(payload);
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const password = await userRepositoryPostgres.getPasswordByEmail(payload.email);
+
+      // Assert
+      expect(password).toStrictEqual(payload.password);
+    });
+
+    it('should throw InvariantError when user not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getPasswordByEmail('user-test@mail.com')).rejects.toThrowError('email yang anda masukkan tidak ditemukan');
     });
   });
 });
