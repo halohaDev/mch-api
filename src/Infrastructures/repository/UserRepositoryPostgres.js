@@ -65,6 +65,36 @@ class UserRepositoryPostgres extends UserRepository {
 
     return result.rows[0].id;
   }
+
+  async verifyAvailableNik(nik) {
+    const query = {
+      text: 'SELECT nik FROM users WHERE nik = $1',
+      values: [nik],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount) {
+      throw new InvariantError('NIK sudah digunakan');
+    }
+
+    return true;
+  }
+
+  async verifyAvailablePhoneNumber(phoneNumber) {
+    const query = {
+      text: 'SELECT phone_number FROM users WHERE phone_number = $1',
+      values: [phoneNumber],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount) {
+      throw new InvariantError('Nomor telepon sudah digunakan');
+    }
+
+    return true;
+  }
 }
 
 module.exports = UserRepositoryPostgres;
