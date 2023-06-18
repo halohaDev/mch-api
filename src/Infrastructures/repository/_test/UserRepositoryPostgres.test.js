@@ -33,6 +33,44 @@ describe('UserRepositoryPostgres', () => {
     });
   });
 
+  describe('verifyAvailableNik function', () => {
+    it('should throw InvariantError when nik not available', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ nik: '1234567890' });
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAvailableNik('1234567890')).rejects.toThrowError(InvariantError);
+    });
+
+    it('should not throw InvariantError when nik available', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAvailableNik('1234567890')).resolves.not.toThrowError(InvariantError);
+    });
+  });
+
+  describe('verifyAvailablePhone function', () => {
+    it('should throw InvariantError when phone not available', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ phone_number: '081234567890' });
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAvailablePhoneNumber('081234567890')).rejects.toThrowError(InvariantError);
+    });
+
+    it('should not throw InvariantError when phone available', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.verifyAvailablePhoneNumber('081234567890')).resolves.not.toThrowError(InvariantError);
+    });
+  });
+
   describe('addUser function', () => {
     it('should persist new user', async () => {
       // Arrange
