@@ -10,9 +10,11 @@ class NagariRepositoryPostgres extends NagariRepository {
   }
 
   async verifyAvailableNagariName(name) {
+    const lowerName = name.toLowerCase();
+
     const query = {
-      text: 'SELECT name FROM nagari WHERE name = $1',
-      values: [name],
+      text: 'SELECT name FROM nagari WHERE name ILIKE $1',
+      values: [lowerName],
     };
 
     const result = await this._pool.query(query);

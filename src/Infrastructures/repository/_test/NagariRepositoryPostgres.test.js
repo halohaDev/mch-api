@@ -40,25 +40,24 @@ describe('NagariRepositoryPostgres', () => {
   describe('verifyAvailableNagariName function', () => {
     it('should throw InvariantError when nagari name not available', async () => {
       // Arrange
-      const createNagari = new CreateNagari({
-        name: 'Nagari Test',
-      });
+      const name = 'Nagari Test';
+
+      await NagariTableTestHelper.addNagari({ name: 'Nagari Test' });
+
       const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(nagariRepositoryPostgres.addNagari(createNagari))
+      await expect(nagariRepositoryPostgres.verifyAvailableNagariName(name))
         .rejects.toThrowError(InvariantError);
     });
 
     it('should not throw InvariantError when nagari name available', async () => {
       // Arrange
-      const createNagari = new CreateNagari({
-        name: 'Nagari Test',
-      });
+      const name = 'Nagari Test';
       const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(nagariRepositoryPostgres.addNagari(createNagari))
+      await expect(nagariRepositoryPostgres.verifyAvailableNagariName(name))
         .resolves.not.toThrowError(InvariantError);
     });
   });
