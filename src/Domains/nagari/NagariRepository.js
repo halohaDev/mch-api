@@ -6,6 +6,10 @@ class NagariRepository {
   async verifyAvailableNagariName() {
     throw new Error('NAGARI_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
+
+  async getNagariById() {
+    throw new Error('NAGARI_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = NagariRepository;

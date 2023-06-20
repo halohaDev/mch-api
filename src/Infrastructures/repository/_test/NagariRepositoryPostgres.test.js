@@ -3,6 +3,7 @@ const NagariTableTestHelper = require('../../../../tests/NagariTableTestHelper')
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const CreateNagari = require('../../../Domains/nagari/entities/CreateNagari');
 const ShowNagari = require('../../../Domains/nagari/entities/ShowNagari');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const NagariRepositoryPostgres = require('../NagariRepositoryPostgres');
 
 describe('NagariRepositoryPostgres', () => {
@@ -59,6 +60,29 @@ describe('NagariRepositoryPostgres', () => {
       // Action & Assert
       await expect(nagariRepositoryPostgres.verifyAvailableNagariName(name))
         .resolves.not.toThrowError(InvariantError);
+    });
+  });
+
+  describe('getNagariById function', () => {
+    it('should throw NotFoundError when nagari id not found', async () => {
+      // Arrange
+      const id = 'nagari-123';
+      const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(nagariRepositoryPostgres.getNagariById(id))
+        .rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when nagari id found', async () => {
+      // Arrange
+      const id = 'nagari-123';
+      await NagariTableTestHelper.addNagari({ id });
+      const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(nagariRepositoryPostgres.getNagariById(id))
+        .resolves.not.toThrowError(NotFoundError);
     });
   });
 });

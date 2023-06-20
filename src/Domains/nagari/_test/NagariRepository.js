@@ -8,5 +8,6 @@ describe('NagariRepository interface', () => {
     // Action & Assert
     await expect(nagariRepository.addNagari({})).rejects.toThrowError('NAGARI_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(nagariRepository.verifyAvailableNagariName('')).rejects.toThrowError('NAGARI_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(nagariRepository.getNagariById('')).rejects.toThrowError('NAGARI_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

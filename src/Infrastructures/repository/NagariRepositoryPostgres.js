@@ -1,6 +1,7 @@
 const InvariantError = require('../../Commons/exceptions/InvariantError');
 const ShowNagari = require('../../Domains/nagari/entities/ShowNagari');
 const NagariRepository = require('../../Domains/nagari/NagariRepository');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
 class NagariRepositoryPostgres extends NagariRepository {
   constructor(pool, idGenerator) {
@@ -34,6 +35,21 @@ class NagariRepositoryPostgres extends NagariRepository {
     };
 
     const result = await this._pool.query(query);
+
+    return new ShowNagari({ ...result.rows[0] });
+  }
+
+  async getNagariById(id) {
+    const query = {
+      text: 'SELECT id, name FROM nagari WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('nagari tidak ditemukan');
+    }
 
     return new ShowNagari({ ...result.rows[0] });
   }
