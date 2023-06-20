@@ -5,6 +5,7 @@ const ClientError = require('../../Commons/exceptions/ClientError');
 const users = require('../../Interfaces/http/api/users');
 const auth = require('../../Interfaces/http/api/auth');
 const nagari = require('../../Interfaces/http/api/nagari');
+const jorong = require('../../Interfaces/http/api/jorong');
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -23,6 +24,10 @@ const createServer = async (container) => {
     },
     {
       plugin: nagari,
+      options: { container },
+    },
+    {
+      plugin: jorong,
       options: { container },
     },
   ]);
