@@ -31,7 +31,7 @@ describe('NagariRepositoryPostgres', () => {
       const nagari = await NagariTableTestHelper.findNagariById('nagari-123');
       expect(createdNagari).toStrictEqual(new ShowNagari({
         id: 'nagari-123',
-        name: 'Nagari Test',
+        name: 'nagari test',
       }));
       expect(nagari).toHaveLength(1);
     });
@@ -40,9 +40,9 @@ describe('NagariRepositoryPostgres', () => {
   describe('verifyAvailableNagariName function', () => {
     it('should throw InvariantError when nagari name not available', async () => {
       // Arrange
-      const name = 'Nagari Test';
+      const name = 'nagari test';
 
-      await NagariTableTestHelper.addNagari({ name: 'Nagari Test' });
+      await NagariTableTestHelper.addNagari({ name });
 
       const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
 

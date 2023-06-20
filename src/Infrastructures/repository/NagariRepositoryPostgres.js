@@ -13,7 +13,7 @@ class NagariRepositoryPostgres extends NagariRepository {
     const lowerName = name.toLowerCase();
 
     const query = {
-      text: 'SELECT name FROM nagari WHERE name ILIKE $1',
+      text: 'SELECT name FROM nagari WHERE name = $1',
       values: [lowerName],
     };
 
@@ -26,11 +26,11 @@ class NagariRepositoryPostgres extends NagariRepository {
 
   async addNagari(createNagari) {
     const { name } = createNagari;
-    const id = `nagari-${this._idGenerator()}`;
-
+    const id = `nagari-${this._idGenerator(3)}`;
+    const lowerName = name.toLowerCase();
     const query = {
       text: 'INSERT INTO nagari(id, name) VALUES($1, $2) RETURNING id, name',
-      values: [id, name],
+      values: [id, lowerName],
     };
 
     const result = await this._pool.query(query);

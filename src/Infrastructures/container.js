@@ -11,16 +11,21 @@ const pool = require('./database/postgres/pool');
 // service
 const UserRepositoryPostgres = require('./repository/UserRepositoryPostgres');
 const AuthRepositoryPostgres = require('./repository/AuthRepositoryPostgres');
+const NagariRepositoryPostgres = require('./repository/NagariRepositoryPostgres');
 const BcryptPasswordHash = require('./security/BcryptPasswordHash');
 const JsonWebToken = require('./security/JsonWebToken');
 
-// user case
-const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
+// interface
 const UserRepository = require('../Domains/users/UserRepository');
 const AuthRepository = require('../Domains/auth/AuthRepository');
+const NagariRepository = require('../Domains/nagari/NagariRepository');
+
+// user case
+const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
 const PasswordHash = require('../Applications/security/PasswordHash');
 const AuthTokenManager = require('../Applications/security/AuthTokenManager');
 const AuthUseCase = require('../Applications/use_case/AuthUseCase');
+const NagariUseCase = require('../Applications/use_case/NagariUseCase');
 
 const container = createContainer();
 
@@ -75,6 +80,20 @@ container.register([
       ],
     },
   },
+  {
+    key: NagariRepository.name,
+    Class: NagariRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
 ]);
 
 // use case
@@ -118,6 +137,20 @@ container.register([
         {
           name: 'tokenManager',
           internal: AuthTokenManager.name,
+        },
+      ],
+    },
+  },
+
+  {
+    key: NagariUseCase.name,
+    Class: NagariUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'nagariRepository',
+          internal: NagariRepository.name,
         },
       ],
     },

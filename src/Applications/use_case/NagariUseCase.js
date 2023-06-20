@@ -7,8 +7,9 @@ class NagariUseCase {
   }
 
   async addNagari(useCasePayload) {
-    await this._nagariRepository.verifyAvailableNagariName(useCasePayload.name);
-    const createdNagari = await this._nagariRepository.addNagari(new CreateNagari(useCasePayload));
+    const createNagari = new CreateNagari(useCasePayload);
+    await this._nagariRepository.verifyAvailableNagariName(createNagari.name);
+    const createdNagari = await this._nagariRepository.addNagari(createNagari);
     return new ShowNagari(createdNagari);
   }
 }
