@@ -16,6 +16,10 @@ DomainErrorTranslator._directories = {
   'AUTH_USE_CASE.NOT_CONTAIN_EMAIL_OR_PASSWORD': new InvariantError('harus mengirimkan email dan password'),
   'AUTH_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('autentikasi gagal, payload tidak sesuai'),
   'CREATE_USER.NIK_IS_NOT_VALID': new InvariantError('tidak dapat membuat user baru karena NIK tidak valid'),
+  'CREATE_NAGARI.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat nagari baru karena tipe data tidak sesuai'),
+  'CREATE_NAGARI.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat nagari baru karena properti yang dibutuhkan tidak ada'),
+  'CREATE_JORONG.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat jorong baru karena tipe data tidak sesuai'),
+  'CREATE_JORONG.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat jorong baru karena properti yang dibutuhkan tidak ada'),
 };
 
 module.exports = DomainErrorTranslator;
