@@ -26,6 +26,11 @@ const PlacementsTableTestHelper = {
 
     return rows[0];
   },
+
+  // clean table test helper
+  async cleanTable() {
+    await pool.query('DELETE FROM placements WHERE 1=1');
+  },
 };
 
 module.exports = PlacementsTableTestHelper;

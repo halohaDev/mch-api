@@ -27,7 +27,7 @@ const NagariTableTestHelper = {
 
   // clean table test helper
   async cleanTable() {
-    await pool.query('TRUNCATE TABLE nagari');
+    await pool.query('DELETE FROM nagari WHERE 1=1');
   },
 };
 
