@@ -18,7 +18,7 @@ const PlacementsTableTestHelper = {
   // find placement test helper
   async findPlacementByIds(midwifeId, jorongId) {
     const query = {
-      text: 'SELECT * FROM placements WHERE midwifeId = $1 AND jorongId = $2',
+      text: 'SELECT * FROM placements WHERE midwife_id = $1 AND jorong_id = $2',
       values: [midwifeId, jorongId],
     };
 

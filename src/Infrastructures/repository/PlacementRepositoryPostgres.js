@@ -13,7 +13,7 @@ class PlacementRepositoryPostgres extends PlacementRepository {
     placementDate,
   }) {
     const query = {
-      text: 'INSERT INTO placements VALUES($1, $2, $3) RETURNING midwife_id, jorong_id, placement_date',
+      text: 'INSERT INTO placements(midwife_id, jorong_id, placement_date) VALUES($1, $2, $3) RETURNING midwife_id, jorong_id, placement_date',
       values: [midwifeId, jorongId, placementDate],
     };
 

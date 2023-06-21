@@ -34,8 +34,10 @@ describe('PlacementRepository postgres implementation', () => {
       });
 
       // Assert
-      const placements = await PlacementTableTestHelper.findPlacementByIds('midwife-123', 'jorong-123');
-      expect(placements).toHaveLength(1);
+      const placement = await PlacementTableTestHelper.findPlacementByIds('midwife-123', 'jorong-123');
+      expect(placement).toBeDefined();
+      expect(placement.midwife_id).toBe('midwife-123');
+      expect(placement.jorong_id).toBe('jorong-123');
     });
   });
 
