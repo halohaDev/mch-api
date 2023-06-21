@@ -64,7 +64,6 @@ describe('PlacementRepository postgres implementation', () => {
       expect(placement).toStrictEqual({
         midwife_id: 'midwife-123',
         jorong_id: 'jorong-123',
-        placement_date: '2021-01-01T00:00:00.000Z',
       });
     });
   });

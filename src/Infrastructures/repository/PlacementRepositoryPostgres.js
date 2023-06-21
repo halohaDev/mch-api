@@ -23,7 +23,7 @@ class PlacementRepositoryPostgres extends PlacementRepository {
 
   async findPlacementByIds(midwifeId, jorongId) {
     const query = {
-      text: 'SELECT * FROM placements WHERE midwife_id = $1 AND jorong_id = $2',
+      text: 'SELECT midwife_id, jorong_id FROM placements WHERE midwife_id = $1 AND jorong_id = $2',
       values: [midwifeId, jorongId],
     };
 
