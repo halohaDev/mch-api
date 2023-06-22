@@ -6,8 +6,8 @@ class PlacementUseCase {
   }
 
   async addPlacement(useCasePayload) {
-    await this._jorongRepository.findJorongById(useCasePayload.jorongId);
-    await this._userRepository.findUserById(useCasePayload.midwifeId);
+    await this._jorongRepository.getJorongById(useCasePayload.jorongId);
+    await this._userRepository.getUserById(useCasePayload.midwifeId);
 
     return this._placementRepository.addPlacement(useCasePayload);
   }

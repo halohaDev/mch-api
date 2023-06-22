@@ -24,8 +24,8 @@ describe('PlacementUseCase', () => {
       const mockJorongRepository = new JorongRepository();
 
       // mock function
-      mockJorongRepository.findJorongById = jest.fn(() => Promise.resolve());
-      mockUserRepository.findUserById = jest.fn(() => Promise.resolve());
+      mockJorongRepository.getJorongById = jest.fn(() => Promise.resolve());
+      mockUserRepository.getUserById = jest.fn(() => Promise.resolve());
       mockPlacementRepository.addPlacement = jest.fn(() => Promise.resolve(expectedPlacement));
 
       // create use case instance
@@ -40,8 +40,8 @@ describe('PlacementUseCase', () => {
 
       // Assert
       expect(placement).toBeDefined();
-      expect(mockJorongRepository.findJorongById).toBeCalledWith(useCasePayload.jorongId);
-      expect(mockUserRepository.findUserById).toBeCalledWith(useCasePayload.midwifeId);
+      expect(mockJorongRepository.getJorongById).toBeCalledWith(useCasePayload.jorongId);
+      expect(mockUserRepository.getUserById).toBeCalledWith(useCasePayload.midwifeId);
     });
   });
 });
