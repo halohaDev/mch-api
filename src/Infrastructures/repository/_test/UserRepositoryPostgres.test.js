@@ -159,4 +159,28 @@ describe('UserRepositoryPostgres', () => {
       await expect(userRepositoryPostgres.getPasswordByEmail('user-test@mail.com')).rejects.toThrowError('email yang anda masukkan tidak ditemukan');
     });
   });
+
+  describe('getUserById function', () => {
+    it('should return user correctly', async () => {
+      // Arrange
+      const id = 'user-123';
+      await UsersTableTestHelper.addUser({ id });
+
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const user = await userRepositoryPostgres.getUserById(id);
+
+      // Assert
+      expect(user).toBeDefined();
+    });
+
+    it('should throw NotFound error when user not found', async () => {
+      // Arrange
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(userRepositoryPostgres.getUserById('user-123')).rejects.toThrowError('user tidak ditemukan');
+    });
+  });
 });
