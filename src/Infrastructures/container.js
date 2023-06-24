@@ -14,6 +14,7 @@ const AuthRepositoryPostgres = require('./repository/AuthRepositoryPostgres');
 const NagariRepositoryPostgres = require('./repository/NagariRepositoryPostgres');
 const JorongRepositoryPostgres = require('./repository/JorongRepositoryPostgres');
 const PlacementRepositoryPostgres = require('./repository/PlacementRepositoryPostgres');
+const MaternalRepositoryPostgres = require('./repository/MaternalRepositoryPostgres');
 
 // external
 const BcryptPasswordHash = require('./security/BcryptPasswordHash');
@@ -25,6 +26,7 @@ const AuthRepository = require('../Domains/auth/AuthRepository');
 const NagariRepository = require('../Domains/nagari/NagariRepository');
 const JorongRepository = require('../Domains/jorong/JorongRepository');
 const PlacementRepository = require('../Domains/placements/PlacementRepository');
+const MaternalRepository = require('../Domains/maternal/MaternalRepository');
 
 // user case
 const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
@@ -34,6 +36,7 @@ const AuthUseCase = require('../Applications/use_case/AuthUseCase');
 const NagariUseCase = require('../Applications/use_case/NagariUseCase');
 const JorongUseCase = require('../Applications/use_case/JorongUseCase');
 const PlacementUseCase = require('../Applications/use_case/PlacementUseCase');
+const MaternalUseCase = require('../Applications/use_case/MaternalUseCase');
 
 const container = createContainer();
 
@@ -123,6 +126,20 @@ container.register([
       dependencies: [
         {
           concrete: pool,
+        },
+      ],
+    },
+  },
+  {
+    key: MaternalRepository.name,
+    Class: MaternalRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
         },
       ],
     },
@@ -218,6 +235,23 @@ container.register([
         {
           name: 'jorongRepository',
           internal: JorongRepository.name,
+        },
+        {
+          name: 'userRepository',
+          internal: UserRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: MaternalUseCase.name,
+    Class: MaternalUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'maternalRepository',
+          internal: MaternalRepository.name,
         },
         {
           name: 'userRepository',
