@@ -3,7 +3,7 @@ class MaternalRepository {
     throw new Error('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getMaternalByUserId() {
+  async findMaternalByUserId() {
     throw new Error('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

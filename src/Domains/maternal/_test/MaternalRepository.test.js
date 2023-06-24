@@ -7,7 +7,7 @@ describe('MaternalRepository interface', () => {
 
     // Action and Assert
     await expect(maternalRepository.addMaternal({})).rejects.toThrowError('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    await expect(maternalRepository.getMaternalByUserId('')).rejects.toThrowError('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(maternalRepository.findMaternalByUserId('')).rejects.toThrowError('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(maternalRepository.updateMaternalByUserId('', {})).rejects.toThrowError('MATERNAL_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
