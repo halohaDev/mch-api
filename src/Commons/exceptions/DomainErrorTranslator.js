@@ -2,8 +2,23 @@ const InvariantError = require('./InvariantError');
 
 const DomainErrorTranslator = {
   translate(error) {
-    return DomainErrorTranslator._directories[error.message] || error;
+    const newError = DomainErrorTranslator._validationError(error);
+    return newError || DomainErrorTranslator._directories[error.message] || error;
   },
+};
+
+DomainErrorTranslator._validationError = (error) => {
+  const { message } = error;
+  const validationMessage = message.split('.');
+
+  if (validationMessage[1] === 'INPUT_VALIDATION') {
+    const valueMessage = validationMessage[0].toLowerCase();
+    const errorMessage = validationMessage[2].split('_').join(' ').toLowerCase();
+
+    return new InvariantError(`${valueMessage} ${errorMessage}`);
+  }
+
+  return null;
 };
 
 DomainErrorTranslator._directories = {
