@@ -13,6 +13,7 @@ const UserRepositoryPostgres = require('./repository/UserRepositoryPostgres');
 const AuthRepositoryPostgres = require('./repository/AuthRepositoryPostgres');
 const NagariRepositoryPostgres = require('./repository/NagariRepositoryPostgres');
 const JorongRepositoryPostgres = require('./repository/JorongRepositoryPostgres');
+const PlacementRepositoryPostgres = require('./repository/PlacementRepositoryPostgres');
 
 // external
 const BcryptPasswordHash = require('./security/BcryptPasswordHash');
@@ -23,6 +24,7 @@ const UserRepository = require('../Domains/users/UserRepository');
 const AuthRepository = require('../Domains/auth/AuthRepository');
 const NagariRepository = require('../Domains/nagari/NagariRepository');
 const JorongRepository = require('../Domains/jorong/JorongRepository');
+const PlacementRepository = require('../Domains/placements/PlacementRepository');
 
 // user case
 const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
@@ -31,6 +33,7 @@ const AuthTokenManager = require('../Applications/security/AuthTokenManager');
 const AuthUseCase = require('../Applications/use_case/AuthUseCase');
 const NagariUseCase = require('../Applications/use_case/NagariUseCase');
 const JorongUseCase = require('../Applications/use_case/JorongUseCase');
+const PlacementUseCase = require('../Applications/use_case/PlacementUseCase');
 
 const container = createContainer();
 
@@ -113,6 +116,17 @@ container.register([
       ],
     },
   },
+  {
+    key: PlacementRepository.name,
+    Class: PlacementRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+      ],
+    },
+  },
 ]);
 
 // use case
@@ -187,6 +201,27 @@ container.register([
         {
           name: 'nagariRepository',
           internal: NagariRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: PlacementUseCase.name,
+    Class: PlacementUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'placementRepository',
+          internal: PlacementRepository.name,
+        },
+        {
+          name: 'jorongRepository',
+          internal: JorongRepository.name,
+        },
+        {
+          name: 'userRepository',
+          internal: UserRepository.name,
         },
       ],
     },

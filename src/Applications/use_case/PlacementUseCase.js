@@ -1,3 +1,5 @@
+const CreatePlacement = require('../../Domains/placements/entities/CreatePlacement');
+
 class PlacementUseCase {
   constructor({ placementRepository, userRepository, jorongRepository }) {
     this._placementRepository = placementRepository;
@@ -6,8 +8,10 @@ class PlacementUseCase {
   }
 
   async addPlacement(useCasePayload) {
-    await this._jorongRepository.getJorongById(useCasePayload.jorongId);
-    await this._userRepository.getUserById(useCasePayload.midwifeId);
+    const createPlacement = new CreatePlacement(useCasePayload);
+
+    await this._jorongRepository.getJorongById(createPlacement.jorongId);
+    await this._userRepository.getUserById(createPlacement.midwifeId);
 
     return this._placementRepository.addPlacement(useCasePayload);
   }
