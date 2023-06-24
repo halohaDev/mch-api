@@ -1,5 +1,6 @@
 const JorongRepository = require('../../Domains/jorong/JorongRepository');
 const InvariantError = require('../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
 class JorongRepositoryPostgres extends JorongRepository {
   constructor(pool, idGenerator) {
@@ -35,6 +36,21 @@ class JorongRepositoryPostgres extends JorongRepository {
     };
 
     const result = await this._pool.query(query);
+
+    return result.rows[0];
+  }
+
+  async getJorongById(id) {
+    const query = {
+      text: 'SELECT jorong.id, jorong.name, jorong.nagari_id FROM jorong WHERE jorong.id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('jorong tidak ditemukan');
+    }
 
     return result.rows[0];
   }

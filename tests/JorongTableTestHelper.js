@@ -27,7 +27,7 @@ const JorongTableTestHelper = {
 
   // clean table test helper
   async cleanTable() {
-    await pool.query('TRUNCATE TABLE jorong');
+    await pool.query('DELETE FROM jorong WHERE 1=1');
   },
 };
 

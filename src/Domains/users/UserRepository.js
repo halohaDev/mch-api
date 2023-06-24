@@ -23,6 +23,10 @@ class UserRepository {
   async verifyAvailableNik(nik) {
     throw new Error('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
+
+  async getUserById(userId) {
+    throw new Error('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = UserRepository;
