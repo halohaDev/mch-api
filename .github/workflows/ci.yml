@@ -39,13 +39,13 @@ jobs:
     - name: npm install migrate and test
       run: |
         npm install
-        npm run migrate:test up
+        npm run migrate up
         npm run test
       env:
-        PGHOST_TEST: localhost
-        PGPORT_TEST: 5432
-        PGPASSWORD_TEST: postgres
-        PGDATABASE_TEST: test_db
-        PGUSER_TEST: postgres
+        PGHOST: localhost
+        PGPORT: 5432
+        PGPASSWORD: postgres
+        PGDATABASE: test_db
+        PGUSER: postgres
         ACCESS_TOKEN_KEY: access_token
         REFRESH_TOKEN_KEY: refresh_token
