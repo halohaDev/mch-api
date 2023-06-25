@@ -34,7 +34,7 @@ describe('MaternalUseCase', () => {
       });
 
       // Action
-      const maternalId = await maternalUseCase.addMaternal(useCasePayload);
+      const { id: maternalId } = await maternalUseCase.addMaternal(useCasePayload);
 
       // Assert
       expect(maternalId).toStrictEqual('123');
@@ -87,7 +87,7 @@ describe('MaternalUseCase', () => {
       });
 
       // Action
-      const maternalId = await maternalUseCase.addUserMaternal(useCasePayload);
+      const { id: maternalId } = await maternalUseCase.addUserMaternal(useCasePayload);
 
       // Assert
       expect(maternalId).toStrictEqual('123');

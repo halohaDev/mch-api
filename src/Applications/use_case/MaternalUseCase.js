@@ -11,7 +11,7 @@ class MaternalUseCase {
     const newMaternal = new NewMaternal(useCasePayload);
     await this._userRepository.getUserById(newMaternal.userId);
     const maternalId = await this._maternalRepository.addMaternal(newMaternal);
-    return maternalId;
+    return { id: maternalId };
   }
 
   async addUserMaternal(useCasePayload) {
@@ -20,7 +20,7 @@ class MaternalUseCase {
 
     const newMaternal = new NewMaternal({ ...useCasePayload, userId });
     const maternalId = await this._maternalRepository.addMaternal(newMaternal);
-    return maternalId;
+    return { id: maternalId };
   }
 }
 
