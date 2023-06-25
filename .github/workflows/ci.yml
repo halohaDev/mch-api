@@ -1,0 +1,51 @@
+name: Continuous Integration
+ 
+on: 
+  pull_request:
+    types: [synchronize]
+ 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:12.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mch_api_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+ 
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+ 
+    steps:
+    - uses: actions/checkout@v3
+  
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: npm install migrate and test
+      run: |
+        npm install
+        npm run migrate up
+        npm run test
+      env:
+        PGHOST: localhost
+        PGPORT: 5432
+        PGPASSWORD: postgres
+        PGDATABASE: mch_api_test
+        PGUSER: postgres
+        ACCESS_TOKEN_KEY: access_token
+        REFRESH_TOKEN_KEY: refresh_token
