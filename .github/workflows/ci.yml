@@ -2,8 +2,7 @@ name: Continuous Integration
  
 on: 
   pull_request:
-    branches:
-      - main
+    types: [synchronize]
  
 jobs:
   test:
@@ -16,7 +15,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          POSTGRES_DB: mch_api_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -25,7 +24,7 @@ jobs:
  
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
  
     steps:
@@ -36,21 +35,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-  
-    - name: Install PostgreSQL client
-        run: |
-          sudo apt-get -yqq install libpq-dev
 
     - name: npm install migrate and test
       run: |
         npm install
-        npm run migrate:test up
+        npm run migrate up
         npm run test
       env:
-        PGHOST_TEST: localhost
-        PGPORT_TEST: 5432
-        PGPASSWORD_TEST: postgres
-        PGDATABASE_TEST: test_db
-        PGUSER_TEST: postgres
+        PGHOST: localhost
+        PGPORT: 5432
+        PGPASSWORD: postgres
+        PGDATABASE: mch_api_test
+        PGUSER: postgres
         ACCESS_TOKEN_KEY: access_token
         REFRESH_TOKEN_KEY: refresh_token
