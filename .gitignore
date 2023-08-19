@@ -3,7 +3,9 @@
 
 node_modules
 
-config
+config/database/*
+!config/database/.example.test.json
+
 
 coverage
 ```
