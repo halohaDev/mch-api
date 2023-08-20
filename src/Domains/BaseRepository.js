@@ -2,7 +2,7 @@ class BaseRepository {
   async paginate({ perPage = 10, direction = 'ASC', directionColumn = 'id', page = 1, targetTable = '', pool }) {
     const query = await this.getPaginatedQuery({ perPage, direction, directionColumn, page, targetTable })
     const paginateResult = await this.paginateResult(pool, query)
-    const totalData = await this.totalData(targetTable)
+    const totalData = await this.totalData(pool, targetTable)
 
     const results = await this.formatResult(paginateResult, totalData, page, perPage)
 
@@ -87,12 +87,12 @@ class BaseRepository {
     }
   }
 
-  async totalData(targetTable) {
+  async totalData(pool, targetTable) {
     const query = {
       text: `SELECT COUNT(*) FROM ${targetTable}`,
     }
 
-    const result = await this._pool.query(query)
+    const result = await pool.query(query)
 
     return result.rows[0].count
   }
