@@ -111,6 +111,12 @@ class UserRepositoryPostgres extends UserRepository {
 
     return result.rows[0];
   }
+
+  async getUsers(queryParams) {
+    const { perPage, direction, directionColumn, page } = queryParams;
+
+    return await this.paginate({ perPage, direction, directionColumn, page, targetTable: 'users', pool: this._pool });
+  }
 }
 
 module.exports = UserRepositoryPostgres;
