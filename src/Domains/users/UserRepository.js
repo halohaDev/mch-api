@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-class UserRepository {
+const BaseRepository = require('../BaseRepository');
+
+class UserRepository extends BaseRepository {
   async addUser(registerUser) {
     throw new Error('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
@@ -25,6 +27,10 @@ class UserRepository {
   }
 
   async getUserById(userId) {
+    throw new Error('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
+  async getUsers() {
     throw new Error('USER_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }

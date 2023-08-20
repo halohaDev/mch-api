@@ -183,4 +183,36 @@ describe('UserRepositoryPostgres', () => {
       await expect(userRepositoryPostgres.getUserById('user-123')).rejects.toThrowError('user tidak ditemukan');
     });
   });
+
+  describe('getUsers function', () => {
+    it('should return users correctly in pagination', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'user123', nik: '1', phoneNumber: '1' });
+      await UsersTableTestHelper.addUser({ id: 'user-456', email: 'user456', nik: '2', phoneNumber: '2' });
+      await UsersTableTestHelper.addUser({ id: 'user-789', email: 'user789', nik: '3', phoneNumber: '3' });
+
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const users = await userRepositoryPostgres.getUsers({ perPage: 2, page: 1 });
+
+      // Assert
+      expect(users.data).toHaveLength(2);
+    });
+
+    it('should return users correctly in pagination with default value', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123', email: 'user123', nik: '1', phoneNumber: '1' });
+      await UsersTableTestHelper.addUser({ id: 'user-456', email: 'user456', nik: '2', phoneNumber: '2' });
+      await UsersTableTestHelper.addUser({ id: 'user-789', email: 'user789', nik: '3', phoneNumber: '3' });
+
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+
+      // Action
+      const users = await userRepositoryPostgres.getUsers({});
+
+      // Assert
+      expect(users.data).toHaveLength(3);
+    });
+  });
 });
