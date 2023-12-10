@@ -108,7 +108,6 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/Mother'
                   - $ref: '#/components/schemas/Midwife'
-                required: true
         responses:
             '201':
                 description: 'User has been created'
