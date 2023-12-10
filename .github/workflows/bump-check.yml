@@ -5,11 +5,11 @@ permissions:
   pull-requests: write
 on:
   pull_request:
-    types: [labeled, synchronize]
+    types: [synchronize]
 
 jobs:
   api-diff:
-    if: ${{ github.event.pull_request.labels.*.name == 'docs' }}
+    if: ${{ github.event.pull_request.labels.some(label => label.name == 'api-diff') }}
     name: Check API diff on Bump.sh
     runs-on: ubuntu-latest
     steps:
