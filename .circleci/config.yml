@@ -29,8 +29,6 @@ workflows:
     jobs:
       - hold:
           type: approval
-          requires:
-            - build
           filters:
             branches:
               only: main
