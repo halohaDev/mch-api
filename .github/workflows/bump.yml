@@ -9,12 +9,13 @@ on:
       - main
       - master
   pull_request:
-    branches:
-      - main
-      - master
+    # when label docs is added
+    types: [labeled]
+
+
 jobs:
   deploy-doc:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' }} || ${{ github.event.pull_request.labels.*.name == 'docs' }}
     name: Deploy API documentation on Bump.sh
     runs-on: ubuntu-latest
     steps:
@@ -27,7 +28,7 @@ jobs:
           token: ${{secrets.BUMP_TOKEN}}
           file: docs/openapi.yml
   api-diff:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' }} || ${{ github.event.pull_request.labels.*.name == 'docs' }}
     name: Check API diff on Bump.sh
     runs-on: ubuntu-latest
     steps:
