@@ -33,16 +33,16 @@ workflows:
             - build
           filters:
             branches:
-            only: main
+              only: main
       - build:
           requires:
             - hold
           filters:
             branches:
-            only: main
+              only: main
       - deploy:
           requires:
             - build
           filters:
             branches:
-            only: main
+              only: main
