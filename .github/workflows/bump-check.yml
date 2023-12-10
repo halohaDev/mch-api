@@ -1,30 +1,13 @@
 
-name: Check & deploy API documentation
+name: Check API documentation
 permissions:
   contents: read
   pull-requests: write
 on:
-  push:
-    branches:
-      - main
-      - master
   pull_request:
     types: [labeled, synchronize]
 
 jobs:
-  deploy-doc:
-    if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main' }}
-    name: Deploy API documentation on Bump.sh
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Deploy API documentation
-        uses: bump-sh/github-action@v1
-        with:
-          doc: mch-api
-          token: ${{secrets.BUMP_TOKEN}}
-          file: docs/openapi.yml
   api-diff:
     if: ${{ github.event.pull_request.labels.*.name == 'docs' }}
     name: Check API diff on Bump.sh
