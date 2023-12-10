@@ -30,19 +30,19 @@ workflows:
       - hold:
           type: approval
           requires:
-              - build
+            - build
           filters:
-              branches:
-                only: main
+            branches:
+            only: main
       - build:
           requires:
-              - hold
-        filters:
-          branches:
+            - hold
+          filters:
+            branches:
             only: main
       - deploy:
           requires:
             - build
           filters:
             branches:
-              only: main
+            only: main
