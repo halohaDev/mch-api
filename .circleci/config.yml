@@ -25,7 +25,7 @@ jobs:
           command: npm install
       - run:
           name: Run migrations
-          command: npm run migrate up
+          command: npm run migrate:test up
       - run:
           name: Run tests
           command: npm run test 
@@ -35,8 +35,7 @@ jobs:
       - run:
           name: Copy environment file to VM
           command: | 
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cp ~/config/.env ~/mch-api/.env"
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cp ~/config/test.json ~/mch-api/test.json"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "sudo cp ~/config/.env ~/mch-api/.env"
 
   deploy:
     machine:
@@ -45,7 +44,7 @@ jobs:
       - run:
           name: Check if server is running
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "curl -s http://localhost:3000" 
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "curl -s http://localhost:5000" 
       - run:
           name: Install dependencies
           command: |
