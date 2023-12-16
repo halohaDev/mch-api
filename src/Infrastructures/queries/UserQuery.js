@@ -4,7 +4,7 @@ class UserQuery extends BaseQuery {
   }
 
   getByName(name) {
-    return [`name = '%${name}%'`, name];
+    return [`name = '${name}'`, name];
   }
 
   getByEmail(email) {
