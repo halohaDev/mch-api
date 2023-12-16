@@ -22,7 +22,7 @@ describe("UserQuery", () => {
       const users = await userQuery.wheres({ id: "user-123" }).paginate();
 
       // Assert
-      expect(users).toHaveLength(1);
+      expect(users.data).toHaveLength(1);
     });
 
     it("should return empty array when user not found", async () => {
@@ -33,7 +33,7 @@ describe("UserQuery", () => {
       const users = await userQuery.wheres({ id: "user-123" }).paginate();
 
       // Assert
-      expect(users).toHaveLength(0);
+      expect(users.data).toHaveLength(0);
     });
 
     it("should return with pagination format", async () => {
@@ -51,7 +51,7 @@ describe("UserQuery", () => {
       expect(users.meta).toHaveProperty("currentPage");
       expect(users.meta).toHaveProperty("perPage");
       expect(users.meta).toHaveProperty("totalPages");
-      expect(users.meta).toHaveProperty("totalData");
+      expect(users.meta).toHaveProperty("size");
     });
 
     it("should return user correctly when search by name", async () => {
@@ -64,7 +64,7 @@ describe("UserQuery", () => {
       const users = await userQuery.wheres({ name: "user test" }).paginate();
 
       // Assert
-      expect(users).toHaveLength(1);
+      expect(users.data).toHaveLength(1);
     });
 
     it("should return user correctly when search by email", async () => {
@@ -82,7 +82,7 @@ describe("UserQuery", () => {
         .paginate();
 
       // Assert
-      expect(users).toHaveLength(1);
+      expect(users.data).toHaveLength(1);
     });
 
     it("should return user correctly when search by role", async () => {
@@ -95,7 +95,7 @@ describe("UserQuery", () => {
       const users = await userQuery.wheres({ role: "midwife" }).paginate();
 
       // Assert
-      expect(users).toHaveLength(1);
+      expect(users.data).toHaveLength(1);
     });
 
     it("should return user correctly when search by name and role", async () => {
@@ -114,7 +114,7 @@ describe("UserQuery", () => {
         .paginate();
 
       // Assert
-      expect(users).toHaveLength(1);
+      expect(users.data).toHaveLength(1);
     });
 
     it("should return pagination meta correctly when search", async () => {
@@ -128,6 +128,7 @@ describe("UserQuery", () => {
           nik: `1234567890${i}`,
           email: `email${i}@mail.com`,
           role: "midwife",
+          phoneNumber: `0812345678${i}`,
         });
       }
 
@@ -136,9 +137,9 @@ describe("UserQuery", () => {
 
       // Assert
       expect(users.meta.currentPage).toEqual(1);
-      expect(users.meta.perPage).toEqual(10);
-      expect(users.meta.totalPages).toEqual(15);
-      expect(users.meta.totalData).toEqual(150);
+      expect(users.meta.perPage).toEqual(100);
+      expect(users.meta.totalPages).toEqual(2);
+      expect(users.meta.size).toEqual(150);
     });
   });
 });

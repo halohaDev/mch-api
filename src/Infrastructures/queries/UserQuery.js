@@ -20,6 +20,10 @@ class UserQuery extends BaseQuery {
   getBySearch(query) {
     return [`name LIKE '%${search}%'`, query];
   }
+
+  getById(id) {
+    return [`id = '${id}'`, id];
+  }
 }
 
 module.exports = UserQuery;

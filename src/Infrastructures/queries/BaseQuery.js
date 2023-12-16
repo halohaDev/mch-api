@@ -1,7 +1,8 @@
 class BaseQuery {
   constructor({ pool }) {
     this._pool = pool;
-    this.tableName = this.constructor.name.toLowerCase() + "s";
+    this.tableName =
+      this.constructor.name.replace(/Query$/, "").toLowerCase() + "s";
     this._finalObject = {
       select: "*",
       where: "",
@@ -17,12 +18,12 @@ class BaseQuery {
     };
 
     this.finalSQL = "";
-    this.joinsSQL = "";
-    this.whereSQL = [];
-    this.values = [];
   }
 
   wheres(params) {
+    const whereSQL = [];
+    const values = [];
+
     if (params) {
       // get each value from params
       Object.keys(params).forEach((param) => {
@@ -32,14 +33,13 @@ class BaseQuery {
         ](params[param]);
 
         // push the query to whereSQL
-        this.whereSQL.push(query);
+        whereSQL.push(query);
 
         // push the value to values
-        this.values.push(value);
+        values.push(value);
       });
 
-      const sql =
-        " WHERE " + this.whereSQL.join(" AND ").replace(/AND\s*$/, "");
+      const sql = " WHERE " + whereSQL.join(" AND ").replace(/AND\s*$/, "");
       this._finalObject.where = sql;
       this._finalObject.values = this.values;
 
@@ -103,7 +103,7 @@ class BaseQuery {
       values: this._finalObject.values,
     };
 
-    const results = this._pool.query(query);
+    const results = await this._pool.query(query);
 
     return {
       data: results.rows,
@@ -111,23 +111,25 @@ class BaseQuery {
     };
   }
 
-  fetchTotalData = async () => {
-    sql = `SELECT COUNT(*) FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where}`;
+  async fetchTotalData() {
+    const sql = `SELECT COUNT(*) FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where}`;
 
     const query = {
       text: sql,
       values: this._finalObject.values,
     };
 
-    const results = this._pool.query(query);
-    const totalData = results.rows[0].count;
+    const results = await this._pool.query(query);
+    const totalData = parseInt(results.rows[0].count);
 
     this.paginationMeta.totalPages = Math.ceil(
       totalData / this.paginationMeta.perPage
     );
 
+    this.paginationMeta.size = totalData;
+
     return this;
-  };
+  }
 
   finalizeSQL() {
     this.finalSQL = `SELECT ${this._finalObject.select} FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where} ${this._finalObject.paginate}`;
