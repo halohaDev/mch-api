@@ -9,7 +9,9 @@ jobs:
           PGUSER_TEST: postgres
           PGDATABASE_TEST: mch_api_test
           PGPASSWORD_TEST: password
-          PGPORT_TEST: 5432
+          PGUSER: postgres
+          PGDATABASE: mch_api_test
+          PGPASSWORD: password
           NODE_ENV: test
       - image: circleci/postgres:12.5
         environment:
