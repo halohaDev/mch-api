@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Restart server
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo pm2 restart all"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && pm2 restart all"
 
 workflows:
   version: 2
