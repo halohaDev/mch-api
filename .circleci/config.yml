@@ -25,7 +25,7 @@ jobs:
           command: npm install
       - run:
           name: Run migrations
-          command: npm run migrate
+          command: npm run migrate up
       - run:
           name: Run tests
           command: npm run test 
@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm run migrate"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm run migrate up"
       - run:
           name: Restart server
           command: |
