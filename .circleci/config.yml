@@ -17,6 +17,12 @@ jobs:
           POSTGRES_DB: mch_api_test
           POSTGRES_PASSWORD: password
     steps:
+      - run:
+          name: Remove old repo and initialize new one
+          command: |
+            rm -rf ~/repo
+            git init ~/repo
+
       - checkout
       - add_ssh_keys:
           fingerprints:
