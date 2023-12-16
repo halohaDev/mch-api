@@ -4,23 +4,60 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.19.0
+        environment:
+          PGHOST_TEST: localhost
+          PGUSER_TEST: postgres
+          PGDATABASE_TEST: mch_api_test
+          PGPASSWORD_TEST: password
+          PGPORT_TEST: 5432
+      - image: circleci/postgres:12.5
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: mch_api_test
+          POSTGRES_PASSWORD: password
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - $SSH_FINGERPRINT
       - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run migrations
+          command: npm run migrate
+      - run:
+          name: Run tests
+          command: npm run test 
+      - run:
           name: Copy updated files to VM
           command: scp -o StrictHostKeyChecking=no -r ./* $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api
+      - run:
+          name: Copy environment file to VM
+          command: | 
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cp ~/config/.env ~/mch-api/.env"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cp ~/config/test.json ~/mch-api/test.json"
 
   deploy:
     machine:
       enabled: true
     steps:
       - run:
-          name: Deploy Over SSH
+          name: Check if server is running
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VMP_IP "cd mch-api && sudo npm run-script stop && sudo npm install && sudo npm start"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "curl -s http://localhost:3000" 
+      - run:
+          name: Install dependencies
+          command: |
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm install"
+      - run:
+          name: Run migrations
+          command: |
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm run migrate"
+      - run:
+          name: Restart server
+          command: |
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo pm2 restart all"
 
 workflows:
   version: 2
@@ -30,17 +67,14 @@ workflows:
       - hold:
           type: approval
           filters:
-            branches:
-              only: main
+            branches: { only: [main, /(release|hotfix|v)\/.*/] }
       - build:
           requires:
             - hold
           filters:
-            branches:
-              only: main
+            branches: { only: [main, /(release|hotfix|v)\/.*/] }
       - deploy:
           requires:
             - build
           filters:
-            branches:
-              only: main
+            branches: { only: [main, /(release|hotfix|v)\/.*/] }
