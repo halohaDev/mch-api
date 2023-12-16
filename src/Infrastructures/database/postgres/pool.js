@@ -9,6 +9,6 @@ const testConfig = {
   database: process.env.PGDATABASE_TEST || 'mch_api_test',
 };
 
-const pool = process.env.NODE_ENV === 'test' ? new Pool(testConfig) : new Pool({ ssl: true });
+const pool = process.env.NODE_ENV === 'test' ? new Pool(testConfig) : new Pool();
 
 module.exports = pool;
