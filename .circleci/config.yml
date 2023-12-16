@@ -8,8 +8,8 @@ jobs:
           PGUSER: postgres
           PGDATABASE: mch_api_test
           PGPASSWORD: password
-          ACCESS_TOKEN: $ACCESS_TOKEN
-          SSH_FINGERPRINT: $REFRESH_TOKEN
+          ACCESS_TOKEN_KEY: $ACCESS_TOKEN
+          REFRESH_TOKEN_KEY: $REFRESH_TOKEN
       - image: circleci/postgres:12.5
         environment:
           POSTGRES_USER: postgres
