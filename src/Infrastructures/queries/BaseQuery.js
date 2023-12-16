@@ -24,15 +24,18 @@ class BaseQuery {
 
   wheres(params) {
     if (params) {
-      params.forEach((param) => {
-        const key =
-          Object.keys(param)[0].charAt(0).toUpperCase() +
-          Object.keys(param)[0].slice(1);
-        const value = Object.values(param)[0];
-        const currentResult = this[`getBy${key}`](value);
+      // get each value from params
+      Object.keys(params).forEach((param) => {
+        // get the query and the value
+        const [query, value] = this[
+          `getBy${param.charAt(0).toUpperCase() + param.slice(1)}`
+        ](params[param]);
 
-        this.whereSQL.push(currentResult[0]);
-        this.values.push(currentResult[1]);
+        // push the query to whereSQL
+        this.whereSQL.push(query);
+
+        // push the value to values
+        this.values.push(value);
       });
 
       const sql =
