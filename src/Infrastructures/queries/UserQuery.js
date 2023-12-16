@@ -6,23 +6,23 @@ class UserQuery extends BaseQuery {
   }
 
   getByName(name) {
-    return [`name = '${name}'`, name];
+    return ["name = ? ", name];
   }
 
   getByEmail(email) {
-    return [`email = '${email}'`, email];
+    return ["email = ? ", email];
   }
 
   getByRole(role) {
-    return [`role = '${role}'`, role];
+    return ["role =  ?", role];
   }
 
   getBySearch(query) {
-    return [`name LIKE '%${search}%'`, query];
+    return ["name LIKE %?% ", query];
   }
 
   getById(id) {
-    return [`id = '${id}'`, id];
+    return ["id = ?", id];
   }
 }
 
