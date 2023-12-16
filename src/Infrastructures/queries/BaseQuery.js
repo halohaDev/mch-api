@@ -131,4 +131,4 @@ class BaseQuery {
   }
 }
 
-export default BaseClass;
+module.exports = BaseQuery;

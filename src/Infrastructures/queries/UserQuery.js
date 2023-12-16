@@ -1,3 +1,5 @@
+const BaseQuery = require("./BaseQuery");
+
 class UserQuery extends BaseQuery {
   constructor({ pool }) {
     super({ pool });
@@ -19,3 +21,5 @@ class UserQuery extends BaseQuery {
     return [`name LIKE '%${search}%'`, query];
   }
 }
+
+module.exports = UserQuery;

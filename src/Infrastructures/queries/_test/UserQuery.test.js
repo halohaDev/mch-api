@@ -1,5 +1,6 @@
 const pool = require("../../database/postgres/pool");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const UserQuery = require("../UserQuery");
 
 describe("UserQuery", () => {
   afterAll(async () => {
