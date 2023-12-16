@@ -8,6 +8,7 @@ class BaseQuery {
       where: "",
       values: [],
       paginate: "",
+      joins: "",
     };
 
     this.paginationMeta = {
@@ -18,35 +19,82 @@ class BaseQuery {
     };
 
     this.finalSQL = "";
+
+    this._perPage = 100;
+    this._page = 1;
+  }
+
+  async paginate({ page = this._page, perPage = this._perPage } = {}) {
+    const limit = perPage;
+    const offset = (page - 1) * perPage;
+
+    this.paginationMeta.currentPage = page;
+    this.paginationMeta.perPage = perPage;
+
+    this.fetchTotalData();
+
+    const sql = ` LIMIT ${limit} OFFSET ${offset}`;
+    this._finalObject.paginate = sql;
+
+    await this.finalizeSQL();
+
+    const query = {
+      text: this.finalSQL,
+      values: this._finalObject.values,
+    };
+
+    console.log(query);
+
+    const results = await this._pool.query(query);
+
+    return {
+      data: results.rows,
+      meta: this.paginationMeta,
+    };
   }
 
   wheres(params) {
-    const whereSQL = [];
-    const values = [];
+    let whereSQL = [];
+    let values = [];
 
-    if (params) {
-      // get each value from params
-      Object.keys(params).forEach((param) => {
-        // get the query and the value
-        const [query, value] = this[
-          `getBy${param.charAt(0).toUpperCase() + param.slice(1)}`
-        ](params[param]);
-
-        // push the query to whereSQL
-        whereSQL.push(query);
-
-        // push the value to values
-        values.push(value);
-      });
-
-      const sql = " WHERE " + whereSQL.join(" AND ").replace(/AND\s*$/, "");
-      this._finalObject.where = sql;
-      this._finalObject.values = this.values;
-
-      this.finalizeSQL();
-
+    if (!params || typeof params !== "object") {
       return this;
     }
+
+    Object.keys(params).forEach((param, index) => {
+      const methodName = `getBy${
+        param.charAt(0).toUpperCase() + param.slice(1)
+      }`;
+
+      if (typeof this[methodName] !== "function") {
+        return;
+      }
+
+      const result = this[methodName](params[param]);
+
+      if (param === "page" || param === "perPage") {
+        return;
+      }
+
+      const [query, value] = result;
+      const paramizeQuery = query.replace(/\?/g, `$${index + 1}`);
+
+      whereSQL.push(paramizeQuery);
+      values.push(value);
+    });
+
+    if (whereSQL.length === 0) {
+      return this;
+    }
+
+    const sql = " WHERE " + whereSQL.join(" AND ").replace(/AND\s*$/, "");
+
+    this._finalObject.where = sql;
+    this._finalObject.values = values;
+
+    this.finalizeSQL();
+
+    return this;
   }
 
   joins(params) {
@@ -57,7 +105,7 @@ class BaseQuery {
 
       params.forEach((param) => {
         const key = param.charAt(0).toUpperCase() + param.slice(1);
-        this.joinsSQL += this[`joinBy${key}`]();
+        this._finalObject.joins += this[`joinBy${key}`]();
       });
     }
 
@@ -84,33 +132,6 @@ class BaseQuery {
     return this;
   }
 
-  async paginate({ page = 1, perPage = 100 } = {}) {
-    const limit = perPage;
-    const offset = (page - 1) * perPage;
-
-    this.paginationMeta.currentPage = page;
-    this.paginationMeta.perPage = perPage;
-
-    this.fetchTotalData();
-
-    const sql = ` LIMIT ${limit} OFFSET ${offset}`;
-    this._finalObject.paginate = sql;
-
-    await this.finalizeSQL();
-
-    const query = {
-      text: this.finalSQL,
-      values: this._finalObject.values,
-    };
-
-    const results = await this._pool.query(query);
-
-    return {
-      data: results.rows,
-      meta: this.paginationMeta,
-    };
-  }
-
   async fetchTotalData() {
     const sql = `SELECT COUNT(*) FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where}`;
 
@@ -132,7 +153,17 @@ class BaseQuery {
   }
 
   finalizeSQL() {
-    this.finalSQL = `SELECT ${this._finalObject.select} FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where} ${this._finalObject.paginate}`;
+    const sql = `SELECT ${this._finalObject.select} FROM ${this.tableName} ${this._finalObject.joins} ${this._finalObject.where} ${this._finalObject.paginate}`;
+
+    this.finalSQL = sql.replace(/\s+/g, " ").trim();
+  }
+
+  getByPerPage(perPage) {
+    this._perPage = parseInt(perPage);
+  }
+
+  getByPage(page) {
+    this._page = parseInt(page);
   }
 }
 
