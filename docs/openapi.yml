@@ -2,7 +2,7 @@
 openapi: 3.0.0
 servers:
 - description: MCH API for Puskesmas IV Koto
-  url: https://4.227.153.43
+  url: http://mch-api.tanbo.tech/
 info:
   description: |
     This API will handle all of functional requirement needed by Puskesmas IV Koto in parts of its Pelayanan Ibu dan Anak
