@@ -9,7 +9,7 @@ on:
 
 jobs:
   api-diff:
-    if: ${{ github.event.pull_request.labels.some(label => label.name == 'api-diff') }}
+    if: github.event.label.name == 'docs' 
     name: Check API diff on Bump.sh
     runs-on: ubuntu-latest
     steps:
