@@ -3,7 +3,7 @@ class MaternalHistoryRepository {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async getMaternalHistoryByPatientId(patientId) {
+  async getMaternalHistoryByMaternalId(patientId) {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
@@ -12,6 +12,10 @@ class MaternalHistoryRepository {
   }
 
   async updateMaternalHistoryById(id, data) {
+    throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getMaternalHistories() {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
