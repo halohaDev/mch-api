@@ -1,25 +1,29 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
-const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const CreatedUser = require('../../Domains/users/entities/CreatedUser');
-const UserRepository = require('../../Domains/users/UserRepository');
+const InvariantError = require("../../Commons/exceptions/InvariantError");
+const NotFoundError = require("../../Commons/exceptions/NotFoundError");
+const CreatedUser = require("../../Domains/users/entities/CreatedUser");
+const UserRepository = require("../../Domains/users/UserRepository");
+const UserQuery = require("../queries/UserQuery");
 
 class UserRepositoryPostgres extends UserRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._userQuery = new UserQuery({ pool });
   }
 
   async verifyAvailableEmail(email) {
     const query = {
-      text: 'SELECT email FROM users WHERE email = $1',
+      text: "SELECT email FROM users WHERE email = $1",
       values: [email],
     };
 
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError('tidak dapat membuat user baru karena email sudah digunakan');
+      throw new InvariantError(
+        "tidak dapat membuat user baru karena email sudah digunakan"
+      );
     }
   }
 
@@ -28,7 +32,7 @@ class UserRepositoryPostgres extends UserRepository {
     const id = `user-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO users(id, email, name, password) VALUES($1, $2, $3, $4) RETURNING id, email, name',
+      text: "INSERT INTO users(id, email, name, password) VALUES($1, $2, $3, $4) RETURNING id, email, name",
       values: [id, email, name, password],
     };
 
@@ -39,14 +43,14 @@ class UserRepositoryPostgres extends UserRepository {
 
   async getPasswordByEmail(email) {
     const query = {
-      text: 'SELECT password FROM users WHERE email = $1',
+      text: "SELECT password FROM users WHERE email = $1",
       values: [email],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('email yang anda masukkan tidak ditemukan');
+      throw new InvariantError("email yang anda masukkan tidak ditemukan");
     }
 
     return result.rows[0].password;
@@ -54,14 +58,14 @@ class UserRepositoryPostgres extends UserRepository {
 
   async getIdByEmail(email) {
     const query = {
-      text: 'SELECT id FROM users WHERE email = $1',
+      text: "SELECT id FROM users WHERE email = $1",
       values: [email],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('email yang anda masukkan tidak ditemukan');
+      throw new InvariantError("email yang anda masukkan tidak ditemukan");
     }
 
     return result.rows[0].id;
@@ -69,14 +73,14 @@ class UserRepositoryPostgres extends UserRepository {
 
   async verifyAvailableNik(nik) {
     const query = {
-      text: 'SELECT nik FROM users WHERE nik = $1',
+      text: "SELECT nik FROM users WHERE nik = $1",
       values: [nik],
     };
 
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError('NIK sudah digunakan');
+      throw new InvariantError("NIK sudah digunakan");
     }
 
     return true;
@@ -84,14 +88,14 @@ class UserRepositoryPostgres extends UserRepository {
 
   async verifyAvailablePhoneNumber(phoneNumber) {
     const query = {
-      text: 'SELECT phone_number FROM users WHERE phone_number = $1',
+      text: "SELECT phone_number FROM users WHERE phone_number = $1",
       values: [phoneNumber],
     };
 
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError('Nomor telepon sudah digunakan');
+      throw new InvariantError("Nomor telepon sudah digunakan");
     }
 
     return true;
@@ -99,23 +103,22 @@ class UserRepositoryPostgres extends UserRepository {
 
   async getUserById(userId) {
     const query = {
-      text: 'SELECT id, name, email, phone_number, nik FROM users WHERE id = $1',
+      text: "SELECT id, name, email, phone_number, nik FROM users WHERE id = $1",
       values: [userId],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('user tidak ditemukan');
+      throw new NotFoundError("user tidak ditemukan");
     }
 
     return result.rows[0];
   }
 
   async getUsers(queryParams) {
-    const { perPage, direction, directionColumn, page } = queryParams;
-
-    return await this.paginate({ perPage, direction, directionColumn, page, targetTable: 'users', pool: this._pool });
+    const result = await this._userQuery.wheres(queryParams).paginate();
+    return result;
   }
 }
 
