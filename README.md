@@ -12,15 +12,31 @@ Database will be using PostgreSQL. The structure of the database is as follows: 
 Using Clean Architecture form R.C Martin knowns as Uncle Bob
 
 ## Requirements
-1. Node.js v14.15.4 or later
-2. PostgreSQL v12.x or later
+1. Node.js v14.15.4 or later, you can download it [here](https://nodejs.org/en/download/)
+```bash
+# check node version
+node -v
+
+# check npm version
+npm -v
+```
+2. PostgreSQL v12.x or later, you can download it [here](https://www.postgresql.org/download/)
+```bash
+# check postgres version
+psql --version
+```
 
 ## How to run
 1. Clone this repository
 ```bash
 git clone https://github.com/mnfaizp/mch-api.git
 ```
+
 2. Install all dependencies using `npm install`
+```bash
+npm install
+``
+
 3. Create a `.env` file and fill it with the required environment variables
 ```yml
 # HTTP Server
@@ -45,6 +61,23 @@ PGPORT_TEST=5432
 ACCESS_TOKEN_KEY=access_token
 REFRESH_TOKEN_KEY=refresh_token
 ```
+
 4. Create a database with the name `mch_api_developement` and `mch_api_test`
+```bash
+# login to postgres
+psql -U postgres -d postgres
+
+# create database
+CREATE DATABASE mch_api_developement;
+CREATE DATABASE mch_api_test;
+```
+
 5. Run the database migration using `npm run migrate`
+```bash
+npm run migrate
+```
+
 3. Run the server using `npm run dev`
+```bash
+npm run dev
+```
