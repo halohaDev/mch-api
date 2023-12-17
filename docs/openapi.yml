@@ -1,0 +1,283 @@
+---
+openapi: 3.0.0
+servers:
+- description: MCH API for Puskesmas IV Koto
+  url: http://mch-api.tanbo.tech/
+info:
+  description: |
+    This API will handle all of functional requirement needed by Puskesmas IV Koto in parts of its Pelayanan Ibu dan Anak
+  version: 0.0.1
+  title: Maternal and Child Healthcare API
+  contact:
+    email: mnfaizp@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+- name: authentications
+  description: Authentication operations
+- name: admins
+  description: Admin operations
+paths:
+  /authentications:
+    post:
+      tags:
+      - authentications
+      summary: Authenticates user
+      operationId: authenticates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticatesRequest'
+            example:
+              email: admin@admin.com
+              password: admin
+        description: Authenticates user
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticatesResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /placements:
+    post:
+      tags:
+        - admins
+      summary: Place midwife to a Jorong
+      operationId: placeMidwife
+      requestBody:
+        $ref: '#/components/requestBodies/PlaceMidwifeRequest'
+      responses:
+        '201':
+          description: 'Midwife has been placed to a Jorong'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MidwifePlacement'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users:
+    post:
+        tags:
+        - admins
+        summary: Create a user
+        operationId: createUser
+        requestBody:
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Mother'
+                  - $ref: '#/components/schemas/Midwife'
+        responses:
+            '201':
+                description: 'User has been created'
+                content:
+                  application/json:
+                      schema:
+                        oneOf:
+                          - $ref: '#/components/schemas/User'
+            '400':
+                description: Bad Request
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Error'
+            '404':
+                description: Not Found
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Error'
+            '500':
+                description: Internal Server Error
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Error'
+
+
+components:
+  schemas:
+    AuthenticatesRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+
+    AuthenticatesResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+
+    MidwifePlacement:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          midwifeId:
+            type: integer
+            format: int32
+          jorongId:
+            type: integer
+            format: int32
+          placementDate:
+            type: string
+            format: date
+        required:
+          - midwifeId
+          - jorongId
+
+    User:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          role:
+            type: string
+            enum: [mother, midwife, chairperson, coordinator]
+          email:
+            type: string
+          name:
+            type: string
+          dateOfBirth:
+            type: string
+            format: date
+          nik:
+            type: string
+          phoneNumber:
+            type: number
+          address:
+            type: string
+          birthPlace:
+            type: string
+          jobTitle:
+            type: string
+          religion:
+            type: string
+            enum: [islam, kristen, katolik, hindu, budha, konghucu, kepercayaan]
+          isActiveBpjs:
+            type: boolean
+          bpjsKesehatanNumber:
+            type: string
+
+    Mother:
+        type: object
+        properties:
+          role:
+              type: string
+              enum: [mother, relatives]
+          email:
+            type: string
+          password:
+              type: string
+          name:
+            type: string
+          nik:
+            type: string
+          phoneNumber:
+            type: number
+          address:
+            type: string
+          dateOfBirth:
+            type: string
+          jobTitle:
+            type: string
+          religion:
+            type: string
+            enum: [islam, kristen, katolik, hindu, budha, konghucu, kepercayaan]
+          isActiveBpjs:
+            type: boolean
+          bpjsKesehatanNumber:
+            type: string
+
+    Midwife:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [midwife, chairperson, coordinator]
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        fields:
+          type: array
+      required:
+      - code
+      - message
+
+  requestBodies:
+    PlaceMidwifeRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MidwifePlacement'
+          example:
+            midwifeId: 1
+            jorongId: 1
+      description: Place midwife to a Jorong
+      required: true
