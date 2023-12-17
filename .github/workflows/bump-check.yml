@@ -9,7 +9,6 @@ on:
 
 jobs:
   api-diff:
-    if: "contains(github.event.pull_request.labels.*.name, 'docs')"
     name: Check API diff on Bump.sh
     runs-on: ubuntu-latest
     steps:
