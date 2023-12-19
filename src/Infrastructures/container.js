@@ -34,6 +34,7 @@ const AuthUseCase = require('../Applications/use_case/AuthUseCase');
 const NagariUseCase = require('../Applications/use_case/NagariUseCase');
 const JorongUseCase = require('../Applications/use_case/JorongUseCase');
 const PlacementUseCase = require('../Applications/use_case/PlacementUseCase');
+const ShowAllUserUseCase = require('../Applications/use_case/ShowAllUserUseCase');
 
 const container = createContainer();
 
@@ -219,6 +220,19 @@ container.register([
           name: 'jorongRepository',
           internal: JorongRepository.name,
         },
+        {
+          name: 'userRepository',
+          internal: UserRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: ShowAllUserUseCase.name,
+    Class: ShowAllUserUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
         {
           name: 'userRepository',
           internal: UserRepository.name,
