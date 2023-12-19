@@ -4,7 +4,7 @@ class ShowAllUserUseCase {
   }
 
   async execute(queryParams) {
-    return await this._userRepository.getAllUsers(queryParams);
+    return await this._userRepository.getUsers(queryParams);
   }
 }
 
