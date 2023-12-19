@@ -7,3 +7,5 @@ class ShowAllUserUseCase {
     return await this._userRepository.getAllUsers(queryParams);
   }
 }
+
+module.exports = ShowAllUserUseCase;
