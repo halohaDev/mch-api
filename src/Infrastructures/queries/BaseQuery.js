@@ -44,8 +44,6 @@ class BaseQuery {
       values: this._finalObject.values,
     };
 
-    console.log(query);
-
     const results = await this._pool.query(query);
 
     return {
