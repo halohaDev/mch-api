@@ -310,4 +310,71 @@ describe('HTTP server - users', () => {
       expect(responseJson.message).toEqual('Nomor telepon sudah digunakan');
     });
   });
+
+  describe('when to show all users', () => {
+    beforeEach(async () => {
+      await UsersTableTestHelper.createManyUser(10);
+    });
+
+    it('should response 200 and show all users', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/users',
+      });
+
+      
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.length).toEqual(10);
+    });
+
+    it('should return 200 and show users with limit', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/users?perPage=3',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.meta.perPage).toEqual(3);
+      expect(responseJson.meta.size).toEqual(10);
+      expect(responseJson.meta.totalPages).toEqual(4);
+    });
+
+    it('should return 200 and show users with page', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/users?page=4&perPage=3',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.length).toEqual(1);
+      expect(responseJson.meta.currentPage).toEqual(4);
+      expect(responseJson.meta.perPage).toEqual(3);
+      expect(responseJson.meta.size).toEqual(10);
+      expect(responseJson.meta.totalPages).toEqual(4);
+    });
+  });
 });

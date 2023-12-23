@@ -25,6 +25,18 @@ const UsersTableTestHelper = {
     return result.rows;
   },
 
+  // create many user according to number passed
+  async createManyUser(number) {
+    for (let i = 0; i < number; i += 1) {
+      const unique = Math.floor(Math.random() * 100000);
+      await this.addUser({ 
+        id: `user-${unique}`, email: `user${unique}!@mail.com`, 
+        password: 'secret_password', name: `User ${unique}`, 
+        nik: `123456789${unique}`, role: 'mother', phoneNumber: `0812345678${unique}`
+      });
+    }
+  },
+
   // clean table test helper
   async cleanTable() {
     await pool.query('DELETE FROM users WHERE 1=1');

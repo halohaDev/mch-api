@@ -9,6 +9,7 @@ class BaseQuery {
       values: [],
       paginate: "",
       joins: "",
+      currentIndex: 0,
     };
 
     this.paginationMeta = {
@@ -25,15 +26,15 @@ class BaseQuery {
   }
 
   async paginate({ page = this._page, perPage = this._perPage } = {}) {
-    const limit = perPage;
-    const offset = (page - 1) * perPage;
+    const limit = parseInt(perPage);
+    const offset = (parseInt(page) - 1) * perPage;
 
     this.paginationMeta.currentPage = page;
     this.paginationMeta.perPage = perPage;
 
     this.fetchTotalData();
 
-    const sql = ` LIMIT ${limit} OFFSET ${offset}`;
+    const sql = `LIMIT ${limit} OFFSET ${offset}`;
     this._finalObject.paginate = sql;
 
     await this.finalizeSQL();
@@ -42,8 +43,6 @@ class BaseQuery {
       text: this.finalSQL,
       values: this._finalObject.values,
     };
-
-    console.log(query);
 
     const results = await this._pool.query(query);
 
@@ -61,7 +60,8 @@ class BaseQuery {
       return this;
     }
 
-    Object.keys(params).forEach((param, index) => {
+    Object.keys(params).forEach((param) => {
+      this._finalObject.currentIndex += 1;
       const methodName = `getBy${
         param.charAt(0).toUpperCase() + param.slice(1)
       }`;
@@ -77,7 +77,9 @@ class BaseQuery {
       }
 
       const [query, value] = result;
-      const paramizeQuery = query.replace(/\?/g, `$${index + 1}`);
+      const paramizeQuery = query.replace(/\?/g, `$${
+        this._finalObject.currentIndex
+      }`);
 
       whereSQL.push(paramizeQuery);
       values.push(value);
