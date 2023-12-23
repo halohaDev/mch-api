@@ -135,6 +135,76 @@ paths:
                     schema:
                       $ref: '#/components/schemas/Error'
 
+    get: 
+        tags:
+        - admins
+        summary: Get all users
+        operationId: getAllUsers
+        parameters:
+          - name: role
+            in: query
+            description: Role of user
+            required: false
+            schema:
+              type: string
+              enum: [mother, midwife, chairperson, coordinator]
+          - name: name
+            in: query
+            description: Name of user
+            required: false
+            schema:
+              type: string
+          - name: search
+            in: query
+            description: Search user by name
+            required: false
+            schema:
+              type: string
+          - name: id
+            in: query
+            description: ID of user
+            required: false
+            schema:
+              type: integer
+              format: int32
+          - name: email
+            in: query
+            description: Email of user
+            required: false
+            schema:
+              type: string
+          - name: page
+            in: query
+            description: Page of users
+            required: false
+            schema:
+              type: integer
+              format: int32
+          - name: perPage
+            in: query
+            description: Number of users per page
+            required: false
+            schema:
+              type: integer
+              format: int32
+
+        responses:
+          '200':
+            description: 'OK'
+            content:
+              application/json:
+                  schema:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/User'
+          '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+                          
 
 components:
   schemas:
