@@ -29,7 +29,7 @@ describe('HTTP server - maternal', () => {
       // Action
       const userResponse = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload: {
           email: 'test-email@mail.com',
           password: 'secret_password',
@@ -42,7 +42,7 @@ describe('HTTP server - maternal', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/maternal',
+        url: '/api/v1/maternal',
         payload: { ...requestPayload, userId: id },
       });
 
@@ -65,7 +65,7 @@ describe('HTTP server - maternal', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/maternal',
+        url: '/api/v1/maternal',
         payload: requestPayload,
       });
 
@@ -76,7 +76,7 @@ describe('HTTP server - maternal', () => {
     });
   });
 
-  describe('when POST /maternal/user', () => {
+  describe('when POST /api/v1/mater', () => {
     it('should response 200 and presist user and maternal', async () => {
       // Arrange
       const useCasePayload = {
@@ -104,7 +104,7 @@ describe('HTTP server - maternal', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/maternal/user',
+        url: '/api/v1/maternal/user',
         payload: useCasePayload,
       });
 
@@ -130,7 +130,7 @@ describe('HTTP server - maternal', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/maternal/user',
+        url: '/api/v1/maternal/user',
         payload: requestPayload,
       });
 
@@ -167,7 +167,7 @@ describe('HTTP server - maternal', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/maternal/user',
+        url: '/api/v1/maternal/user',
         payload: useCasePayload,
       });
 

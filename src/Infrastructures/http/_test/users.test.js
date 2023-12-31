@@ -25,7 +25,7 @@ describe('HTTP server - users', () => {
     // Action
     const response = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/api/v1/users',
       payload,
     });
 
@@ -48,7 +48,7 @@ describe('HTTP server - users', () => {
     // Action
     const response = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/api/v1/users',
       payload,
     });
 
@@ -73,7 +73,7 @@ describe('HTTP server - users', () => {
     // Action
     const response = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/api/v1/users',
       payload,
     });
 
@@ -98,7 +98,7 @@ describe('HTTP server - users', () => {
     // Action
     const response = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/api/v1/users',
       payload,
     });
 
@@ -125,7 +125,7 @@ describe('HTTP server - users', () => {
     // Action
     const response = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/api/v1/users',
       payload,
     });
 
@@ -158,7 +158,7 @@ describe('HTTP server - users', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload,
       });
 
@@ -193,7 +193,7 @@ describe('HTTP server - users', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload,
       });
 
@@ -228,7 +228,7 @@ describe('HTTP server - users', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload,
       });
 
@@ -263,7 +263,7 @@ describe('HTTP server - users', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload,
       });
 
@@ -299,7 +299,7 @@ describe('HTTP server - users', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload,
       });
 

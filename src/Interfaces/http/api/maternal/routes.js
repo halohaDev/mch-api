@@ -1,12 +1,12 @@
 const routes = (handler) => [
   {
     method: 'POST',
-    path: '/maternal',
+    path: '/api/v1/maternal',
     handler: handler.postMaternalHandler,
   },
   {
     method: 'POST',
-    path: '/maternal/user',
+    path: '/api/v1/maternal/user',
     handler: handler.postMaternalUserHandler,
   },
 ];
