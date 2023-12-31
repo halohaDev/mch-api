@@ -12,7 +12,7 @@ describe("MaternalHistoryRepository interface", () => {
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
     await expect(
-      maternalHistoryRepository.getMaternalHistoryByPatientId("")
+      maternalHistoryRepository.getMaternalHistoryByMaternalId("")
     ).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
