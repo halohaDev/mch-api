@@ -52,7 +52,9 @@ const createServer = async (container) => {
         const newResponse = h.response({
           status: "fail",
           message: translatedError.message,
+          detail: translatedError.detail,
         });
+
         newResponse.code(translatedError.statusCode);
         return newResponse;
       }
