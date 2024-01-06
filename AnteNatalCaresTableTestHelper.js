@@ -78,3 +78,5 @@ const AnteNatalCaresTableTestHelper = {
     await pool.query("TRUNCATE TABLE ante_natal_cares");
   },
 };
+
+module.exports = AnteNatalCaresTableTestHelper;
