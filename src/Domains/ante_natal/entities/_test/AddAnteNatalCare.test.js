@@ -4,7 +4,6 @@ describe("a AddAnteNatalCare entities", () => {
   it("should throw error when payload did not contain needed property", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
       contactType: "c1",
       weight: 50,
       height: 160,

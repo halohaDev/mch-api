@@ -46,75 +46,75 @@ class AddAnteNatalCare extends DomainBase {
   }
 
   _verifyPayload(payload) {
-    isRequired(payload.placementId, "string");
-    isRequired(payload.contactType, "string");
-    isOptional(payload.action, "string");
-    isOptional(payload.ttImunization, "string");
+    this.isRequired("placementId", "string");
+    this.isRequired("contactType", "string");
+    this.isOptional("action", "string");
+    this.isOptional("ttImunization", "string");
 
     const contactDirectories = {
-      c1: this.#addFirstContact,
-      c2: this.#addSecondContact,
-      c3: this.#addThirdContact,
-      c4: this.#addFourthContact,
-      c5: this.#addFifthContact,
-      c6: this.#addSixthContact,
-      c0: this.#addNonContact,
+      c1: this._addFirstContact,
+      c2: this._addSecondContact,
+      c3: this._addThirdContact,
+      c4: this._addFourthContact,
+      c5: this._addFifthContact,
+      c6: this._addSixthContact,
+      c0: this._addNonContact,
     };
 
-    contactDirectories[payload.contactType](payload);
+    contactDirectories[payload.contactType];
   }
 
-  #addFirstContact(payload) {
+  _addFirstContact(payload) {
     this.#validateRequired(payload);
 
-    isRequired(payload.height, "number");
-    isRequired(payload.hemoglobin, "number");
-    isRequired(payload.bloodType, "string");
-    isRequired(payload.usgCheckDate, "string");
+    this.isRequired("height", "number");
+    this.isRequired("hemoglobin", "number");
+    this.isRequired("bloodType", "string");
+    this.isRequired("usgCheckDate", "string");
   }
 
-  #addSecondContact(payload) {
-    this.#validateRequired(payload);
+  _addSecondContact() {
+    this.#validateRequired();
 
-    isRequired(payload.proteinInUrine, "string");
+    this.isRequired("proteinInUrine", "string");
   }
 
-  #addThirdContact(payload) {
-    this.#validateRequired(payload);
+  _addThirdContact() {
+    this.#validateRequired();
   }
 
-  #addFourthContact(payload) {
-    this.#validateRequired(payload);
+  _addFourthContact() {
+    this.#validateRequired();
 
-    isRequired(payload.hemoglobin, "number");
+    this.isRequired("hemoglobin", "number");
   }
 
-  #addFifthContact(payload) {
-    this.#validateRequired(payload);
+  _addFifthContact() {
+    this.#validateRequired();
 
-    isRequired(payload.hemoglobin, "number");
-    isRequired(payload.usgCheckDate, "string");
+    this.isRequired("hemoglobin", "number");
+    this.isRequired("usgCheckDate", "string");
   }
 
-  #addSixthContact(payload) {
-    this.#validateRequired(payload);
+  _addSixthContact() {
+    this.#validateRequired();
   }
 
-  #addNonContact(payload) {
-    isOptional(payload.weight, "number");
-    isOptional(payload.height, "number");
-    isOptional(payload.hemoglobin, "number");
-    isOptional(payload.bloodPressure, "number");
+  _addNonContact() {
+    this.isOptional("weight", "number");
+    this.isOptional("height", "number");
+    this.isOptional("hemoglobin", "number");
+    this.isOptional("bloodPressure", "number");
   }
 
-  #validateRequired(payload) {
-    isRequired(payload.weight, "number");
-    isRequired(payload.bloodPressure, "number");
-    isRequired(payload.fundalHeight, "number");
-    isRequired(payload.fetalHeartRate, "number");
-    isRequired(payload.hbsag, "string");
-    isRequired(payload.hiv, "string");
-    isRequired(payload.syphilis, "string");
+  #validateRequired() {
+    this.isRequired("weight", "number");
+    this.isRequired("bloodPressure", "number");
+    this.isRequired("fundalHeight", "number");
+    this.isRequired("fetalHeartRate", "number");
+    this.isRequired("hbsag", "string");
+    this.isRequired("hiv", "string");
+    this.isRequired("syphilis", "string");
   }
 }
 
