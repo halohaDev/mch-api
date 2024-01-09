@@ -18,9 +18,8 @@ class Validator {
 
     // if not found throw error
     if (!value) {
-      this.#errors[key].push({
-        message: `${this.#camelCaseToSnakeCase(key)} is required`,
-      });
+      const message = `${key} is required`;
+      this.#pushErrors(key, { message: message });
     }
 
     this.#key = key;
@@ -71,11 +70,9 @@ class Validator {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
     if (!dateRegex.test(date)) {
-      this.#errors[this.#key].push({
-        message: `${this.#camelCaseToSnakeCase(
-          this.#key
-        )} is not in date format`,
-      });
+      const message = `${this.#key} is not a valid date format`;
+
+      this.#pushErrors(this.#key, { message: message });
     }
   }
 
@@ -83,18 +80,18 @@ class Validator {
     const numberRegex = /^\d+$/;
 
     if (!numberRegex.test(value)) {
-      this.#errors[this.#key].push({
-        message: `${this.#camelCaseToSnakeCase(this.#key)} is not a number`,
-      });
+      const message = `${this.#key} is not a number`;
+
+      this.#pushErrors(this.#key, { message: message });
     }
   }
 
   #validateString(value) {
     // validate single string value
     if (typeof value !== "string") {
-      this.#errors[this.#key].push({
-        message: `${this.#camelCaseToSnakeCase(this.#key)} is not a string`,
-      });
+      const message = `${this.#key} is not a string`;
+
+      this.#pushErrors(this.#key, { message: message });
     }
   }
 
@@ -102,11 +99,9 @@ class Validator {
     const emailRegex = /\S+@\S+\.\S+/;
 
     if (!emailRegex.test(email)) {
-      this.#errors[this.#key].push({
-        message: `${this.#camelCaseToSnakeCase(
-          this.#key
-        )} is not a valid email`,
-      });
+      const message = `${this.#key} is not a valid email`;
+
+      this.#pushErrors(this.#key, { message: message });
     }
   }
 
@@ -121,6 +116,16 @@ class Validator {
     }
 
     return this.#validatedOutput;
+  }
+
+  #pushErrors(key, value) {
+    const objectTarget = this.#errors[key];
+
+    if (objectTarget) {
+      objectTarget.push(value);
+    } else {
+      this.#errors[key] = [value];
+    }
   }
 }
 
