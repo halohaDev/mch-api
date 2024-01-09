@@ -1,5 +1,12 @@
+const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatal");
+const AddMaternalHistory = require("../../../Domains/maternal_history/entities/AddMaternalHistory");
+
 class AddUseCase {
-  constructor({ anteNatalRepository, maternalHistoryRepository, maternalRepository }) {
+  constructor({
+    anteNatalRepository,
+    maternalHistoryRepository,
+    maternalRepository,
+  }) {
     this.anteNatalRepository = anteNatalRepository;
     this.maternalHistoryRepository = maternalHistoryRepository;
     this.maternalRepository = maternalRepository;
@@ -11,43 +18,35 @@ class AddUseCase {
 
     let maternalHistoryId = null;
     if (!maternalHistory) {
-      maternalHistoryId = await this.maternalHistoryRepository.addMaternalHistory(payload);
+      maternalHistoryId =
+        await this.maternalHistoryRepository.addMaternalHistory(payload);
     } else {
-      maternalHistoryId = await this.maternalHistoryRepository.updateMaternalHistoryStatus('pregnant');
+      maternalHistoryId =
+        await this.maternalHistoryRepository.updateMaternalHistoryStatus(
+          "pregnant"
+        );
     }
 
-    const anteNatal = await this.anteNatalRepository.addAnteNatal({
-      maternal_history_id: materalHistoryId,
-      ...payload
-    });
+    const updatedPayload = { ...payload, maternalHistoryId: maternalHistoryId };
+    const addAnteNatal = new AddAnteNatal(updatedPayload);
+
+    await this.anteNatalRepository.addAnteNatal(addAnteNatal);
   }
 
   async #getActiveMaternalHistory(maternalId) {
-    const mh = await this.maternalHistoryRepository.getMaternalHistoryByMaternalId(maternalId);
+    const mh =
+      await this.maternalHistoryRepository.getMaternalHistoryByMaternalId(
+        maternalId
+      );
 
-    if (mh.maternal_status === 'pregnant' || mh.maternal_status === 'non_pregnant') {
+    if (
+      mh.maternal_status === "pregnant" ||
+      mh.maternal_status === "non_pregnant"
+    ) {
       return mh;
     }
 
     return null;
-  }
-
-  async #addFirstContact(anteNatal) {
-  }
-
-  async #addSecondContact(anteNatal) {
-  }
-
-  async #addThirdContact(anteNatal) {
-  }
-
-  async #addFourthContact(anteNatal) {
-  }
-
-  async #addFifthContact(anteNatal) {
-  }
-
-  async #addSixthContact(anteNatal) {
   }
 }
 
