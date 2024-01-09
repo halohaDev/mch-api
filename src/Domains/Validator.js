@@ -115,13 +115,13 @@ class Validator {
     return camelCase.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
   }
 
-  output = () => {
+  output() {
     if (Object.keys(this.#errors).length > 0) {
       throw new UnprocessableError(this.#errors);
     }
 
     return this.#validatedOutput;
-  };
+  }
 }
 
 module.exports = Validator;

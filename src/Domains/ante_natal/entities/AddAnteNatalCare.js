@@ -23,7 +23,7 @@ class AddAnteNatalCare extends DomainBase {
       hbsag,
       hiv,
       syphilis,
-    } = this._payload;
+    } = this.output();
 
     this.placementId = placementId;
     this.contactType = contactType;

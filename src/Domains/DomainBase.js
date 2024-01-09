@@ -3,9 +3,7 @@ const Validator = require("./Validator");
 class DomainBase extends Validator {
   constructor(payload) {
     super(payload);
-
     this._verifyPayload(payload);
-    this._payload = this.output();
   }
 
   _verifyPayload(payload) {
