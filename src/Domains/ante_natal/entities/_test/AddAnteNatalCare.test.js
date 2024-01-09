@@ -25,7 +25,7 @@ describe("a AddAnteNatalCare entities", () => {
 
     // Action and Assert
     expect(() => new AddAnteNatalCare(payload)).toThrowError(
-      "ADD_ANTE_NATAL_CARE.NOT_CONTAIN_NEEDED_PROPERTY"
+      "Unprocessable Entity"
     );
   });
 });
