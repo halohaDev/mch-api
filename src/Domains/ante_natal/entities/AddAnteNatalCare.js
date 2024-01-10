@@ -23,9 +23,11 @@ class AddAnteNatalCare extends DomainBase {
       hbsag,
       hiv,
       syphilis,
+      maternalHistoryId,
     } = this.output();
 
     this.placementId = placementId;
+    this.maternalHistoryId = maternalHistoryId;
     this.contactType = contactType;
     this.weight = weight;
     this.height = height;
@@ -48,6 +50,7 @@ class AddAnteNatalCare extends DomainBase {
   _verifyPayload(payload) {
     this.isRequired("placementId", "string");
     this.isRequired("contactType", "string");
+    this.isRequired("maternalHistoryId", "string");
     this.isOptional("action", "string");
     this.isOptional("ttImunization", "string");
 

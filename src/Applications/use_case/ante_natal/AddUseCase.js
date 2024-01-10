@@ -1,41 +1,37 @@
-const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatal");
-const AddMaternalHistory = require("../../../Domains/maternal_history/entities/AddMaternalHistory");
+const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatalCare");
 
 class AddUseCase {
-  constructor({
-    anteNatalRepository,
-    maternalHistoryRepository,
-    maternalRepository,
-  }) {
-    this.anteNatalRepository = anteNatalRepository;
-    this.maternalHistoryRepository = maternalHistoryRepository;
-    this.maternalRepository = maternalRepository;
+  constructor({ anteNatalRepository, maternalHistoryRepository }) {
+    this._anteNatalRepository = anteNatalRepository;
+    this._maternalHistoryRepository = maternalHistoryRepository;
   }
 
   async execute(payload) {
     const { maternalId } = payload;
     const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
 
-    let maternalHistoryId = null;
-    if (!maternalHistory) {
-      maternalHistoryId =
-        await this.maternalHistoryRepository.addMaternalHistory(payload);
-    } else {
-      maternalHistoryId =
-        await this.maternalHistoryRepository.updateMaternalHistoryStatus(
-          "pregnant"
-        );
-    }
+    const updatedMaternalHistory = await this.#updateOrCreateMaternalHistory(
+      payload,
+      maternalHistory
+    );
 
-    const updatedPayload = { ...payload, maternalHistoryId: maternalHistoryId };
+    // TODO: Get Id From Placement autenticated user
+    const placementId = "placement-123";
+
+    const updatedPayload = {
+      ...payload,
+      placementId,
+      maternalHistoryId: updatedMaternalHistory.id,
+    };
+
     const addAnteNatal = new AddAnteNatal(updatedPayload);
 
-    await this.anteNatalRepository.addAnteNatal(addAnteNatal);
+    await this._anteNatalRepository.addAnteNatalCare(addAnteNatal);
   }
 
   async #getActiveMaternalHistory(maternalId) {
     const mh =
-      await this.maternalHistoryRepository.getMaternalHistoryByMaternalId(
+      await this._maternalHistoryRepository.getMaternalHistoryByMaternalId(
         maternalId
       );
 
@@ -47,6 +43,19 @@ class AddUseCase {
     }
 
     return null;
+  }
+
+  async #updateOrCreateMaternalHistory(payload, maternalHistory) {
+    if (maternalHistory === null) {
+      return await this._maternalHistoryRepository.addMaternalHistory(payload);
+    }
+
+    const { id: maternalHistoryId } = maternalHistory;
+
+    return await this._maternalHistoryRepository.updateMaternalHistoryById({
+      id: maternalHistoryId,
+      maternalStatus: "pregnant",
+    });
   }
 }
 
