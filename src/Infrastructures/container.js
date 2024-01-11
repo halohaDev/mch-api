@@ -1,47 +1,80 @@
 /* istanbul ignore file */
 
-const { createContainer } = require('instances-container');
+const { createContainer } = require("instances-container");
 
 // external
-const bcrypt = require('bcrypt');
-const { nanoid } = require('nanoid');
-const jwt = require('@hapi/jwt');
-const pool = require('./database/postgres/pool');
+const bcrypt = require("bcrypt");
+const { nanoid } = require("nanoid");
+const jwt = require("@hapi/jwt");
+const pool = require("./database/postgres/pool");
 
 // service
-const UserRepositoryPostgres = require('./repository/UserRepositoryPostgres');
-const AuthRepositoryPostgres = require('./repository/AuthRepositoryPostgres');
-const NagariRepositoryPostgres = require('./repository/NagariRepositoryPostgres');
-const JorongRepositoryPostgres = require('./repository/JorongRepositoryPostgres');
-const PlacementRepositoryPostgres = require('./repository/PlacementRepositoryPostgres');
-const MaternalRepositoryPostgres = require('./repository/MaternalRepositoryPostgres');
+const UserRepositoryPostgres = require("./repository/UserRepositoryPostgres");
+const AuthRepositoryPostgres = require("./repository/AuthRepositoryPostgres");
+const NagariRepositoryPostgres = require("./repository/NagariRepositoryPostgres");
+const JorongRepositoryPostgres = require("./repository/JorongRepositoryPostgres");
+const PlacementRepositoryPostgres = require("./repository/PlacementRepositoryPostgres");
+const MaternalRepositoryPostgres = require("./repository/MaternalRepositoryPostgres");
+const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepositoryPostgres");
+const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
 
 // external
-const BcryptPasswordHash = require('./security/BcryptPasswordHash');
-const JsonWebToken = require('./security/JsonWebToken');
+const BcryptPasswordHash = require("./security/BcryptPasswordHash");
+const JsonWebToken = require("./security/JsonWebToken");
 
 // interface
-const UserRepository = require('../Domains/users/UserRepository');
-const AuthRepository = require('../Domains/auth/AuthRepository');
-const NagariRepository = require('../Domains/nagari/NagariRepository');
-const JorongRepository = require('../Domains/jorong/JorongRepository');
-const PlacementRepository = require('../Domains/placements/PlacementRepository');
-const MaternalRepository = require('../Domains/maternal/MaternalRepository');
+const UserRepository = require("../Domains/users/UserRepository");
+const AuthRepository = require("../Domains/auth/AuthRepository");
+const NagariRepository = require("../Domains/nagari/NagariRepository");
+const JorongRepository = require("../Domains/jorong/JorongRepository");
+const PlacementRepository = require("../Domains/placements/PlacementRepository");
+const MaternalRepository = require("../Domains/maternal/MaternalRepository");
+const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
+const maternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
 
 // user case
-const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
-const PasswordHash = require('../Applications/security/PasswordHash');
-const AuthTokenManager = require('../Applications/security/AuthTokenManager');
-const AuthUseCase = require('../Applications/use_case/AuthUseCase');
-const NagariUseCase = require('../Applications/use_case/NagariUseCase');
-const JorongUseCase = require('../Applications/use_case/JorongUseCase');
-const PlacementUseCase = require('../Applications/use_case/PlacementUseCase');
-const ShowAllUserUseCase = require('../Applications/use_case/ShowAllUserUseCase');
-const MaternalUseCase = require('../Applications/use_case/MaternalUseCase');
+const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
+const PasswordHash = require("../Applications/security/PasswordHash");
+const AuthTokenManager = require("../Applications/security/AuthTokenManager");
+const AuthUseCase = require("../Applications/use_case/AuthUseCase");
+const NagariUseCase = require("../Applications/use_case/NagariUseCase");
+const JorongUseCase = require("../Applications/use_case/JorongUseCase");
+const PlacementUseCase = require("../Applications/use_case/PlacementUseCase");
+const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase");
+const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
+const AddAnteNatalUseCase = require("../Applications/use_case/ante_natal/AddUseCase");
 
 const container = createContainer();
 
 container.register([
+  {
+    key: maternalHistoryRepository.name,
+    Class: MaternalHistoryRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: AnteNatalCareRepository.name,
+    Class: AnteNatalCareRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
   {
     key: UserRepository.name,
     Class: UserRepositoryPostgres,
@@ -150,17 +183,30 @@ container.register([
 // use case
 container.register([
   {
+    key: AddAnteNatalUseCase.name,
+    Class: AddAnteNatalUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "anteNatalCareRepository",
+          internal: AnteNatalCareRepository.name,
+        },
+      ],
+    },
+  },
+  {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'userRepository',
+          name: "userRepository",
           internal: UserRepository.name,
         },
         {
-          name: 'passwordHash',
+          name: "passwordHash",
           internal: PasswordHash.name,
         },
       ],
@@ -171,22 +217,22 @@ container.register([
     key: AuthUseCase.name,
     Class: AuthUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'authRepository',
+          name: "authRepository",
           internal: AuthRepository.name,
         },
         {
-          name: 'userRepository',
+          name: "userRepository",
           internal: UserRepository.name,
         },
         {
-          name: 'passwordHash',
+          name: "passwordHash",
           internal: PasswordHash.name,
         },
         {
-          name: 'tokenManager',
+          name: "tokenManager",
           internal: AuthTokenManager.name,
         },
       ],
@@ -197,10 +243,10 @@ container.register([
     key: NagariUseCase.name,
     Class: NagariUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'nagariRepository',
+          name: "nagariRepository",
           internal: NagariRepository.name,
         },
       ],
@@ -210,14 +256,14 @@ container.register([
     key: JorongUseCase.name,
     Class: JorongUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'jorongRepository',
+          name: "jorongRepository",
           internal: JorongRepository.name,
         },
         {
-          name: 'nagariRepository',
+          name: "nagariRepository",
           internal: NagariRepository.name,
         },
       ],
@@ -227,18 +273,18 @@ container.register([
     key: PlacementUseCase.name,
     Class: PlacementUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'placementRepository',
+          name: "placementRepository",
           internal: PlacementRepository.name,
         },
         {
-          name: 'jorongRepository',
+          name: "jorongRepository",
           internal: JorongRepository.name,
         },
         {
-          name: 'userRepository',
+          name: "userRepository",
           internal: UserRepository.name,
         },
       ],
@@ -248,10 +294,10 @@ container.register([
     key: ShowAllUserUseCase.name,
     Class: ShowAllUserUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'userRepository',
+          name: "userRepository",
           internal: UserRepository.name,
         },
       ],
@@ -261,14 +307,14 @@ container.register([
     key: MaternalUseCase.name,
     Class: MaternalUseCase,
     parameter: {
-      injectType: 'destructuring',
+      injectType: "destructuring",
       dependencies: [
         {
-          name: 'maternalRepository',
+          name: "maternalRepository",
           internal: MaternalRepository.name,
         },
         {
-          name: 'userRepository',
+          name: "userRepository",
           internal: UserRepository.name,
         },
       ],
