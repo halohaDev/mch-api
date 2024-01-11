@@ -48,7 +48,7 @@ class AddAnteNatalCare extends DomainBase {
   }
 
   _verifyPayload(payload) {
-    this.isRequired("placementId", "string");
+    this.isOptional("placementId", "string");
     this.isRequired("contactType", "string");
     this.isRequired("maternalHistoryId", "string");
     this.isOptional("action", "string");
