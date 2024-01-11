@@ -67,7 +67,7 @@ describe("UserRepositoryPostgres", () => {
   describe("verifyAvailablePhone function", () => {
     it("should throw InvariantError when phone not available", async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ phone_number: "081234567890" });
+      await UsersTableTestHelper.addUser({ phoneNumber: "081234567890" });
       const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
 
       // Action & Assert

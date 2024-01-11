@@ -1,7 +1,7 @@
 /* instanbul ignore file */
 const pool = require("../src/Infrastructures/database/postgres/pool");
 
-const MaternalTableTestHelper = {
+const MaternalHistoriesTableTestHelper = {
   // clean table test helper
   async cleanTable() {
     await pool.query("DELETE FROM maternal_histories WHERE 1=1");
@@ -67,4 +67,4 @@ const MaternalTableTestHelper = {
   },
 };
 
-module.exports = MaternalTableTestHelper;
+module.exports = MaternalHistoriesTableTestHelper;
