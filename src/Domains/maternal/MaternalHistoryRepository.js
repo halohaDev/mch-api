@@ -7,10 +7,6 @@ class MaternalHistoryRepository {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async deleteMaternalHistoryById(id) {
-    throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
-  }
-
   async updateMaternalHistoryById(id, data) {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }

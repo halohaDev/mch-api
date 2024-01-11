@@ -17,11 +17,6 @@ describe("MaternalHistoryRepository interface", () => {
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
     await expect(
-      maternalHistoryRepository.deleteMaternalHistoryById("")
-    ).rejects.toThrowError(
-      "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
-    );
-    await expect(
       maternalHistoryRepository.updateMaternalHistoryById("", {})
     ).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
