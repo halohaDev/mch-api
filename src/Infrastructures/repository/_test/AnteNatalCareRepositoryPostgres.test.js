@@ -69,14 +69,19 @@ describe("AnteNatalCareRepositoryPostgres", () => {
         new AnteNatalCareRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
-      const anteNatalCareId =
+      const anteNatalCare =
         await anteNatalCareRepositoryPostgres.addAnteNatalCare(payload);
 
       // Assert
       const anteNatalCares =
         await AnteNatalCareTableTestHelper.findAnteNatalCareById("anc-123");
 
-      expect(anteNatalCareId).toStrictEqual("anc-123");
+      expect(anteNatalCare.id).toStrictEqual("anc-123");
+      expect(anteNatalCare.placement_id).toStrictEqual("placement-123");
+      expect(anteNatalCare.contact_type).toStrictEqual("c1");
+      expect(anteNatalCare.action).toStrictEqual("action");
+      expect(anteNatalCare.tt_imunization).toStrictEqual("4");
+      expect(anteNatalCare.height).toStrictEqual(160);
       expect(anteNatalCares).toBeDefined();
     });
   });

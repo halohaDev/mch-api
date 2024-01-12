@@ -93,9 +93,7 @@ describe("HTTP server - ante natal cares", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(422);
       expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
-        "tidak dapat membuat ante natal care baru karena properti yang dibutuhkan tidak ada"
-      );
+      expect(responseJson.message).toEqual("Unprocessable Entity");
     });
 
     describe("when request to specific contact types", () => {
@@ -220,7 +218,7 @@ describe("HTTP server - ante natal cares", () => {
         it("should response 201 and persisted ante natal care when request payload is valid", async () => {
           // Arrange
           const requestPayload = {
-            maternalHistoryId: "maternal-history-123",
+            maternalId: "maternal-123",
             contactType: "c2",
             action: "action",
             ttImunization: "4",
@@ -236,6 +234,7 @@ describe("HTTP server - ante natal cares", () => {
             bloodType: "A",
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
+            proteinInUrine: "negative",
           };
 
           const server = await createServer(container);
@@ -301,7 +300,7 @@ describe("HTTP server - ante natal cares", () => {
         it("should response 201 and persisted ante natal care when request payload is valid", async () => {
           // Arrange
           const requestPayload = {
-            maternalHistoryId: "maternal-history-123",
+            maternalId: "maternal-123",
             contactType: "c4",
             action: "action",
             ttImunization: "4",
