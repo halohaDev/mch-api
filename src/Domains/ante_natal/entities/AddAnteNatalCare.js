@@ -54,70 +54,68 @@ class AddAnteNatalCare extends DomainBase {
     this.isOptional("action", "string");
     this.isOptional("ttImunization", "string");
 
-    const contactDirectories = {
-      c1: this._addFirstContact,
-      c2: this._addSecondContact,
-      c3: this._addThirdContact,
-      c4: this._addFourthContact,
-      c5: this._addFifthContact,
-      c6: this._addSixthContact,
-      c0: this._addNonContact,
-    };
-
-    contactDirectories[payload.contactType];
-  }
-
-  _addFirstContact(payload) {
-    this.#validateRequired(payload);
-
-    this.isRequired("height", "number");
-    this.isRequired("hemoglobin", "number");
-    this.isRequired("bloodType", "string");
-    this.isRequired("usgCheckDate", "string");
-  }
-
-  _addSecondContact() {
-    this.#validateRequired();
-
-    this.isRequired("proteinInUrine", "string");
-  }
-
-  _addThirdContact() {
-    this.#validateRequired();
-  }
-
-  _addFourthContact() {
-    this.#validateRequired();
-
-    this.isRequired("hemoglobin", "number");
-  }
-
-  _addFifthContact() {
-    this.#validateRequired();
-
-    this.isRequired("hemoglobin", "number");
-    this.isRequired("usgCheckDate", "string");
-  }
-
-  _addSixthContact() {
-    this.#validateRequired();
-  }
-
-  _addNonContact() {
-    this.isOptional("weight", "number");
-    this.isOptional("height", "number");
-    this.isOptional("hemoglobin", "number");
-    this.isOptional("bloodPressure", "number");
-  }
-
-  #validateRequired() {
-    this.isRequired("weight", "number");
-    this.isRequired("bloodPressure", "number");
-    this.isRequired("fundalHeight", "number");
-    this.isRequired("fetalHeartRate", "number");
-    this.isRequired("hbsag", "string");
-    this.isRequired("hiv", "string");
-    this.isRequired("syphilis", "string");
+    if (payload.contactType === "c1") {
+      this.isRequired("height", "number");
+      this.isRequired("hemoglobin", "number");
+      this.isRequired("bloodType", "string");
+      this.isRequired("usgCheckDate", "string");
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+    } else if (payload.contactType === "c2") {
+      this.isRequired("proteinInUrine", "string");
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+    } else if (payload.contactType === "c3") {
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+    } else if (payload.contactType === "c4") {
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+      this.isRequired("hemoglobin", "number");
+    } else if (payload.contactType === "c5") {
+      this.isRequired("hemoglobin", "number");
+      this.isRequired("usgCheckDate", "string");
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+    } else if (payload.contactType === "c6") {
+      this.isRequired("weight", "number");
+      this.isRequired("bloodPressure", "number");
+      this.isRequired("fundalHeight", "number");
+      this.isRequired("fetalHeartRate", "number");
+      this.isRequired("hbsag", "string");
+      this.isRequired("hiv", "string");
+      this.isRequired("syphilis", "string");
+    } else {
+      this.isOptional("weight", "number");
+      this.isOptional("height", "number");
+      this.isOptional("hemoglobin", "number");
+      this.isOptional("bloodPressure", "number");
+    }
   }
 }
 
