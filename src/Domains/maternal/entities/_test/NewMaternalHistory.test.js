@@ -1,4 +1,4 @@
-const MaternalHistory = require("../MaternalHistory");
+const MaternalHistory = require("../NewMaternalHistory");
 
 describe("MaternalHistory entity", () => {
   it("should create maternalHistory entity correctly", () => {
@@ -10,7 +10,7 @@ describe("MaternalHistory entity", () => {
       periodCycle: "1",
       lastIllness: "1",
       gemeli: "1",
-      edd: "1",
+      edd: "2023-01-01",
       hpht: "1",
       weightBeforePregnancy: "1",
       maternalStatus: "1",
@@ -24,7 +24,7 @@ describe("MaternalHistory entity", () => {
       periodCycle: "1",
       lastIllness: "1",
       gemeli: "1",
-      edd: "1",
+      edd: "2023-01-01",
       hpht: "1",
       weightBeforePregnancy: "1",
       maternalStatus: "1",
@@ -46,7 +46,7 @@ describe("MaternalHistory entity", () => {
           hpht: "1",
           weightBeforePregnancy: "1",
         })
-    ).toThrowError("MATERNAL_HISTORY.NOT_CONTAIN_NEEDED_PROPERTY");
+    ).toThrowError("Unprocessable Entity");
   });
 
   it("should throw error when payload did not meet data type specification", () => {
@@ -65,6 +65,6 @@ describe("MaternalHistory entity", () => {
           weightBeforePregnancy: "1",
           maternalStatus: 1,
         })
-    ).toThrowError("MATERNAL_HISTORY.NOT_MEET_DATA_TYPE_SPECIFICATION");
+    ).toThrowError("Unprocessable Entity");
   });
 });
