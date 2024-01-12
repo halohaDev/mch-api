@@ -39,7 +39,7 @@ describe("AddAnteNatalUseCase", () => {
       Promise.resolve([])
     );
     mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
-      Promise.resolve({ id: "maternal-history-123" })
+      Promise.resolve([{ id: "maternal-history-123" }])
     );
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
 
@@ -86,10 +86,12 @@ describe("AddAnteNatalUseCase", () => {
 
     // mock function
     mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve({
-        id: "maternal-history-123",
-        maternal_status: "non_pregnant",
-      })
+      Promise.resolve([
+        {
+          id: "maternal-history-123",
+          maternal_status: "non_pregnant",
+        },
+      ])
     );
     mockMaternalHistoryRepository.updateMaternalHistoryById = jest.fn(() =>
       Promise.resolve({ id: "maternal-history-123" })
@@ -143,7 +145,7 @@ describe("AddAnteNatalUseCase", () => {
 
     // mock function
     mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve({})
+      Promise.resolve([{}])
     );
     mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
       Promise.resolve({

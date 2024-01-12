@@ -30,16 +30,23 @@ class AddAnteNatalCareUseCase {
   }
 
   async #getActiveMaternalHistory(maternalId) {
-    const mh =
+    const results =
       await this._maternalHistoryRepository.getMaternalHistoryByMaternalId(
         maternalId
       );
 
-    if (
-      mh.maternal_status === "pregnant" ||
-      mh.maternal_status === "non_pregnant"
-    ) {
-      return mh;
+    if (results.length === 0) {
+      return null;
+    }
+
+    const activeMaternalHistory = results.find(
+      (maternalHistory) =>
+        maternalHistory.maternal_status === "pregnant" ||
+        maternalHistory.maternal_status === "non_pregnant"
+    );
+
+    if (activeMaternalHistory) {
+      return activeMaternalHistory;
     }
 
     return null;
