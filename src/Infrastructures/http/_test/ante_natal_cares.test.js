@@ -27,6 +27,9 @@ describe("HTTP server - ante natal cares", () => {
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
     await PlacementsTableTestHelper.addPlacement({ midwifeId: "midwife-123" });
     await MaternalTableTestHelper.addMaternal({ userId: "user-123" });
+    await MaternalHistoriesTableTestHelper.addMaternalHistory({
+      maternalId: "maternal-123",
+    });
   });
 
   describe("when POST /api/v1/ante_natal_cares", () => {

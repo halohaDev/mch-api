@@ -39,7 +39,7 @@ describe("AddAnteNatalUseCase", () => {
       Promise.resolve([])
     );
     mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
-      Promise.resolve([{ id: "maternal-history-123" }])
+      Promise.resolve({ id: "maternal-history-123" })
     );
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
 

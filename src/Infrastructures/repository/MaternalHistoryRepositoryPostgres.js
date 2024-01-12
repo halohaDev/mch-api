@@ -72,7 +72,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     return rows[0];
   }
 
-  async updateMaternalHistory(
+  async updateMaternalHistoryById(
     id,
     {
       periodDuration,

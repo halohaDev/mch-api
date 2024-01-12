@@ -143,7 +143,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
     });
   });
 
-  describe("updateMaternalHistory function", () => {
+  describe("updateMaternalHistoryById function", () => {
     it("should update maternal history correctly", async () => {
       const fakeIdGenerator = () => "123";
       const maternalHistoryRepositoryPostgres =
@@ -161,7 +161,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       };
 
       // Action
-      await maternalHistoryRepositoryPostgres.updateMaternalHistory(
+      await maternalHistoryRepositoryPostgres.updateMaternalHistoryById(
         "maternal-history-123",
         payload
       );
@@ -197,7 +197,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
 
       // Action & Assert
       await expect(
-        maternalHistoryRepositoryPostgres.updateMaternalHistory(
+        maternalHistoryRepositoryPostgres.updateMaternalHistoryById(
           "maternal-history-123",
           payload
         )
