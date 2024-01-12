@@ -62,6 +62,10 @@ class AddAnteNatalCareUseCase {
       payload.maternalStatus = "non_pregnant";
     }
 
+    if (payload.contactType === "c1") {
+      payload.maternalStatus = "pregnant";
+    }
+
     if (maternalHistory === null) {
       const addMaternalHistory = new AddMaternalHistory(payload);
 
