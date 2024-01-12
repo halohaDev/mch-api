@@ -59,10 +59,10 @@ class AddAnteNatalCareUseCase {
 
     const { id: maternalHistoryId } = maternalHistory;
 
-    return await this._maternalHistoryRepository.updateMaternalHistoryById({
-      id: maternalHistoryId,
-      maternalStatus: "pregnant",
-    });
+    return await this._maternalHistoryRepository.updateMaternalHistoryById(
+      maternalHistoryId,
+      { maternalStatus: "pregnant" }
+    );
   }
 }
 

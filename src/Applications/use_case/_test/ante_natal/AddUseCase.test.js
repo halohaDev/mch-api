@@ -107,10 +107,7 @@ describe("AddAnteNatalUseCase", () => {
     ).toBeCalledWith(useCasePayload.maternalId);
     expect(
       mockMaternalHistoryRepository.updateMaternalHistoryById
-    ).toBeCalledWith({
-      id: "maternal-history-123",
-      maternalStatus: "pregnant",
-    });
+    ).toBeCalledWith("maternal-history-123", { maternalStatus: "pregnant" });
   });
 
   it("should orchestrize action correctly", async () => {
