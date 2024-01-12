@@ -8,6 +8,7 @@ const nagari = require("../../Interfaces/http/api/nagari");
 const jorong = require("../../Interfaces/http/api/jorong");
 const placements = require("../../Interfaces/http/api/placements");
 const maternal = require("../../Interfaces/http/api/maternal");
+const anteNatalCares = require("../../Interfaces/http/api/ante_natal");
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -38,6 +39,10 @@ const createServer = async (container) => {
     },
     {
       plugin: maternal,
+      options: { container },
+    },
+    {
+      plugin: anteNatalCares,
       options: { container },
     },
   ]);

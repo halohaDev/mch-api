@@ -1,6 +1,6 @@
 const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatalCare");
 
-class AddUseCase {
+class AddAnteNatalCareUseCase {
   constructor({ anteNatalRepository, maternalHistoryRepository }) {
     this._anteNatalRepository = anteNatalRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
@@ -8,8 +8,8 @@ class AddUseCase {
 
   async execute(payload) {
     const { maternalId } = payload;
-    const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
 
+    const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
     const updatedMaternalHistory = await this.#updateOrCreateMaternalHistory(
       payload,
       maternalHistory
@@ -59,4 +59,4 @@ class AddUseCase {
   }
 }
 
-module.exports = AddUseCase;
+module.exports = AddAnteNatalCareUseCase;

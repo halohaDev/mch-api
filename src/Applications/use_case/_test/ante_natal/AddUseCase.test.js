@@ -1,4 +1,4 @@
-const AddAnteNatalUseCase = require("../../ante_natal/AddUseCase");
+const AddAnteNatalUseCase = require("../../ante_natal/AddAnteNatalCareUseCase");
 const AnteNatalCareRepository = require("../../../../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../../../../Domains/maternal/MaternalHistoryRepository");
 const AddAnteNatalCare = require("../../../../Domains/ante_natal/entities/AddAnteNatalCare");

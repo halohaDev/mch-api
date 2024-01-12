@@ -1,15 +1,17 @@
-const AddAnteNatalUseCase = require("../../../../Applications/use_case/ante_natal/AddUseCase");
+const AddAnteNatalUseCase = require("../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 
-class AddAnteNatalUseCase {
+class AnteNatalCareHandler {
   constructor(container) {
     this._container = container;
 
-    this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
+    this.postAnteNatalCareHandler = this.postAnteNatalCareHandler.bind(this);
   }
 
-  async postAuthenticationHandler(request, h) {
-    const authUseCase = this._container.getInstance(AddAnteNatalUseCase.name);
-    const result = await authUseCase.login(request.payload);
+  async postAnteNatalCareHandler(request, h) {
+    const addAnteNatalUseCase = this._container.getInstance(
+      AddAnteNatalUseCase.name
+    );
+    const result = await addAnteNatalUseCase.execute(request.payload);
 
     const response = h.response({
       status: "success",
@@ -23,4 +25,4 @@ class AddAnteNatalUseCase {
   }
 }
 
-module.exports = AuthHandler;
+module.exports = AnteNatalCareHandler;

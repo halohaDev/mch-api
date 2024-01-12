@@ -30,7 +30,7 @@ const JorongRepository = require("../Domains/jorong/JorongRepository");
 const PlacementRepository = require("../Domains/placements/PlacementRepository");
 const MaternalRepository = require("../Domains/maternal/MaternalRepository");
 const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
-const maternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
+const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -42,13 +42,13 @@ const JorongUseCase = require("../Applications/use_case/JorongUseCase");
 const PlacementUseCase = require("../Applications/use_case/PlacementUseCase");
 const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase");
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
-const AddAnteNatalUseCase = require("../Applications/use_case/ante_natal/AddUseCase");
+const AddAnteNatalUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 
 const container = createContainer();
 
 container.register([
   {
-    key: maternalHistoryRepository.name,
+    key: MaternalHistoryRepository.name,
     Class: MaternalHistoryRepositoryPostgres,
     parameter: {
       dependencies: [
@@ -191,6 +191,10 @@ container.register([
         {
           name: "anteNatalCareRepository",
           internal: AnteNatalCareRepository.name,
+        },
+        {
+          name: "materialHistoryRepository",
+          internal: MaternalHistoryRepository.name,
         },
       ],
     },
