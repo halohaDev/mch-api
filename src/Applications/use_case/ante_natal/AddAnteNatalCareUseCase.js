@@ -26,7 +26,11 @@ class AddAnteNatalCareUseCase {
 
     const addAnteNatal = new AddAnteNatal(updatedPayload);
 
-    await this._anteNatalCareRepository.addAnteNatalCare(addAnteNatal);
+    const result = await this._anteNatalCareRepository.addAnteNatalCare(
+      addAnteNatal
+    );
+
+    return result;
   }
 
   async #getActiveMaternalHistory(maternalId) {
