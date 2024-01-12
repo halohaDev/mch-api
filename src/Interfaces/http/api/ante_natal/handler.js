@@ -1,4 +1,4 @@
-const AddAnteNatalUseCase = require("../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
+const AddAnteNatalCareUseCase = require("../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 
 class AnteNatalCareHandler {
   constructor(container) {
@@ -9,8 +9,9 @@ class AnteNatalCareHandler {
 
   async postAnteNatalCareHandler(request, h) {
     const addAnteNatalUseCase = this._container.getInstance(
-      AddAnteNatalUseCase.name
+      AddAnteNatalCareUseCase.name
     );
+
     const result = await addAnteNatalUseCase.execute(request.payload);
 
     const response = h.response({

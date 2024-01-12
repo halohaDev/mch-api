@@ -1,8 +1,8 @@
 const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatalCare");
 
 class AddAnteNatalCareUseCase {
-  constructor({ anteNatalRepository, maternalHistoryRepository }) {
-    this._anteNatalRepository = anteNatalRepository;
+  constructor({ anteNatalCareRepository, maternalHistoryRepository }) {
+    this._anteNatalCareRepository = anteNatalCareRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
   }
 
@@ -26,7 +26,7 @@ class AddAnteNatalCareUseCase {
 
     const addAnteNatal = new AddAnteNatal(updatedPayload);
 
-    await this._anteNatalRepository.addAnteNatalCare(addAnteNatal);
+    await this._anteNatalCareRepository.addAnteNatalCare(addAnteNatal);
   }
 
   async #getActiveMaternalHistory(maternalId) {

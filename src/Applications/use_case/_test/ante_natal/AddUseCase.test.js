@@ -30,7 +30,7 @@ describe("AddAnteNatalUseCase", () => {
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
-      anteNatalRepository: mockAnteNatalRepository,
+      anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
     });
 
@@ -80,7 +80,7 @@ describe("AddAnteNatalUseCase", () => {
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
-      anteNatalRepository: mockAnteNatalRepository,
+      anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
     });
 
@@ -137,7 +137,7 @@ describe("AddAnteNatalUseCase", () => {
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
-      anteNatalRepository: mockAnteNatalRepository,
+      anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
     });
 

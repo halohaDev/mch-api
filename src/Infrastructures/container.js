@@ -42,39 +42,11 @@ const JorongUseCase = require("../Applications/use_case/JorongUseCase");
 const PlacementUseCase = require("../Applications/use_case/PlacementUseCase");
 const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase");
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
-const AddAnteNatalUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
+const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 
 const container = createContainer();
 
 container.register([
-  {
-    key: MaternalHistoryRepository.name,
-    Class: MaternalHistoryRepositoryPostgres,
-    parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
-    },
-  },
-  {
-    key: AnteNatalCareRepository.name,
-    Class: AnteNatalCareRepositoryPostgres,
-    parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
-    },
-  },
   {
     key: UserRepository.name,
     Class: UserRepositoryPostgres,
@@ -178,27 +150,38 @@ container.register([
       ],
     },
   },
-]);
-
-// use case
-container.register([
   {
-    key: AddAnteNatalUseCase.name,
-    Class: AddAnteNatalUseCase,
+    key: AnteNatalCareRepository.name,
+    Class: AnteNatalCareRepositoryPostgres,
     parameter: {
-      injectType: "destructuring",
       dependencies: [
         {
-          name: "anteNatalCareRepository",
-          internal: AnteNatalCareRepository.name,
+          concrete: pool,
         },
         {
-          name: "materialHistoryRepository",
-          internal: MaternalHistoryRepository.name,
+          concrete: nanoid,
         },
       ],
     },
   },
+  {
+    key: MaternalHistoryRepository.name,
+    Class: MaternalHistoryRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+]);
+
+// use case
+container.register([
   {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,
@@ -320,6 +303,23 @@ container.register([
         {
           name: "userRepository",
           internal: UserRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddAnteNatalCareUseCase.name,
+    Class: AddAnteNatalCareUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "anteNatalCareRepository",
+          internal: AnteNatalCareRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
         },
       ],
     },
