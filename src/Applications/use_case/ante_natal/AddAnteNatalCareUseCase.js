@@ -10,7 +10,7 @@ class AddAnteNatalCareUseCase {
     const { maternalId } = payload;
 
     const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
-    const updatedMaternalHistory = await this.#updateOrCreateMaternalHistory(
+    const updatedMaternalHistoryId = await this.#updateOrCreateMaternalHistory(
       payload,
       maternalHistory
     );
@@ -21,7 +21,7 @@ class AddAnteNatalCareUseCase {
     const updatedPayload = {
       ...payload,
       placementId,
-      maternalHistoryId: updatedMaternalHistory.id,
+      maternalHistoryId: updatedMaternalHistoryId,
     };
 
     const addAnteNatal = new AddAnteNatal(updatedPayload);
@@ -53,16 +53,29 @@ class AddAnteNatalCareUseCase {
   }
 
   async #updateOrCreateMaternalHistory(payload, maternalHistory) {
+    if (payload.contactType === "c0") {
+      payload.maternalStatus = "non_pregnant";
+    }
+
     if (maternalHistory === null) {
-      return await this._maternalHistoryRepository.addMaternalHistory(payload);
+      const newMaternalHistory =
+        await this._maternalHistoryRepository.addMaternalHistory(payload);
+      return newMaternalHistory.id;
+    }
+
+    if (payload.contactType === "c0") {
+      return maternalHistory.id;
     }
 
     const { id: maternalHistoryId } = maternalHistory;
 
-    return await this._maternalHistoryRepository.updateMaternalHistoryById(
-      maternalHistoryId,
-      { maternalStatus: "pregnant" }
-    );
+    const result =
+      await this._maternalHistoryRepository.updateMaternalHistoryById(
+        maternalHistoryId,
+        { maternalStatus: "pregnant" }
+      );
+
+    return result.id;
   }
 }
 
