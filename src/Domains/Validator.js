@@ -63,6 +63,10 @@ class Validator {
       this.#validateDateFormat(value);
     }
 
+    if (validator === "datetime") {
+      this.#validateDateTimeFormat(value);
+    }
+
     this.#validatedOutput[this.#key] = value;
   }
 
@@ -71,6 +75,16 @@ class Validator {
 
     if (!dateRegex.test(date)) {
       const message = `${this.#key} is not a valid date format`;
+
+      this.#pushErrors(this.#key, { message: message });
+    }
+  }
+
+  #validateDateTimeFormat(datetime) {
+    const datetimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+
+    if (!datetimeRegex.test(datetime)) {
+      const message = `${this.#key} is not a valid datetime format`;
 
       this.#pushErrors(this.#key, { message: message });
     }
@@ -105,13 +119,11 @@ class Validator {
     }
   }
 
-  #camelCaseToSnakeCase(camelCase) {
-    // convert camelCase to snake_case
-    return camelCase.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
-  }
-
   output() {
     if (Object.keys(this.#errors).length > 0) {
+      if (process.env.NODE_ENV !== "production") {
+        console.log(this.#errors);
+      }
       throw new UnprocessableError(this.#errors);
     }
 
