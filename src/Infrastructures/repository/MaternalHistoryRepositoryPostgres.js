@@ -122,7 +122,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     };
 
     const query = {
-      text: "UPDATE maternal_histories SET period_duration = $1, period_amount = $2, period_concern = $3, period_cycle = $4, last_illness = $5, current_illness = $6, gemeli = $7, edd = $8, hpht = $9, weight_before_pregnancy = $10, maternal_status = $11 WHERE id = $12",
+      text: "UPDATE maternal_histories SET period_duration = $1, period_amount = $2, period_concern = $3, period_cycle = $4, last_illness = $5, current_illness = $6, gemeli = $7, edd = $8, hpht = $9, weight_before_pregnancy = $10, maternal_status = $11 WHERE id = $12 RETURNING id",
       values: [
         toBeUpdatedPeriodDuration,
         toBeUpdatedPeriodAmount,
@@ -139,7 +139,9 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       ],
     };
 
-    await this._pool.query(query);
+    const { rows } = await this._pool.query(query);
+
+    return rows[0];
   }
 }
 
