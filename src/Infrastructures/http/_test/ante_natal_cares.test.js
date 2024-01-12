@@ -116,7 +116,6 @@ describe("HTTP server - ante natal cares", () => {
             hbsag: "negative",
             hiv: "negative",
             syphilis: "negative",
-            usgCheckDate: "2021-08-01",
             placementId: "placement-123",
           };
 
