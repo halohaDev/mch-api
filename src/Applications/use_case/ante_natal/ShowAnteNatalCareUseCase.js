@@ -4,7 +4,7 @@ class ShowAnteNatalCareUseCase {
   }
 
   async execute(useCasePayload) {
-    return this._anteNatalCareRepository.getAnteNatalCares(useCasePayload);
+    return this._anteNatalCareRepository.showAnteNatalCare(useCasePayload);
   }
 }
 
