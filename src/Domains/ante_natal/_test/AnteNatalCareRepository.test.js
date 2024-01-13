@@ -9,5 +9,8 @@ describe("AnteNatalCareRepository interface", () => {
     await expect(
       anteNatalCareRepository.addAnteNatalCare({})
     ).rejects.toThrowError("ANTE_NATAL_CARE_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+    await expect(
+      anteNatalCareRepository.showAnteNatalCares()
+    ).rejects.toThrowError("ANTE_NATAL_CARE_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });
