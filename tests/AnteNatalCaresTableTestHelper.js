@@ -23,9 +23,10 @@ const AnteNatalCaresTableTestHelper = {
     hbsag = "negative",
     hiv = "negative",
     syphilis = "negative",
+    maternalHistoryId = "maternal-history-123",
   }) {
     const query = {
-      text: "INSERT INTO ante_natal_cares(id, placement_id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, sugar_in_urine, hbsag, hiv, syphilis) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16, $17, $18, $19)",
+      text: "INSERT INTO ante_natal_cares(id, placement_id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, sugar_in_urine, hbsag, hiv, syphilis, maternal_history_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)",
       values: [
         id,
         placementId,
@@ -46,6 +47,7 @@ const AnteNatalCaresTableTestHelper = {
         hbsag,
         hiv,
         syphilis,
+        maternalHistoryId,
       ],
     };
 
