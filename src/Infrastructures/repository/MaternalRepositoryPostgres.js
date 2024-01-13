@@ -80,7 +80,8 @@ class MaternalRepositoryPostgres extends MaternalRepository {
       .joins(["users", "lastMaternalStatus"])
       .selects([
         "maternals.id",
-        "users.name",
+        "users.name as name",
+        "users.nik as nik",
         "maternal_histories.maternal_status as last_maternal_status",
         "maternals.user_id",
       ])
