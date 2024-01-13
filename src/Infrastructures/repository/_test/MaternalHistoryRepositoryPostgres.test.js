@@ -66,6 +66,8 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       expect(maternalHistory.gemeli).toEqual(false);
       expect(maternalHistory.weight_before_pregnancy).toEqual(50);
       expect(maternalHistory.maternal_status).toEqual("pregnant");
+      expect(maternalHistory.created_at).toBeDefined();
+      expect(maternalHistory.updated_at).toBeDefined();
     });
   });
 
@@ -160,6 +162,14 @@ describe("MaternalHistoryRepositoryPostgres", () => {
         maternalStatus: "abortion",
       };
 
+      const previousMaternalHistory =
+        await MaternalHistoryTableTestHelper.findMaternalHistoryById(
+          "maternal-history-123"
+        );
+
+      const prevCreatedAt = previousMaternalHistory.created_at;
+      const prevUpdatedAt = previousMaternalHistory.updated_at;
+
       // Action
       await maternalHistoryRepositoryPostgres.updateMaternalHistoryById(
         "maternal-history-123",
@@ -176,6 +186,8 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       expect(maternalHistory.gemeli).toEqual(false);
       expect(maternalHistory.period_duration).toEqual(5);
       expect(maternalHistory.period_amount).toEqual(2);
+      expect(maternalHistory.created_at).toEqual(prevCreatedAt);
+      expect(maternalHistory.updated_at).not.toEqual(prevUpdatedAt);
     });
 
     it("should throw NotFoundError when maternal history not found", async () => {

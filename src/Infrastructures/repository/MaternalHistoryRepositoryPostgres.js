@@ -103,6 +103,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       toBeUpdatedHpht,
       toBeUpdatedWeightBeforePregnancy,
       toBeUpdatedMaternalStatus,
+      createdAt,
     } = {
       toBeUpdatedPeriodDuration:
         periodDuration || maternalHistory.period_duration,
@@ -119,6 +120,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
         weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
       toBeUpdatedMaternalStatus:
         maternalStatus || maternalHistory.maternal_status,
+      createdAt: maternalHistory.created_at,
     };
 
     const query = {
@@ -135,6 +137,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
         toBeUpdatedHpht,
         toBeUpdatedWeightBeforePregnancy,
         toBeUpdatedMaternalStatus,
+        createdAt,
         id,
       ],
     };
