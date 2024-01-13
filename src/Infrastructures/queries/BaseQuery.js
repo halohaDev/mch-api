@@ -108,7 +108,9 @@ class BaseQuery {
 
       params.forEach((param) => {
         const key = param.charAt(0).toUpperCase() + param.slice(1);
-        this._finalObject.joins += this[`joinBy${key}`]();
+        const query = this[`joinBy${key}`]();
+
+        this._finalObject.joins += ` ${query} `;
       });
     }
 
