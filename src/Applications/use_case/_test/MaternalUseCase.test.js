@@ -158,4 +158,35 @@ describe("MaternalUseCase", () => {
       ).toBeCalledWith("maternal-history-123", useCasePayload.maternalStatus);
     });
   });
+
+  describe("showAllMaternal function", () => {
+    it("should orchestrating the show all maternal action correctly", async () => {
+      // Arrange
+      const useCasePayload = {
+        page: 1,
+        limit: 10,
+      };
+
+      /** creating dependency of use case */
+      const mockMaternalRepository = new MaternalRepository();
+
+      /** mocking needed function */
+      mockMaternalRepository.showAllMaternal = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve());
+
+      /** creating use case instance */
+      const maternalUseCase = new MaternalUseCase({
+        maternalRepository: mockMaternalRepository,
+      });
+
+      // Action
+      await maternalUseCase.showAllMaternal(useCasePayload);
+
+      // Assert
+      expect(mockMaternalRepository.showAllMaternal).toBeCalledWith(
+        useCasePayload
+      );
+    });
+  });
 });
