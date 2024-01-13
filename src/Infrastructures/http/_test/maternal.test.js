@@ -218,10 +218,10 @@ describe("HTTP server - maternal", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.data).toHaveLength(1);
-      expect(responseJson.data.data.id).toEqual(maternalId);
-      expect(responseJson.data.data.user_id).toEqual(userId);
-      expect(responseJson.data.data.user.name).toEqual("Test");
+      expect(responseJson.data).toHaveLength(1);
+      expect(responseJson.data[0].id).toEqual(maternalId);
+      expect(responseJson.data[0].user_id).toEqual(userId);
+      expect(responseJson.data[0].name).toEqual("Test");
     });
   });
 });
