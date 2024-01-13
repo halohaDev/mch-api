@@ -10,7 +10,7 @@ describe("ShowAnteNatalCareUseCase", () => {
 
     /** creating dependency of use case */
     const mockAnteNatalCareRepository = new AnteNatalCareRepository();
-    mockAnteNatalCareRepository.showAnteNatalCare = jest
+    mockAnteNatalCareRepository.showAnteNatalCares = jest
       .fn()
       .mockImplementation(() => Promise.resolve([]));
 
@@ -23,7 +23,7 @@ describe("ShowAnteNatalCareUseCase", () => {
     await showAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(mockAnteNatalCareRepository.showAnteNatalCare).toBeCalledWith(
+    expect(mockAnteNatalCareRepository.showAnteNatalCares).toBeCalledWith(
       useCasePayload
     );
   });
