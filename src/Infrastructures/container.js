@@ -43,6 +43,7 @@ const PlacementUseCase = require("../Applications/use_case/PlacementUseCase");
 const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase");
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
 const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
+const ShowAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/ShowAnteNatalCareUseCase");
 
 const container = createContainer();
 
@@ -182,6 +183,19 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: ShowAnteNatalCareUseCase.name,
+    Class: ShowAnteNatalCareUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "anteNatalCareRepository",
+          internal: AnteNatalCareRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,

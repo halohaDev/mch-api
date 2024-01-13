@@ -14,6 +14,7 @@ describe("HTTP server - ante natal cares", () => {
   });
 
   afterEach(async () => {
+    await AnteNatalCaresTableTestHelper.cleanTable();
     await MaternalHistoriesTableTestHelper.cleanTable();
     await PlacementsTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
@@ -341,6 +342,62 @@ describe("HTTP server - ante natal cares", () => {
           expect(anteNatalCare).toHaveLength(1);
         });
       });
+    });
+  });
+
+  describe("when GET /api/v1/ante_natal_cares", () => {
+    it("should response 200 and return all ante natal cares", async () => {
+      // Arrange
+      await AnteNatalCaresTableTestHelper.addAnteNatalCare({ id: "anc-123" });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/ante_natal_cares",
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toHaveLength(1);
+    });
+
+    it("should response 200 and return all ante natal cares with query", async () => {
+      // Arrange
+      await AnteNatalCaresTableTestHelper.addAnteNatalCare({
+        id: "anc-123",
+        maternalHistoryId: "maternal-history-123",
+      });
+
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-345",
+        maternalId: "maternal-123",
+      });
+      await AnteNatalCaresTableTestHelper.addAnteNatalCare({
+        id: "anc-456",
+        maternalHistoryId: "maternal-history-345",
+      });
+      await AnteNatalCaresTableTestHelper.addAnteNatalCare({
+        id: "anc-789",
+        maternalHistoryId: "maternal-history-345",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/ante_natal_cares?maternalHistoryId=maternal-history-345",
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toHaveLength(2);
     });
   });
 });
