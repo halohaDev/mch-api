@@ -14,7 +14,7 @@ describe("HTTP server - maternal", () => {
     await UsersTableTestHelper.cleanTable();
   });
 
-  describe("when POST /maternal", () => {
+  describe("when POST /api/v1/maternal", () => {
     it("should response 201 and persisted maternal", async () => {
       // Arrange
       const requestPayload = {
@@ -78,7 +78,7 @@ describe("HTTP server - maternal", () => {
     });
   });
 
-  describe("when POST /api/v1/mater", () => {
+  describe("when POST /api/v1/maternal/user", () => {
     it("should response 200 and presist user and maternal", async () => {
       // Arrange
       const useCasePayload = {
