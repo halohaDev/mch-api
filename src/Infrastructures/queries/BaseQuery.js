@@ -37,7 +37,7 @@ class BaseQuery {
     const sql = `LIMIT ${limit} OFFSET ${offset}`;
     this._finalObject.paginate = sql;
 
-    await this.finalizeSQL();
+    this.finalizeSQL();
 
     const query = {
       text: this.finalSQL,
