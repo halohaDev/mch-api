@@ -1,10 +1,11 @@
-const MaternalRepositoryPostgres = require('../MaternalRepositoryPostgres');
-const MaternalTableTestHelper = require('../../../../tests/MaternalTableTestHelper');
-const AddMaternal = require('../../../Domains/maternal/entities/NewMaternal');
-const pool = require('../../database/postgres/pool');
-const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const MaternalRepositoryPostgres = require("../MaternalRepositoryPostgres");
+const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
+const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
+const AddMaternal = require("../../../Domains/maternal/entities/NewMaternal");
+const pool = require("../../database/postgres/pool");
+const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 
-describe('MaternalRepositoryPostgres', () => {
+describe("MaternalRepositoryPostgres", () => {
   afterAll(async () => {
     await pool.end();
   });
@@ -13,42 +14,54 @@ describe('MaternalRepositoryPostgres', () => {
     await MaternalTableTestHelper.cleanTable();
   });
 
-  describe('addMaternal function', () => {
-    it('should persist add maternal and return maternal id correctly', async () => {
+  describe("addMaternal function", () => {
+    it("should persist add maternal and return maternal id correctly", async () => {
       // Arrange
       const addMaternal = new AddMaternal({
-        userId: 'user-123',
-        menarcheDate: '2021-08-22',
-        martialDate: '2021-08-22',
-        numberOfMarriage: '1',
-        martialStatus: 'single',
+        userId: "user-123",
+        menarcheDate: "2021-08-22",
+        martialDate: "2021-08-22",
+        numberOfMarriage: "1",
+        martialStatus: "single",
       });
 
-      const fakeIdGenerator = () => '123';
-      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(pool, fakeIdGenerator);
+      const fakeIdGenerator = () => "123";
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
 
       // Action
-      const maternalId = await maternalRepositoryPostgres.addMaternal(addMaternal);
+      const maternalId = await maternalRepositoryPostgres.addMaternal(
+        addMaternal
+      );
 
       // Assert
-      const maternals = await MaternalTableTestHelper.findMaternalById('maternal-123');
+      const maternals = await MaternalTableTestHelper.findMaternalById(
+        "maternal-123"
+      );
 
-      expect(maternalId).toStrictEqual('maternal-123');
+      expect(maternalId).toStrictEqual("maternal-123");
       expect(maternals).toBeDefined();
     });
   });
 
-  describe('findMaternalByUserId function', () => {
-    it('should return maternal correctly', async () => {
+  describe("findMaternalByUserId function", () => {
+    it("should return maternal correctly", async () => {
       // Arrange
-      const userId = 'user-123';
+      const userId = "user-123";
 
-      await MaternalTableTestHelper.addMaternal({ id: 'maternal-123', userId });
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-123", userId });
 
-      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(pool, {});
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {}
+      );
 
       // Action
-      const maternal = await maternalRepositoryPostgres.findMaternalByUserId(userId);
+      const maternal = await maternalRepositoryPostgres.findMaternalByUserId(
+        userId
+      );
 
       // Assert
       const {
@@ -59,48 +72,95 @@ describe('MaternalRepositoryPostgres', () => {
         martial_status: martialStatus,
       } = maternal;
 
-      expect(id).toStrictEqual('maternal-123');
+      expect(id).toStrictEqual("maternal-123");
       expect(new Date(maternalDate)).toBeInstanceOf(Date);
       expect(new Date(martialDate)).toBeInstanceOf(Date);
-      expect(numberOfMarriage).toStrictEqual('1');
-      expect(martialStatus).toStrictEqual('single');
+      expect(numberOfMarriage).toStrictEqual("1");
+      expect(martialStatus).toStrictEqual("single");
     });
 
-    it('shoudl throw NotFoundError when maternal not found', async () => {
+    it("shoudl throw NotFoundError when maternal not found", async () => {
       // Arrange
-      const userId = 'user-123';
+      const userId = "user-123";
 
-      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(pool, {});
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {}
+      );
 
       // Action & Assert
-      await expect(maternalRepositoryPostgres.findMaternalByUserId(userId))
-        .rejects.toThrowError(NotFoundError);
+      await expect(
+        maternalRepositoryPostgres.findMaternalByUserId(userId)
+      ).rejects.toThrowError(NotFoundError);
     });
   });
 
-  describe('updateMaternalByUserId function', () => {
-    it('should update maternal correctly', async () => {
+  describe("updateMaternalByUserId function", () => {
+    it("should update maternal correctly", async () => {
       // Arrange
-      const userId = 'user-123';
+      const userId = "user-123";
 
-      await MaternalTableTestHelper.addMaternal({ id: 'maternal-123', userId });
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-123", userId });
 
-      const fakeIdGenerator = () => '123';
-      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(pool, fakeIdGenerator);
+      const fakeIdGenerator = () => "123";
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
 
       const updateMaternal = {
-        menarcheDate: '2021-08-22',
-        martialDate: '2021-08-22',
-        numberOfMarriage: '1',
-        martialStatus: 'single',
+        menarcheDate: "2021-08-22",
+        martialDate: "2021-08-22",
+        numberOfMarriage: "1",
+        martialStatus: "single",
       };
 
       // Action
-      await maternalRepositoryPostgres.updateMaternalByUserId(userId, updateMaternal);
+      await maternalRepositoryPostgres.updateMaternalByUserId(
+        userId,
+        updateMaternal
+      );
 
       // Assert
-      const maternal = await MaternalTableTestHelper.findMaternalById('maternal-123');
+      const maternal = await MaternalTableTestHelper.findMaternalById(
+        "maternal-123"
+      );
       expect(maternal).toBeDefined();
+    });
+  });
+
+  describe("showAllMaternal function", () => {
+    it("should return all maternal correctly", async () => {
+      // Arrange
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-123" });
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-456" });
+
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {}
+      );
+
+      // Action
+      const maternals = await maternalRepositoryPostgres.showAllMaternal();
+
+      // Assert
+      expect(maternals).toHaveLength(2);
+      expect(maternals[0].id).toStrictEqual("maternal-123");
+      expect(maternals[1].id).toStrictEqual("maternal-456");
+    });
+
+    it("should return empty array when no maternal found", async () => {
+      // Arrange
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {}
+      );
+
+      // Action
+      const maternals = await maternalRepositoryPostgres.showAllMaternal();
+
+      // Assert
+      expect(maternals).toHaveLength(0);
     });
   });
 });
