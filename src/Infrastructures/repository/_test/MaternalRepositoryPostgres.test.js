@@ -4,6 +4,7 @@ const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHist
 const AddMaternal = require("../../../Domains/maternal/entities/NewMaternal");
 const pool = require("../../database/postgres/pool");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
+const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 
 describe("MaternalRepositoryPostgres", () => {
   afterAll(async () => {
@@ -11,7 +12,9 @@ describe("MaternalRepositoryPostgres", () => {
   });
 
   afterEach(async () => {
+    await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   describe("addMaternal function", () => {
@@ -132,8 +135,24 @@ describe("MaternalRepositoryPostgres", () => {
   describe("showAllMaternal function", () => {
     it("should return all maternal correctly", async () => {
       // Arrange
-      await MaternalTableTestHelper.addMaternal({ id: "maternal-123" });
-      await MaternalTableTestHelper.addMaternal({ id: "maternal-456" });
+      await UsersTableTestHelper.addUser({ id: "user-123" });
+      await UsersTableTestHelper.addUser({ id: "user-456" });
+      await MaternalTableTestHelper.addMaternal({
+        id: "maternal-123",
+        userId: "user-123",
+      });
+      await MaternalTableTestHelper.addMaternal({
+        id: "maternal-456",
+        userId: "user-456",
+      });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId: "maternal-123",
+      });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-124",
+        maternalId: "maternal-456",
+      });
 
       const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
         pool,
@@ -141,12 +160,46 @@ describe("MaternalRepositoryPostgres", () => {
       );
 
       // Action
-      const maternals = await maternalRepositoryPostgres.showAllMaternal();
+      const { data: maternals } =
+        await maternalRepositoryPostgres.showAllMaternal();
 
       // Assert
       expect(maternals).toHaveLength(2);
       expect(maternals[0].id).toStrictEqual("maternal-123");
       expect(maternals[1].id).toStrictEqual("maternal-456");
+    });
+
+    it("should return with last maternal history status", async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: "user-123" });
+      await MaternalTableTestHelper.addMaternal({
+        id: "maternal-123",
+        userId: "user-123",
+      });
+
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId: "maternal-123",
+      });
+
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-124",
+        maternalId: "maternal-123",
+      });
+
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {}
+      );
+
+      // Action
+      const { data: maternals } =
+        await maternalRepositoryPostgres.showAllMaternal();
+
+      // Assert
+      expect(maternals).toHaveLength(1);
+      expect(maternals[0].id).toStrictEqual("maternal-123");
+      expect(maternals[0]).toHaveProperty("last_maternal_status");
     });
 
     it("should return empty array when no maternal found", async () => {
@@ -157,7 +210,8 @@ describe("MaternalRepositoryPostgres", () => {
       );
 
       // Action
-      const maternals = await maternalRepositoryPostgres.showAllMaternal();
+      const { data: maternals } =
+        await maternalRepositoryPostgres.showAllMaternal();
 
       // Assert
       expect(maternals).toHaveLength(0);

@@ -16,7 +16,7 @@ class MaternalQuery extends BaseQuery {
 
   joinByLastMaternalStatus() {
     return `INNER JOIN (
-      SELECT inner_mh.maternal_id, inner_mh.maternal_status FROM maternal_histories inner_mh ORDER BY inner_mh.maternal_status DESC LIMIT 1
+      SELECT maternal_status, maternal_id FROM maternal_histories GROUP BY        
     ) maternal_histories ON maternal_histories.maternal_id = maternals.id`;
   }
 }

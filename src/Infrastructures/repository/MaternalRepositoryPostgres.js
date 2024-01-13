@@ -76,7 +76,16 @@ class MaternalRepositoryPostgres extends MaternalRepository {
   }
 
   async showAllMaternal(queryParams) {
-    const maternals = await this._maternalQuery.showAllMaternal(queryParams);
+    const maternals = await this._maternalQuery
+      .joins(["users", "lastMaternalStatus"])
+      .selects([
+        "maternals.id",
+        "users.name",
+        "maternal_histories.maternal_status as last_maternal_status",
+        "maternals.user_id",
+      ])
+      .paginate();
+
     return maternals;
   }
 }

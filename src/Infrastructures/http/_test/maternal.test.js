@@ -1,8 +1,9 @@
 const pool = require("../../database/postgres/pool");
-const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
+const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 
 describe("HTTP server - maternal", () => {
   afterAll(async () => {
@@ -10,6 +11,7 @@ describe("HTTP server - maternal", () => {
   });
 
   afterEach(async () => {
+    await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
   });
@@ -179,6 +181,47 @@ describe("HTTP server - maternal", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(422);
       expect(responseJson.status).toEqual("fail");
+    });
+  });
+
+  describe("when GET /api/v1/maternal", () => {
+    it("should response 200 and show all maternal", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        name: "Test",
+        nik: "1234",
+      });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-124",
+        maternalId,
+        maternalStatus: "postpartum",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/maternal",
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.data).toHaveLength(1);
+      expect(responseJson.data.data.id).toEqual(maternalId);
+      expect(responseJson.data.data.user_id).toEqual(userId);
+      expect(responseJson.data.data.user.name).toEqual("Test");
     });
   });
 });
