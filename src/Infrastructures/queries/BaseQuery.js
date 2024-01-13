@@ -77,9 +77,10 @@ class BaseQuery {
       }
 
       const [query, value] = result;
-      const paramizeQuery = query.replace(/\?/g, `$${
-        this._finalObject.currentIndex
-      }`);
+      const paramizeQuery = query.replace(
+        /\?/g,
+        `$${this._finalObject.currentIndex}`
+      );
 
       whereSQL.push(paramizeQuery);
       values.push(value);
@@ -118,7 +119,7 @@ class BaseQuery {
 
   selects(params) {
     if (params.length > 0) {
-      selectedColumns = [];
+      const selectedColumns = [];
 
       params.forEach((param) => {
         selectedColumns.push(param);
