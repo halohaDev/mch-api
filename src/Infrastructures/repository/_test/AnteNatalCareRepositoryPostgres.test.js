@@ -85,4 +85,59 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       expect(anteNatalCares).toBeDefined();
     });
   });
+
+  describe("showAnteNatalCare function", () => {
+    it("should return ante natal care data correctly", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {});
+
+      // Action
+      const anteNatalCares =
+        await anteNatalCareRepositoryPostgres.showAnteNatalCares();
+
+      // Assert
+      expect(anteNatalCares.data).toHaveLength(0);
+    });
+
+    it("should filter data correctly", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {});
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        maternalHistoryId: "maternal-history-123",
+        id: "ante-natal-care-123",
+      });
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        maternalHistoryId: "maternal-history-123",
+        id: "ante-natal-care-124",
+      });
+
+      await MaternalHistoryTableTestHelper.addMaternalHistory({
+        id: "maternal-history-345",
+        maternalId: "maternal-123",
+      });
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        maternalHistoryId: "maternal-history-345",
+        id: "ante-natal-care-345",
+      });
+
+      // Action
+      const anteNatalCares =
+        await anteNatalCareRepositoryPostgres.showAnteNatalCares({
+          maternalHistoryId: "maternal-history-123",
+        });
+
+      // Assert
+      expect(anteNatalCares.data).toHaveLength(2);
+      expect(anteNatalCares.data[0]).toHaveProperty("id");
+      expect(anteNatalCares.data[0]).toHaveProperty("placement_id");
+      expect(anteNatalCares.data[0]).toHaveProperty("contact_type");
+      expect(anteNatalCares.data[0]).toHaveProperty("weight");
+      expect(anteNatalCares.data[0]).toHaveProperty("height");
+    });
+  });
 });

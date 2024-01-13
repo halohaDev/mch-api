@@ -1,10 +1,12 @@
 const AnteNatalCareRepository = require("../../Domains/ante_natal/AnteNatalCareRepository");
+const AnteNatalCareQuery = require("../queries/AnteNatalCareQuery");
 
 class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._anteNatalCareQuery = new AnteNatalCareQuery({ pool });
   }
 
   async addAnteNatalCare(payload) {
@@ -61,6 +63,14 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
     const { rows } = await this._pool.query(query);
 
     return rows[0];
+  }
+
+  async showAnteNatalCares(queryParams) {
+    const queryResult = await this._anteNatalCareQuery
+      .wheres(queryParams)
+      .paginate();
+
+    return queryResult;
   }
 }
 
