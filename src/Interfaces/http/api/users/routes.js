@@ -1,7 +1,7 @@
 const routes = (handler) => ([
   {
     method: 'POST',
-    path: '/users',
+    path: '/api/v1/users',
     handler: handler.postUserHandler,
   },
   {

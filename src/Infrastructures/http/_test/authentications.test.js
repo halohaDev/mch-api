@@ -14,7 +14,7 @@ describe('HTTP server - authentications', () => {
     await AuthenticationsTableTestHelper.cleanTable();
   });
 
-  describe('when POST /authentications', () => {
+  describe('when POST /api/v1/login', () => {
     it('should response 201 and persisted authentication', async () => {
       // Arrange
       const requestPayload = {
@@ -26,7 +26,7 @@ describe('HTTP server - authentications', () => {
       // inject data
       await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload: {
           email: 'user-test@gmail.com',
           password: 'password',
@@ -37,7 +37,7 @@ describe('HTTP server - authentications', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/authentications',
+        url: '/api/v1/login',
         payload: {
           email: requestPayload.email,
           password: requestPayload.password,
@@ -64,7 +64,7 @@ describe('HTTP server - authentications', () => {
       // inject data
       await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload: {
           email: requestPayload.email,
           password: requestPayload.password,
@@ -75,7 +75,7 @@ describe('HTTP server - authentications', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/authentications',
+        url: '/api/v1/login',
         payload: {
           email: requestPayload.email,
           password: 'wrong_password',
@@ -101,7 +101,7 @@ describe('HTTP server - authentications', () => {
       // inject data
       await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload: {
           email: requestPayload.email,
           password: requestPayload.password,
@@ -112,7 +112,7 @@ describe('HTTP server - authentications', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/authentications',
+        url: '/api/v1/login',
         payload: {
           email: requestPayload.email,
         },
@@ -132,7 +132,7 @@ describe('HTTP server - authentications', () => {
       // inject data
       await server.inject({
         method: 'POST',
-        url: '/users',
+        url: '/api/v1/users',
         payload: {
           email: 'user@mail.com',
           password: 'password',
@@ -143,7 +143,7 @@ describe('HTTP server - authentications', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/authentications',
+        url: '/api/v1/login',
         payload: {
           email: 1234,
           password: 'password',
