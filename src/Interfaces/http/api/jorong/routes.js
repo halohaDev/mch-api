@@ -1,7 +1,7 @@
 const routes = (handler) => ([
   {
     method: 'POST',
-    path: '/jorong',
+    path: '/api/v1/jorong',
     handler: handler.postJorongHandler,
   },
 ]);

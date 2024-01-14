@@ -37,7 +37,7 @@ class BaseQuery {
     const sql = `LIMIT ${limit} OFFSET ${offset}`;
     this._finalObject.paginate = sql;
 
-    await this.finalizeSQL();
+    this.finalizeSQL();
 
     const query = {
       text: this.finalSQL,
@@ -77,9 +77,10 @@ class BaseQuery {
       }
 
       const [query, value] = result;
-      const paramizeQuery = query.replace(/\?/g, `$${
-        this._finalObject.currentIndex
-      }`);
+      const paramizeQuery = query.replace(
+        /\?/g,
+        `$${this._finalObject.currentIndex}`
+      );
 
       whereSQL.push(paramizeQuery);
       values.push(value);
@@ -107,7 +108,9 @@ class BaseQuery {
 
       params.forEach((param) => {
         const key = param.charAt(0).toUpperCase() + param.slice(1);
-        this._finalObject.joins += this[`joinBy${key}`]();
+        const query = this[`joinBy${key}`]();
+
+        this._finalObject.joins += ` ${query} `;
       });
     }
 
@@ -118,7 +121,7 @@ class BaseQuery {
 
   selects(params) {
     if (params.length > 0) {
-      selectedColumns = [];
+      const selectedColumns = [];
 
       params.forEach((param) => {
         selectedColumns.push(param);

@@ -1,7 +1,7 @@
 const routes = (handler) => ([
   {
     method: 'POST',
-    path: '/placements',
+    path: '/api/v1/placements',
     handler: handler.postPlacementHandler,
   },
 ]);

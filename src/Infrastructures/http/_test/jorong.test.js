@@ -14,7 +14,7 @@ describe('HTTP server - jorong', () => {
     await JorongTableTestHelper.cleanTable();
   });
 
-  describe('when POST /jorong', () => {
+  describe('when POST /api/v1/jorong', () => {
     it('should response 201 and persisted jorong', async () => {
       // Arrange
       const requestPayload = {
@@ -29,7 +29,7 @@ describe('HTTP server - jorong', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/jorong',
+        url: '/api/v1/jorong',
         payload: requestPayload,
       });
 
@@ -52,7 +52,7 @@ describe('HTTP server - jorong', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/jorong',
+        url: '/api/v1/jorong',
         payload: requestPayload,
       });
 
@@ -75,7 +75,7 @@ describe('HTTP server - jorong', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/jorong',
+        url: '/api/v1/jorong',
         payload: requestPayload,
       });
 
@@ -98,7 +98,7 @@ describe('HTTP server - jorong', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/jorong',
+        url: '/api/v1/jorong',
         payload: requestPayload,
       });
 
