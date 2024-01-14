@@ -6,6 +6,7 @@ describe('DomainErrorTranslator', () => {
     expect(DomainTranslatorError.translate(new Error('CREATE_USER.NOT_CONTAIN_NEEDED_PROPERTY'))).toStrictEqual(new InvariantError('tidak dapat membuat user baru karena properti yang dibutuhkan tidak ada'));
     expect(DomainTranslatorError.translate(new Error('CREATE_USER.NOT_MEET_DATA_TYPE_SPECIFICATION'))).toStrictEqual(new InvariantError('tidak dapat membuat user baru karena tipe data tidak sesuai'));
     expect(DomainTranslatorError.translate(new Error('CREATE_USER.EMAIL_IS_NOT_VALID'))).toStrictEqual(new InvariantError('tidak dapat membuat user baru karena email tidak valid'));
+    expect(DomainTranslatorError.translate(new Error('EMAIL.INPUT_VALIDATION.IS_NOT_VALID_EMAIL'))).toStrictEqual(new InvariantError('email is not valid email'));
   });
 
   it('should return original error when error is not recognized', () => {

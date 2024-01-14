@@ -1,12 +1,14 @@
-const Hapi = require('@hapi/hapi');
-const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
-const ClientError = require('../../Commons/exceptions/ClientError');
+const Hapi = require("@hapi/hapi");
+const DomainErrorTranslator = require("../../Commons/exceptions/DomainErrorTranslator");
+const ClientError = require("../../Commons/exceptions/ClientError");
 
-const users = require('../../Interfaces/http/api/users');
-const auth = require('../../Interfaces/http/api/auth');
-const nagari = require('../../Interfaces/http/api/nagari');
-const jorong = require('../../Interfaces/http/api/jorong');
-const placements = require('../../Interfaces/http/api/placements');
+const users = require("../../Interfaces/http/api/users");
+const auth = require("../../Interfaces/http/api/auth");
+const nagari = require("../../Interfaces/http/api/nagari");
+const jorong = require("../../Interfaces/http/api/jorong");
+const placements = require("../../Interfaces/http/api/placements");
+const maternal = require("../../Interfaces/http/api/maternal");
+const anteNatalCares = require("../../Interfaces/http/api/ante_natal");
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -40,9 +42,17 @@ const createServer = async (container) => {
       plugin: placements,
       options: { container },
     },
+    {
+      plugin: maternal,
+      options: { container },
+    },
+    {
+      plugin: anteNatalCares,
+      options: { container },
+    },
   ]);
 
-  server.ext('onPreResponse', (request, h) => {
+  server.ext("onPreResponse", (request, h) => {
     const { response } = request;
 
     if (response instanceof Error) {
@@ -50,9 +60,11 @@ const createServer = async (container) => {
 
       if (translatedError instanceof ClientError) {
         const newResponse = h.response({
-          status: 'fail',
+          status: "fail",
           message: translatedError.message,
+          detail: translatedError.detail,
         });
+
         newResponse.code(translatedError.statusCode);
         return newResponse;
       }
@@ -62,8 +74,8 @@ const createServer = async (container) => {
       }
 
       const newResponse = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
+        status: "error",
+        message: "Maaf, terjadi kegagalan pada server kami.",
       });
       newResponse.code(500);
 

@@ -12,7 +12,7 @@ describe('HTTP server - nagari', () => {
     await NagariTableTestHelper.cleanTable();
   });
 
-  describe('when POST /nagari', () => {
+  describe('when POST /api/v1/nagari', () => {
     it('should response 201 and persisted nagari', async () => {
       // Arrange
       const requestPayload = {
@@ -24,7 +24,7 @@ describe('HTTP server - nagari', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/nagari',
+        url: '/api/v1/nagari',
         payload: requestPayload,
       });
 
@@ -47,7 +47,7 @@ describe('HTTP server - nagari', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/nagari',
+        url: '/api/v1/nagari',
         payload: requestPayload,
       });
 
@@ -69,7 +69,7 @@ describe('HTTP server - nagari', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/nagari',
+        url: '/api/v1/nagari',
         payload: requestPayload,
       });
 
@@ -90,13 +90,13 @@ describe('HTTP server - nagari', () => {
       // Action
       await server.inject({
         method: 'POST',
-        url: '/nagari',
+        url: '/api/v1/nagari',
         payload: requestPayload,
       });
 
       const response = await server.inject({
         method: 'POST',
-        url: '/nagari',
+        url: '/api/v1/nagari',
         payload: requestPayload,
       });
 

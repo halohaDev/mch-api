@@ -24,7 +24,7 @@ describe('HTTP server - placements', () => {
     await JorongTableTestHelper.addJorong({ id: 'jorong-123' });
   });
 
-  describe('when POST /placements', () => {
+  describe('when POST /api/v1/placements', () => {
     it('should response 201 and persisted placement', async () => {
       // Arrange
       const userId = 'user-123';
@@ -40,7 +40,7 @@ describe('HTTP server - placements', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/placements',
+        url: '/api/v1/placements',
         payload,
       });
 
@@ -63,7 +63,7 @@ describe('HTTP server - placements', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/placements',
+        url: '/api/v1/placements',
         payload,
         auth: {
           strategy: 'forum_api_jwt',
@@ -94,7 +94,7 @@ describe('HTTP server - placements', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/placements',
+        url: '/api/v1/placements',
         payload,
       });
 
