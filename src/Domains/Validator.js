@@ -12,7 +12,7 @@ class Validator {
     this.#errors = {};
   }
 
-  isRequired(key, format = null) {
+  isRequired(key, format = null, schema = null) {
     // find params with key
     const value = this.#params[key];
 
@@ -25,10 +25,10 @@ class Validator {
     this.#key = key;
 
     // if found validate
-    this.#validate(value, format);
+    this.#validate(value, format, schema);
   }
 
-  isOptional(key, format = null) {
+  isOptional(key, format = null, schema = null) {
     // if not found dont validate
     const value = this.#params[key];
 
@@ -38,10 +38,10 @@ class Validator {
 
     this.#key = key;
     // if found validate
-    this.#validate(value, format);
+    this.#validate(value, format, schema);
   }
 
-  #validate(value, validator) {
+  #validate(value, validator, schema) {
     if (validator === null) {
       return;
     }
@@ -65,6 +65,10 @@ class Validator {
 
     if (validator === "datetime") {
       this.#validateDateTimeFormat(value);
+    }
+
+    if (validator === "object") {
+      this.#validateObject(value, schema);
     }
 
     this.#validatedOutput[this.#key] = value;
@@ -119,8 +123,42 @@ class Validator {
     }
   }
 
+  #validateObject(object, schema) {
+    // validate object
+    if (typeof object !== "object") {
+      const message = `${this.#key} is not an object`;
+
+      this.#pushErrors(this.#key, { message: message });
+    }
+
+    if (schema) {
+      let undefinedKeys = [];
+
+      // schema will contain key value
+      // key is the key of the json
+      // value is the format
+      if (schema.length > 0) {
+        for (const key of schema) {
+          if (object[key] === undefined) {
+            undefinedKeys.push(key);
+          }
+        }
+      }
+
+      if (undefinedKeys.length > 0) {
+        const message = `${this.#key}.${undefinedKeys.join(", ")} is required`;
+
+        this.#pushErrors(this.#key, { message: message });
+      }
+    }
+  }
+
   output() {
     if (Object.keys(this.#errors).length > 0) {
+      if (process.env.NODE_ENV !== "development") {
+        console.log(this.#errors);
+      }
+
       throw new UnprocessableError(this.#errors);
     }
 
