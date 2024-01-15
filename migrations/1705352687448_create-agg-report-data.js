@@ -8,7 +8,7 @@ exports.up = (pgm) => {
       type: "VARCHAR",
       primaryKey: true,
     },
-    chairperson_id: {
+    approved_by: {
       type: "VARCHAR",
       notNull: true,
     },
@@ -55,7 +55,7 @@ exports.up = (pgm) => {
     },
   });
 
-  pgm.createIndex("agg_report_data", "chairperson_id");
+  pgm.createIndex("agg_report_data", "approved_by");
   pgm.createIndex("agg_report_data", "placement_id");
   pgm.createIndex("agg_report_data", "reportType");
   pgm.createIndex("agg_report_data", "approved_at");
@@ -66,8 +66,8 @@ exports.up = (pgm) => {
 
   pgm.addConstraint(
     "agg_report_data",
-    "fk_agg_report_data_chairperson_id",
-    "FOREIGN KEY(chairperson_id) REFERENCES users(id)"
+    "fk_agg_report_data_approved_by",
+    "FOREIGN KEY(approved_by) REFERENCES users(id)"
   );
 
   pgm.addConstraint(
