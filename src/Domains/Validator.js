@@ -146,9 +146,10 @@ class Validator {
       }
 
       if (undefinedKeys.length > 0) {
-        const message = `${this.#key}.${undefinedKeys.join(", ")} is required`;
-
-        this.#pushErrors(this.#key, { message: message });
+        undefinedKeys.forEach((key) => {
+          const message = `${key} is required`;
+          this.#pushErrors(key, { message: message });
+        });
       }
     }
   }
