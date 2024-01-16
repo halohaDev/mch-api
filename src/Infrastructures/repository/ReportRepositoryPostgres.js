@@ -1,4 +1,5 @@
 const ReportRepository = require("../../Domains/report/ReportRepository");
+const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class ReportRepositoryPostgres extends ReportRepository {
   constructor(pool, idGenerator) {
@@ -35,7 +36,20 @@ class ReportRepositoryPostgres extends ReportRepository {
 
   async showReport(payload) {}
 
-  async findReportById(id) {}
+  async findReportById(id) {
+    const query = {
+      text: "SELECT * FROM agg_report_data WHERE id = $1",
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("REPORT_REPOSITORY.NOT_FOUND");
+    }
+
+    return result.rows[0];
+  }
 
   async updateReport(payload) {}
 }

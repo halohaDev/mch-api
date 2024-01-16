@@ -69,4 +69,60 @@ describe("ReportRepository postgres implementation", () => {
       expect(report.updated_at).toBeDefined();
     });
   });
+
+  describe("findReportById function", () => {
+    it("should throw NotFoundError when report not found", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(
+        reportRepositoryPostgres.findReportById("report-123")
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it("should return report when report is found", async () => {
+      // Arrange
+      await ReportTableTestHelper.addReport({
+        id: "report-123",
+        midwifeId: "midwife-123",
+        jorongId: "jorong-123",
+        approvedBy: "coordinator-123",
+        data: {
+          cobaMasukanData: "data",
+        },
+        reportType: "anc_jorong_monthly",
+        approvedAt: "2021-08-21",
+        status: "approved",
+        note: "note",
+        month: 8,
+        year: 2021,
+      });
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
+
+      // Action
+      const report = await reportRepositoryPostgres.findReportById(
+        "report-123"
+      );
+
+      // Assert
+      expect(report).toStrictEqual({
+        id: "report-123",
+        midwife_id: "midwife-123",
+        jorong_id: "jorong-123",
+        approved_by: "coordinator-123",
+        data: {
+          cobaMasukanData: "data",
+        },
+        report_type: "anc_jorong_monthly",
+        status: "approved",
+        note: "note",
+        month: 8,
+        year: 2021,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+        approved_at: expect.any(Date),
+      });
+    });
+  });
 });

@@ -5,7 +5,8 @@ const ReportTableTestHelper = {
   // add report
   async addReport({
     id = "report-123",
-    placementId = "placement-123",
+    midwifeId = "midwife-123",
+    jorongId = "jorong-123",
     approvedBy = "user-123",
     data = {},
     reportType = "anc_jorong_monthly",
@@ -17,10 +18,11 @@ const ReportTableTestHelper = {
   }) {
     const jsonData = JSON.stringify(data);
     const query = {
-      text: "INSERT INTO agg_report_data(id, placement_id, approved_by, data, reportType, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10)",
+      text: "INSERT INTO agg_report_data(id, jorong_id, midwife_id, approved_by, data, report_type, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11)",
       values: [
         id,
-        placementId,
+        jorongId,
+        midwifeId,
         approvedBy,
         jsonData,
         reportType,
