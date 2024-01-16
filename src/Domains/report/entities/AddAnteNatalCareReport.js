@@ -34,8 +34,20 @@ class AddAnteNatalCareReport extends DomainBase {
       "anemiaLessThan8",
       "lilaCheck",
       "kek",
-      "proteinUrineCheck",
-      "proteinUrinePositive",
+      "proteInUrineCheck",
+      "proteInUrinePositive",
+      "bloodSugarCheck",
+      "bloodSugarMoreThan140",
+      "comeWithHivPositive",
+      "hivCheck",
+      "offeredHivTest",
+      "gotArt",
+      "vaginalDeliveryHivPositive",
+      "abdominalDeliveryHivPositive",
+      "syphilisCheck",
+      "syphilisPositive",
+      "hepatitisCheck",
+      "hepatitisPositive",
     ]);
     this.isRequired("reportType", "string");
     this.isOptional("note", "string");
