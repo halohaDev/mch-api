@@ -5,7 +5,8 @@ describe("a AnteNatalCareReport entities", () => {
   it("should throw error when payload did not contain needed property", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
+      midwifeId: "midwife-123",
+      jorongId: "jorong-123",
       data: {
         hemoglobinCheck: 1,
         anemiaBetween8And11: 2,
@@ -41,7 +42,8 @@ describe("a AnteNatalCareReport entities", () => {
   it("should throw error when payload did not meet data type specification", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
+      midwifeId: "midwife-123",
+      jorongId: "jorong-123",
       data: {
         hemoglobinCheck: 1,
         anemiaBetween8And11: 2,
@@ -78,7 +80,8 @@ describe("a AnteNatalCareReport entities", () => {
   it("should throw error when payload did not contain proper data", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
+      midwifeId: "midwife-123",
+      jorongId: "jorong-123",
       data: {
         hemoglobinCheck: 1,
         anemiaBetween8And11: 2,
@@ -102,7 +105,8 @@ describe("a AnteNatalCareReport entities", () => {
   it("should create AnteNatalCareReport object correctly", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
+      midwifeId: "midwife-123",
+      jorongId: "jorong-123",
       data: {
         hemoglobinCheck: 1,
         anemiaBetween8And11: 2,
@@ -134,9 +138,8 @@ describe("a AnteNatalCareReport entities", () => {
     const AnteNatalCareReportInstance = new AnteNatalCareReport(payload);
 
     // Assert
-    expect(AnteNatalCareReportInstance.placementId).toEqual(
-      payload.placementId
-    );
+    expect(AnteNatalCareReportInstance.midwifeId).toEqual(payload.midwifeId);
+    expect(AnteNatalCareReportInstance.jorongId).toEqual(payload.jorongId);
     expect(AnteNatalCareReportInstance.data).toEqual(payload.data);
     expect(AnteNatalCareReportInstance.data.anemiaBetween8And11).toEqual(
       payload.data.anemiaBetween8And11

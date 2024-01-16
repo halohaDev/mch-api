@@ -3,8 +3,10 @@ const DomainBase = require("../../DomainBase");
 class AddAnteNatalCareReport extends DomainBase {
   constructor(payload) {
     super(payload);
+
     const {
-      placementId,
+      midwifeId,
+      jorongId,
       approvedBy,
       data,
       reportType,
@@ -15,7 +17,8 @@ class AddAnteNatalCareReport extends DomainBase {
       year,
     } = this.output();
 
-    this.placementId = placementId;
+    this.midwifeId = midwifeId;
+    this.jorongId = jorongId;
     this.approvedBy = approvedBy;
     this.data = data;
     this.reportType = reportType;
@@ -27,7 +30,8 @@ class AddAnteNatalCareReport extends DomainBase {
   }
 
   _verifyPayload() {
-    this.isRequired("placementId", "string");
+    this.isRequired("midwifeId", "string");
+    this.isRequired("jorongId", "string");
     this.isRequired("data", "object", [
       "hemoglobinCheck",
       "anemiaBetween8And11",
