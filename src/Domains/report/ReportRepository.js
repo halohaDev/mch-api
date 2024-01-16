@@ -1,17 +1,17 @@
 class ReportRepository {
-  async addReport(payload) {
+  async addReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async findReportById(id) {
+  async findReportById() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async showReport(id) {
+  async showReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async updateReport(id) {
+  async updateReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }

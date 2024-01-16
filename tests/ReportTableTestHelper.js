@@ -42,6 +42,14 @@ const ReportTableTestHelper = {
       values: [id],
     };
 
-    await pool.query(query);
+    const result = await pool.query(query);
+
+    return result.rows[0];
+  },
+
+  async cleanTable() {
+    await pool.query("TRUNCATE TABLE agg_report_data");
   },
 };
+
+module.exports = ReportTableTestHelper;
