@@ -155,7 +155,7 @@ describe("ReportRepository postgres implementation", () => {
 
       // Assert
       const report = await ReportTableTestHelper.findReportById("report-123");
-      expect(report.status).toBe("rejected");
+      expect(report.status).toBe("revision");
       expect(report.note).toBe("note");
     });
   });
