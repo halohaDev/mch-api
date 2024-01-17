@@ -337,7 +337,7 @@ describe("HTTP server - users", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/users",
+        url: "/api/v1/users",
       });
 
       // Assert
@@ -355,7 +355,7 @@ describe("HTTP server - users", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/users?perPage=3",
+        url: "/api/v1/users?perPage=3",
       });
 
       // Assert
@@ -376,7 +376,7 @@ describe("HTTP server - users", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/users?page=4&perPage=3",
+        url: "/api/v1/users?page=4&perPage=3",
       });
 
       // Assert
