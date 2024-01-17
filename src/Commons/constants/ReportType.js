@@ -5,4 +5,4 @@ const ReportType = {
   ANC_PUSKESMAS_YEARLY: "ANC_PUSKESMAS_YEARLY",
 };
 
-export default ReportType;
+module.exports = ReportType;
