@@ -16,7 +16,7 @@ describe("HTTP server - maternal", () => {
     await UsersTableTestHelper.cleanTable();
   });
 
-  describe("when POST /api/v1/maternal", () => {
+  describe("when POST /api/v1/maternals", () => {
     it("should response 201 and persisted maternal", async () => {
       // Arrange
       const requestPayload = {
@@ -44,7 +44,7 @@ describe("HTTP server - maternal", () => {
 
       const response = await server.inject({
         method: "POST",
-        url: "/api/v1/maternal",
+        url: "/api/v1/maternals",
         payload: { ...requestPayload, userId: id },
       });
 
@@ -69,7 +69,7 @@ describe("HTTP server - maternal", () => {
       // Action
       const response = await server.inject({
         method: "POST",
-        url: "/api/v1/maternal",
+        url: "/api/v1/maternals",
         payload: requestPayload,
       });
 
@@ -80,7 +80,7 @@ describe("HTTP server - maternal", () => {
     });
   });
 
-  describe("when POST /api/v1/maternal/user", () => {
+  describe("when POST /api/v1/maternals/user", () => {
     it("should response 200 and presist user and maternal", async () => {
       // Arrange
       const useCasePayload = {
@@ -108,7 +108,7 @@ describe("HTTP server - maternal", () => {
       // Action
       const response = await server.inject({
         method: "POST",
-        url: "/api/v1/maternal/user",
+        url: "/api/v1/maternals/user",
         payload: useCasePayload,
       });
 
@@ -136,7 +136,7 @@ describe("HTTP server - maternal", () => {
       // Action
       const response = await server.inject({
         method: "POST",
-        url: "/api/v1/maternal/user",
+        url: "/api/v1/maternals/user",
         payload: requestPayload,
       });
 
@@ -173,7 +173,7 @@ describe("HTTP server - maternal", () => {
       // Action
       const response = await server.inject({
         method: "POST",
-        url: "/api/v1/maternal/user",
+        url: "/api/v1/maternals/user",
         payload: useCasePayload,
       });
 
@@ -184,7 +184,7 @@ describe("HTTP server - maternal", () => {
     });
   });
 
-  describe("when GET /api/v1/maternal", () => {
+  describe("when GET /api/v1/maternals", () => {
     it("should response 200 and show all maternal", async () => {
       // Arrange
       const userId = "user-123";
@@ -211,7 +211,7 @@ describe("HTTP server - maternal", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/api/v1/maternal",
+        url: "/api/v1/maternals",
       });
 
       // Assert
