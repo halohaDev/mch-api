@@ -83,6 +83,7 @@ class MaternalRepositoryPostgres extends MaternalRepository {
         "users.name as name",
         "users.nik as nik",
         "maternal_histories.maternal_status as last_maternal_status",
+        "maternal_histories.id as last_maternal_history_id",
         "maternals.user_id",
       ])
       .paginate();
