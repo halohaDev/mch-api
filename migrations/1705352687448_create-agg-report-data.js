@@ -10,7 +10,6 @@ exports.up = (pgm) => {
     },
     approved_by: {
       type: "VARCHAR",
-      notNull: true,
     },
     jorong_id: {
       type: "VARCHAR",
