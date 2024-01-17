@@ -51,7 +51,16 @@ class ReportRepositoryPostgres extends ReportRepository {
     return result.rows[0];
   }
 
-  async updateReport(payload) {}
+  async updateReportStatusAndNote(payload) {
+    await this.findReportById(payload.id);
+
+    const query = {
+      text: "UPDATE agg_report_data SET note = $1, status = $2 WHERE id = $3 RETURNING id",
+      values: [payload.note, payload.status, payload.id],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 module.exports = ReportRepositoryPostgres;

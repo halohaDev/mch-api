@@ -11,7 +11,7 @@ class ReportRepository {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async updateReport() {
+  async updateReportStatusAndNote() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }

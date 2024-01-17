@@ -13,8 +13,8 @@ describe("ReportRepository interface", () => {
     await expect(reportRepository.showReport("")).rejects.toThrowError(
       "REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
-    await expect(reportRepository.updateReport("")).rejects.toThrowError(
-      "REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED"
-    );
+    await expect(
+      reportRepository.updateReportStatusAndNote("")
+    ).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });

@@ -125,4 +125,38 @@ describe("ReportRepository postgres implementation", () => {
       });
     });
   });
+
+  describe("updateReport function", () => {
+    it("should update report", async () => {
+      // Arrange
+      await ReportTableTestHelper.addReport({
+        id: "report-123",
+        midwifeId: "midwife-123",
+        jorongId: "jorong-123",
+        approvedBy: "coordinator-123",
+        data: {
+          cobaMasukanData: "data",
+        },
+        reportType: "anc_jorong_monthly",
+        approvedAt: "2021-08-21",
+        status: "approved",
+        note: "note",
+        month: 8,
+        year: 2021,
+      });
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
+
+      // Action
+      await reportRepositoryPostgres.updateReportStatusAndNote({
+        id: "report-123",
+        status: "revision",
+        note: "note",
+      });
+
+      // Assert
+      const report = await ReportTableTestHelper.findReportById("report-123");
+      expect(report.status).toBe("rejected");
+      expect(report.note).toBe("note");
+    });
+  });
 });
