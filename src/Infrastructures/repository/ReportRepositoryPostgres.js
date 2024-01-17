@@ -1,11 +1,13 @@
 const ReportRepository = require("../../Domains/report/ReportRepository");
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
+const ReportQuery = require("../queries/ReportQuery");
 
 class ReportRepositoryPostgres extends ReportRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._reportQuery = new ReportQuery({ pool });
   }
 
   async addReport(payload) {
@@ -34,7 +36,11 @@ class ReportRepositoryPostgres extends ReportRepository {
     return id;
   }
 
-  async showReport(payload) {}
+  async showReport(queryParams) {
+    const result = await this._reportQuery.wheres(queryParams).paginate();
+
+    return result;
+  }
 
   async findReportById(id) {
     const query = {
