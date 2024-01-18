@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+const Sentry = require("@sentry/node");
 
 module.exports = Sentry.init({
   dsn: process.env.SENTRY_DSN,
