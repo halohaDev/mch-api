@@ -200,6 +200,7 @@ describe("MaternalRepositoryPostgres", () => {
       expect(maternals).toHaveLength(1);
       expect(maternals[0].id).toStrictEqual("maternal-123");
       expect(maternals[0]).toHaveProperty("last_maternal_status");
+      expect(maternals[0]).toHaveProperty("last_maternal_history_id");
     });
 
     it("should return empty array when no maternal found", async () => {
