@@ -56,13 +56,6 @@ class BaseQuery {
       currentIndex: 0,
     };
 
-    this.paginationMeta = {
-      size: 0,
-      perPage: 0,
-      currentPage: 0,
-      totalPages: 0,
-    };
-
     return {
       data: results.rows,
       meta: this.paginationMeta,
