@@ -10,15 +10,15 @@ const placements = require("../../Interfaces/http/api/placements");
 const maternal = require("../../Interfaces/http/api/maternal");
 const anteNatalCares = require("../../Interfaces/http/api/ante_natal");
 
-const createServer = async (container) => {
+const createServer = async (container, tracker = null) => {
   const server = Hapi.server({
     host: process.env.HOST,
     port: process.env.PORT,
     routes: {
       cors: {
-        origin: ['*'],
+        origin: ["*"],
       },
-    }
+    },
   });
 
   await server.register([
@@ -79,8 +79,7 @@ const createServer = async (container) => {
       });
       newResponse.code(500);
 
-      // eslint-disable-next-line no-console
-      console.log(response.stack);
+      tracker?.captureException(response.stack);
 
       return newResponse;
     }
