@@ -23,9 +23,9 @@ describe("MaternalRepositoryPostgres", () => {
       const addMaternal = new AddMaternal({
         userId: "user-123",
         menarcheDate: "2021-08-22",
-        martialDate: "2021-08-22",
+        maritalDate: "2021-08-22",
         numberOfMarriage: "1",
-        martialStatus: "single",
+        maritalStatus: "single",
       });
 
       const fakeIdGenerator = () => "123";
@@ -70,16 +70,16 @@ describe("MaternalRepositoryPostgres", () => {
       const {
         id,
         maternal_date: maternalDate,
-        martial_date: martialDate,
+        marital_date: maritalDate,
         number_of_marriage: numberOfMarriage,
-        martial_status: martialStatus,
+        marital_status: maritalStatus,
       } = maternal;
 
       expect(id).toStrictEqual("maternal-123");
       expect(new Date(maternalDate)).toBeInstanceOf(Date);
-      expect(new Date(martialDate)).toBeInstanceOf(Date);
+      expect(new Date(maritalDate)).toBeInstanceOf(Date);
       expect(numberOfMarriage).toStrictEqual("1");
-      expect(martialStatus).toStrictEqual("single");
+      expect(maritalStatus).toStrictEqual("single");
     });
 
     it("shoudl throw NotFoundError when maternal not found", async () => {
@@ -113,9 +113,9 @@ describe("MaternalRepositoryPostgres", () => {
 
       const updateMaternal = {
         menarcheDate: "2021-08-22",
-        martialDate: "2021-08-22",
+        maritalDate: "2021-08-22",
         numberOfMarriage: "1",
-        martialStatus: "single",
+        maritalStatus: "single",
       };
 
       // Action
