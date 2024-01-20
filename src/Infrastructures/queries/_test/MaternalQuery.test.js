@@ -122,6 +122,33 @@ describe("MaternalQuery", () => {
     });
   });
 
+  it("should return maternal data even when maternal history not present", async () => {
+    // Arrange
+    const userId = "user-123";
+    const maternalId = "maternal-123";
+    const maternalQuery = new MaternalQuery({ pool });
+
+    await UsersTableTestHelper.addUser({ id: userId, name: "user" });
+    await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+
+    // Action
+    const queryResult = await maternalQuery
+      .joins(["users", "lastMaternalStatus"])
+      .selects([
+        "maternals.id",
+        "users.name",
+        "maternal_histories.maternal_status as last_maternal_status",
+      ])
+      .paginate();
+
+    // Assert
+    expect(queryResult.data).toHaveLength(1);
+
+    expect(queryResult.data[0]).toHaveProperty("name");
+    expect(queryResult.data[0]).toHaveProperty("last_maternal_status");
+    expect(queryResult.data[0].last_maternal_status).toBeNull();
+  });
+
   it("should return maternal data correctly when combined with other query", async () => {
     // Arrange
     const userId = "user-123";

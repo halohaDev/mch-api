@@ -46,6 +46,19 @@ class BaseQuery {
 
     const results = await this._pool.query(query);
 
+    // reset this class state
+    this._finalObject = {
+      select: "*",
+      where: "",
+      values: [],
+      paginate: "",
+      joins: "",
+      currentIndex: 0,
+    };
+
+    this._page = 1;
+    this._perPage = 100;
+
     return {
       data: results.rows,
       meta: this.paginationMeta,
