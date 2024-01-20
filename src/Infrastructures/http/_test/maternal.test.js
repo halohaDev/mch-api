@@ -21,8 +21,8 @@ describe("HTTP server - maternal", () => {
       // Arrange
       const requestPayload = {
         menarcheDate: "2021-08-22",
-        martialDate: "2021-08-22",
-        martialStatus: "married",
+        maritalDate: "2021-08-22",
+        maritalStatus: "married",
         numberOfMarriage: "2",
       };
 
@@ -98,9 +98,9 @@ describe("HTTP server - maternal", () => {
         isActiveBpjs: true,
         bpjsKesehatanNumber: "1234567890123456",
         menarcheDate: "2021-08-22",
-        martialDate: "2021-08-22",
+        maritalDate: "2021-08-22",
         numberOfMarriage: "1",
-        martialStatus: "single",
+        maritalStatus: "single",
       };
 
       const server = await createServer(container);
@@ -163,9 +163,9 @@ describe("HTTP server - maternal", () => {
         isActiveBpjs: true,
         bpjsKesehatanNumber: "1234567890123456",
         menarcheDate: "2021-08-22",
-        martialDate: "2021-08-22",
+        maritalDate: "2021-08-22",
         numberOfMarriage: 1,
-        martialStatus: 1,
+        maritalStatus: 1,
       };
 
       const server = await createServer(container);

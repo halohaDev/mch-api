@@ -5,17 +5,17 @@ describe("NewMaternal entity", () => {
     const maternal = new NewMaternal({
       userId: "1",
       menarcheDate: "2020-01-01",
-      martialDate: "2020-01-01",
+      maritalDate: "2020-01-01",
       numberOfMarriage: "1",
-      martialStatus: "marriage",
+      maritalStatus: "marriage",
     });
 
     expect(maternal).toEqual({
       userId: "1",
       menarcheDate: "2020-01-01",
-      martialDate: "2020-01-01",
+      maritalDate: "2020-01-01",
       numberOfMarriage: "1",
-      martialStatus: "marriage",
+      maritalStatus: "marriage",
     });
   });
 
@@ -25,7 +25,7 @@ describe("NewMaternal entity", () => {
         new NewMaternal({
           userId: "1",
           menarcheDate: "2020-01-01",
-          martialDate: "2020-01-01",
+          maritalDate: "2020-01-01",
           numberOfMarriage: "1",
         })
     ).toThrowError("Unprocessable Entity");
@@ -37,9 +37,9 @@ describe("NewMaternal entity", () => {
         new NewMaternal({
           userId: "1",
           menarcheDate: "2020-01-01",
-          martialDate: "2020-01-01",
+          maritalDate: "2020-01-01",
           numberOfMarriage: "1",
-          martialStatus: 1,
+          maritalStatus: 1,
         })
     ).toThrowError("Unprocessable Entity");
   });

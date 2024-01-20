@@ -558,7 +558,7 @@ components:
           type: string
           format: date
           description: Date of first menstruation
-        martialDate:
+        maritalDate:
           type: string
           format: date
           description: Date of marriage
@@ -566,7 +566,7 @@ components:
           type: integer
           format: int32
           description: Number of marriage
-        martialStatus:
+        maritalStatus:
           type: string
           enum: ["single", "married", "divorced", "widow"]
 
