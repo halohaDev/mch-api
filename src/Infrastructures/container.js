@@ -318,6 +318,10 @@ container.register([
           name: "userRepository",
           internal: UserRepository.name,
         },
+        {
+          name: "randomGenerator",
+          concrete: nanoid,
+        },
       ],
     },
   },

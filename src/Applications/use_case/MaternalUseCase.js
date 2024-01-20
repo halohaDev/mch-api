@@ -6,10 +6,12 @@ class MaternalUseCase {
     maternalRepository,
     userRepository,
     maternalHistoryRepository,
+    randomGenerator,
   }) {
     this._maternalRepository = maternalRepository;
     this._userRepository = userRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
+    this._randomGenerator = randomGenerator;
   }
 
   async addMaternal(useCasePayload) {
@@ -20,6 +22,12 @@ class MaternalUseCase {
   }
 
   async addUserMaternal(useCasePayload) {
+    const { password } = useCasePayload;
+
+    if (!password || password === "" || password === " ") {
+      useCasePayload.password = this._randomGenerator();
+    }
+
     const createUser = new CreateUser(useCasePayload);
     const { id: userId } = await this._userRepository.addUser(createUser);
 
