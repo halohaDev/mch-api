@@ -14,20 +14,20 @@ class MaternalRepositoryPostgres extends MaternalRepository {
     const {
       userId,
       menarcheDate,
-      martialDate,
+      maritalDate,
       numberOfMarriage,
-      martialStatus,
+      maritalStatus,
     } = addMaternal;
     const id = `maternal-${this._idGenerator()}`;
     const query = {
-      text: "INSERT INTO maternals(id, user_id, menarche_date, martial_date, number_of_marriage, martial_status) VALUES($1, $2, $3, $4, $5, $6) RETURNING id",
+      text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status) VALUES($1, $2, $3, $4, $5, $6) RETURNING id",
       values: [
         id,
         userId,
         menarcheDate,
-        martialDate,
+        maritalDate,
         numberOfMarriage,
-        martialStatus,
+        maritalStatus,
       ],
     };
 
@@ -52,16 +52,16 @@ class MaternalRepositoryPostgres extends MaternalRepository {
   }
 
   async updateMaternalByUserId(userId, updateMaternal) {
-    const { menarcheDate, martialDate, numberOfMarriage, martialStatus } =
+    const { menarcheDate, maritalDate, numberOfMarriage, maritalStatus } =
       updateMaternal;
 
     const query = {
-      text: "UPDATE maternals SET menarche_date = $1, martial_date = $2, number_of_marriage = $3, martial_status = $4 WHERE user_id = $5 RETURNING id",
+      text: "UPDATE maternals SET menarche_date = $1, marital_date = $2, number_of_marriage = $3, marital_status = $4 WHERE user_id = $5 RETURNING id",
       values: [
         menarcheDate,
-        martialDate,
+        maritalDate,
         numberOfMarriage,
-        martialStatus,
+        maritalStatus,
         userId,
       ],
     };

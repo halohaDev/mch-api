@@ -8,24 +8,24 @@ class NewMaternal extends DomainBase {
     const {
       userId,
       menarcheDate,
-      martialDate,
+      maritalDate,
       numberOfMarriage,
-      martialStatus,
+      maritalStatus,
     } = this.output();
 
     this.userId = userId;
     this.menarcheDate = menarcheDate;
-    this.martialDate = martialDate;
+    this.maritalDate = maritalDate;
     this.numberOfMarriage = numberOfMarriage;
-    this.martialStatus = martialStatus;
+    this.maritalStatus = maritalStatus;
   }
 
   _verifyPayload() {
     this.isRequired("userId", "string");
     this.isRequired("menarcheDate", "date");
-    this.isRequired("martialDate", "date");
+    this.isRequired("maritalDate", "date");
     this.isRequired("numberOfMarriage", "number");
-    this.isRequired("martialStatus", "string");
+    this.isRequired("maritalStatus", "string");
   }
 }
 
