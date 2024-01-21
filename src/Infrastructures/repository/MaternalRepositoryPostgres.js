@@ -17,10 +17,11 @@ class MaternalRepositoryPostgres extends MaternalRepository {
       maritalDate,
       numberOfMarriage,
       maritalStatus,
+      jorongId,
     } = addMaternal;
     const id = `maternal-${this._idGenerator()}`;
     const query = {
-      text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status) VALUES($1, $2, $3, $4, $5, $6) RETURNING id",
+      text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status, jorong_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id",
       values: [
         id,
         userId,
@@ -28,6 +29,7 @@ class MaternalRepositoryPostgres extends MaternalRepository {
         maritalDate,
         numberOfMarriage,
         maritalStatus,
+        jorongId,
       ],
     };
 

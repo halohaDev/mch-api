@@ -2,6 +2,7 @@ const pool = require("../../database/postgres/pool");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
+const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalQuery = require("../MaternalQuery");
 
 describe("MaternalQuery", () => {
@@ -9,6 +10,11 @@ describe("MaternalQuery", () => {
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await JorongTableTestHelper.cleanTable();
+  });
+
+  beforeEach(async () => {
+    await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 
   afterAll(async () => {
@@ -95,8 +101,6 @@ describe("MaternalQuery", () => {
         .selects(["maternals.id", "users.name"])
         .wheres(queryParams)
         .paginate();
-
-      console.log(queryResult);
 
       // Assert
       expect(queryResult.data).toHaveLength(1);
