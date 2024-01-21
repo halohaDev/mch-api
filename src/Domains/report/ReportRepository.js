@@ -14,6 +14,10 @@ class ReportRepository {
   async updateReportStatusAndNote() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async calculateAnteNatalCareReport() {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = ReportRepository;

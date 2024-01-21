@@ -16,5 +16,9 @@ describe("ReportRepository interface", () => {
     await expect(
       reportRepository.updateReportStatusAndNote("")
     ).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+
+    await expect(
+      reportRepository.calculateAnteNatalCareReport({})
+    ).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });
