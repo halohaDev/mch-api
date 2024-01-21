@@ -5,7 +5,6 @@ const AnteNatalCaresTableTestHelper = {
   // add ante natal care
   async addAnteNatalCare({
     id = "ante-natal-care-123",
-    placementId = "placement-123",
     weight = 50,
     height = 160,
     hemoglobin = 12,
@@ -19,17 +18,23 @@ const AnteNatalCaresTableTestHelper = {
     ttImunization = "1",
     contactType = "c1",
     proteinInUrine = "negative",
-    sugarInUrine = "negative",
+    bloodSugar = "100",
     hbsag = "negative",
     hiv = "negative",
     syphilis = "negative",
     maternalHistoryId = "maternal-history-123",
+    jorongId = "jorong-123",
+    midwifeId = "user-123",
+    upperArmCircumference = 10,
   }) {
     const query = {
-      text: "INSERT INTO ante_natal_cares(id, placement_id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, sugar_in_urine, hbsag, hiv, syphilis, maternal_history_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)",
+      text: `INSERT INTO ante_natal_cares (
+        id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, blood_sugar, hbsag, hiv, syphilis, maternal_history_id, jorong_id, midwife_id, upper_arm_circumference
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
+      )`,
       values: [
         id,
-        placementId,
         weight,
         height,
         hemoglobin,
@@ -43,11 +48,14 @@ const AnteNatalCaresTableTestHelper = {
         ttImunization,
         contactType,
         proteinInUrine,
-        sugarInUrine,
+        bloodSugar,
         hbsag,
         hiv,
         syphilis,
         maternalHistoryId,
+        jorongId,
+        midwifeId,
+        upperArmCircumference,
       ],
     };
 

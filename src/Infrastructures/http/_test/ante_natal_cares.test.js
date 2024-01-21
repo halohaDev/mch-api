@@ -157,6 +157,7 @@ describe("HTTP server - ante natal cares", () => {
             usgCheckDate: "2021-08-01",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);
@@ -242,6 +243,7 @@ describe("HTTP server - ante natal cares", () => {
             proteinInUrine: "negative",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);
@@ -318,6 +320,7 @@ describe("HTTP server - ante natal cares", () => {
             bloodPressure: 120,
             fundalHeight: 10,
             fetalHeartRate: 120,
+            bloodSugar: 120,
             hbsag: "negative",
             hiv: "negative",
             syphilis: "negative",
@@ -325,6 +328,7 @@ describe("HTTP server - ante natal cares", () => {
             usgCheckDate: "2021-08-01",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);

@@ -96,8 +96,6 @@ describe("MaternalQuery", () => {
         .wheres(queryParams)
         .paginate();
 
-      console.log(queryResult);
-
       // Assert
       expect(queryResult.data).toHaveLength(1);
     });

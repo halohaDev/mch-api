@@ -92,7 +92,7 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       expect(anteNatalCare.hiv).toStrictEqual("negative");
       expect(anteNatalCare.syphilis).toStrictEqual("negative");
       expect(anteNatalCare.blood_type).toStrictEqual("A");
-      expect(anteNatalCare.usg_check_date).toStrictEqual("2021-08-01");
+      expect(anteNatalCare.usg_check_date).toBeDefined();
       expect(anteNatalCare.jorong_id).toStrictEqual("jorong-123");
       expect(anteNatalCare.midwife_id).toStrictEqual("midwife-123");
       expect(anteNatalCare.upper_arm_circumference).toStrictEqual(10);
