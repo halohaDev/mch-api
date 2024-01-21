@@ -52,7 +52,9 @@ describe("HTTP server - ante natal cares", () => {
         syphilis: "negative",
         bloodType: "A",
         usgCheckDate: "2021-08-01",
-        placementId: "placement-123",
+        midwifeId: "midwife-123",
+        jorongId: "jorong-123",
+        upperArmCircumference: 10,
       };
 
       const server = await createServer(container);
@@ -115,7 +117,8 @@ describe("HTTP server - ante natal cares", () => {
             hbsag: "negative",
             hiv: "negative",
             syphilis: "negative",
-            placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -152,7 +155,9 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);
@@ -197,7 +202,8 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -234,8 +240,10 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             proteinInUrine: "negative",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);
@@ -279,7 +287,8 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -311,12 +320,15 @@ describe("HTTP server - ante natal cares", () => {
             bloodPressure: 120,
             fundalHeight: 10,
             fetalHeartRate: 120,
+            bloodSugar: 120,
             hbsag: "negative",
             hiv: "negative",
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
+            upperArmCircumference: 10,
           };
 
           const server = await createServer(container);

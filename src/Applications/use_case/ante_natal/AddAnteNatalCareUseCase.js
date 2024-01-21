@@ -16,12 +16,12 @@ class AddAnteNatalCareUseCase {
       maternalHistory
     );
 
-    // TODO: Get Id From Placement autenticated user
-    const placementId = "placement-123";
+    // TODO: Get user_id from authenticated user
+    const userId = "user-123";
 
     const updatedPayload = {
       ...payload,
-      placementId,
+      userId,
       maternalHistoryId: updatedMaternalHistoryId,
     };
 

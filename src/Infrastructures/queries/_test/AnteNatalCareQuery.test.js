@@ -4,6 +4,7 @@ const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCaresTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
+const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 
 describe("Ante Natal Query", () => {
   afterEach(async () => {
@@ -11,6 +12,7 @@ describe("Ante Natal Query", () => {
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await JorongTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -18,6 +20,7 @@ describe("Ante Natal Query", () => {
   });
 
   beforeEach(async () => {
+    await JorongTableTestHelper.addJorong({ id: "jorong-123" });
     await UsersTableTestHelper.addUser({ id: "user-123" });
     await MaternalTableTestHelper.addMaternal({
       id: "maternal-123",
@@ -72,7 +75,6 @@ describe("Ante Natal Query", () => {
       // Assert
       expect(queryResult.data).toHaveLength(3);
       expect(queryResult.data[0]).toHaveProperty("id");
-      expect(queryResult.data[0]).toHaveProperty("placement_id");
       expect(queryResult.data[0]).toHaveProperty("contact_type");
       expect(queryResult.data[0]).toHaveProperty("weight");
       expect(queryResult.data[0]).toHaveProperty("height");
@@ -86,11 +88,16 @@ describe("Ante Natal Query", () => {
       expect(queryResult.data[0]).toHaveProperty("blood_type");
       expect(queryResult.data[0]).toHaveProperty("tt_imunization");
       expect(queryResult.data[0]).toHaveProperty("protein_in_urine");
-      expect(queryResult.data[0]).toHaveProperty("sugar_in_urine");
+      expect(queryResult.data[0]).toHaveProperty("blood_sugar");
       expect(queryResult.data[0]).toHaveProperty("hbsag");
       expect(queryResult.data[0]).toHaveProperty("hiv");
       expect(queryResult.data[0]).toHaveProperty("syphilis");
       expect(queryResult.data[0]).toHaveProperty("maternal_history_id");
+      expect(queryResult.data[0]).toHaveProperty("date_of_visit");
+      expect(queryResult.data[0]).toHaveProperty("art_given");
+      expect(queryResult.data[0]).toHaveProperty("upper_arm_circumference");
+      expect(queryResult.data[0]).toHaveProperty("jorong_id");
+      expect(queryResult.data[0]).toHaveProperty("midwife_id");
     });
   });
 });

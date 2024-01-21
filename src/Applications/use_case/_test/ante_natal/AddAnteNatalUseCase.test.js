@@ -22,6 +22,9 @@ describe("AddAnteNatalUseCase", () => {
       syphilis: "negative",
       bloodType: "A",
       usgCheckDate: "2021-08-01",
+      jorongId: "jorong-123",
+      midwifeId: "user-123",
+      upperArmCircumference: 10,
     };
 
     // mock dependency
@@ -72,6 +75,9 @@ describe("AddAnteNatalUseCase", () => {
       syphilis: "negative",
       bloodType: "A",
       usgCheckDate: "2021-08-01",
+      jorongId: "jorong-123",
+      midwifeId: "user-123",
+      upperArmCircumference: 10,
     };
 
     // mock dependency
@@ -128,6 +134,9 @@ describe("AddAnteNatalUseCase", () => {
       syphilis: "negative",
       bloodType: "A",
       usgCheckDate: "2021-08-01",
+      jorongId: "jorong-123",
+      midwifeId: "user-123",
+      upperArmCircumference: 10,
     };
 
     // mock dependency
@@ -162,7 +171,6 @@ describe("AddAnteNatalUseCase", () => {
     expect(mockMaternalHistoryRepository.addMaternalHistory).toBeCalled();
     expect(mockAnteNatalRepository.addAnteNatalCare).toBeCalledWith(
       new AddAnteNatalCare({
-        placementId: "placement-123",
         contactType: "c1",
         action: "action",
         ttImunization: "4",
@@ -178,6 +186,9 @@ describe("AddAnteNatalUseCase", () => {
         bloodType: "A",
         usgCheckDate: "2021-08-01",
         maternalHistoryId: "maternal-history-123",
+        jorongId: "jorong-123",
+        midwifeId: "user-123",
+        upperArmCircumference: 10,
       })
     );
   });
