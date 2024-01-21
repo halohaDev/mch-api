@@ -15,9 +15,10 @@ const MaternalTableTestHelper = {
     maritalDate = "2021-08-22",
     numberOfMarriage = "1",
     maritalStatus = "single",
+    jorongId = "jorong-123",
   }) {
     const query = {
-      text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status) VALUES($1, $2, $3, $4, $5, $6)",
+      text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status, jorong_id) VALUES($1, $2, $3, $4, $5, $6, $7)",
       values: [
         id,
         userId,
@@ -25,6 +26,7 @@ const MaternalTableTestHelper = {
         maritalDate,
         numberOfMarriage,
         maritalStatus,
+        jorongId,
       ],
     };
 

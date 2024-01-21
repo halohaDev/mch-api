@@ -11,6 +11,7 @@ class NewMaternal extends DomainBase {
       maritalDate,
       numberOfMarriage,
       maritalStatus,
+      jorongId,
     } = this.output();
 
     this.userId = userId;
@@ -18,6 +19,7 @@ class NewMaternal extends DomainBase {
     this.maritalDate = maritalDate;
     this.numberOfMarriage = numberOfMarriage;
     this.maritalStatus = maritalStatus;
+    this.jorongId = jorongId;
   }
 
   _verifyPayload() {
@@ -26,6 +28,7 @@ class NewMaternal extends DomainBase {
     this.isRequired("maritalDate", "date");
     this.isRequired("numberOfMarriage", "number");
     this.isRequired("maritalStatus", "string");
+    this.isRequired("jorongId", "string");
   }
 }
 

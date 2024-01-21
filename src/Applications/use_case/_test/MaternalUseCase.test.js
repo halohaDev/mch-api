@@ -15,6 +15,7 @@ describe("MaternalUseCase", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: "1",
         maritalStatus: "single",
+        jorongId: "jorong-123",
       };
 
       /** creating dependency of use case */
@@ -71,6 +72,7 @@ describe("MaternalUseCase", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: "1",
         maritalStatus: "single",
+        jorongId: "jorong-123",
       };
 
       const createUser = new CreateUser({ ...useCasePayload });
