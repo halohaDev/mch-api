@@ -154,6 +154,7 @@ describe("HTTP server - maternal", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: "1",
         maritalStatus: "single",
+        jorongId: "jorong-123",
       };
 
       const server = await createServer(container);
