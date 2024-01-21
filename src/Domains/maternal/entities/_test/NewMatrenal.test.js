@@ -8,6 +8,7 @@ describe("NewMaternal entity", () => {
       maritalDate: "2020-01-01",
       numberOfMarriage: "1",
       maritalStatus: "marriage",
+      jorongId: "jorong-123",
     });
 
     expect(maternal).toEqual({
@@ -16,6 +17,7 @@ describe("NewMaternal entity", () => {
       maritalDate: "2020-01-01",
       numberOfMarriage: "1",
       maritalStatus: "marriage",
+      jorongId: "jorong-123",
     });
   });
 

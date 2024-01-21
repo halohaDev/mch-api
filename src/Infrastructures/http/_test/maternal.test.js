@@ -3,6 +3,7 @@ const container = require("../../container");
 const createServer = require("../createServer");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 
 describe("HTTP server - maternal", () => {
@@ -14,6 +15,11 @@ describe("HTTP server - maternal", () => {
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await JorongTableTestHelper.cleanTable();
+  });
+
+  beforeEach(async () => {
+    await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 
   describe("when POST /api/v1/maternals", () => {
@@ -24,6 +30,7 @@ describe("HTTP server - maternal", () => {
         maritalDate: "2021-08-22",
         maritalStatus: "married",
         numberOfMarriage: "2",
+        jorongId: "jorong-123",
       };
 
       const server = await createServer(container);
@@ -100,6 +107,7 @@ describe("HTTP server - maternal", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: "1",
         maritalStatus: "single",
+        jorongId: "jorong-123",
       };
 
       const server = await createServer(container);
@@ -208,6 +216,7 @@ describe("HTTP server - maternal", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: 1,
         maritalStatus: 1,
+        jorongId: "jorong-123",
       };
 
       const server = await createServer(container);

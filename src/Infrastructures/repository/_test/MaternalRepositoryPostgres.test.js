@@ -5,6 +5,7 @@ const AddMaternal = require("../../../Domains/maternal/entities/NewMaternal");
 const pool = require("../../database/postgres/pool");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 
 describe("MaternalRepositoryPostgres", () => {
   afterAll(async () => {
@@ -15,6 +16,11 @@ describe("MaternalRepositoryPostgres", () => {
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await JorongTableTestHelper.cleanTable();
+  });
+
+  beforeEach(async () => {
+    await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 
   describe("addMaternal function", () => {
@@ -26,6 +32,7 @@ describe("MaternalRepositoryPostgres", () => {
         maritalDate: "2021-08-22",
         numberOfMarriage: "1",
         maritalStatus: "single",
+        jorongId: "jorong-123",
       });
 
       const fakeIdGenerator = () => "123";
