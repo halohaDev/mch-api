@@ -24,6 +24,10 @@ class AddAnteNatalCare extends DomainBase {
       hiv,
       syphilis,
       maternalHistoryId,
+      artGiven,
+      upperArmCircumference,
+      jorongId,
+      midwifeId,
     } = this.output();
 
     this.placementId = placementId;
@@ -45,14 +49,26 @@ class AddAnteNatalCare extends DomainBase {
     this.hbsag = hbsag;
     this.hiv = hiv;
     this.syphilis = syphilis;
+    this.artGiven = artGiven;
+    this.upperArmCircumference = upperArmCircumference;
+    this.jorongId = jorongId;
+    this.midwifeId = midwifeId;
   }
 
   _verifyPayload(payload) {
     this.isOptional("placementId", "string");
     this.isRequired("contactType", "string");
     this.isRequired("maternalHistoryId", "string");
+    this.isRequired("upperArmCircumference", "number");
+    this.isRequired("jorongId", "string");
+    this.isRequired("midwifeId", "string");
+    this.isOptional("artGiven", "boolean");
     this.isOptional("action", "string");
     this.isOptional("ttImunization", "string");
+    this.isOptional("syphilis", "string");
+    this.isOptional("hiv", "string");
+    this.isOptional("hbsag", "string");
+    this.isOptional("temprature", "number");
 
     if (payload.contactType === "c1") {
       this.isRequired("height", "number");
@@ -63,34 +79,22 @@ class AddAnteNatalCare extends DomainBase {
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
     } else if (payload.contactType === "c2") {
       this.isRequired("proteinInUrine", "string");
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
     } else if (payload.contactType === "c3") {
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
     } else if (payload.contactType === "c4") {
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
       this.isRequired("hemoglobin", "number");
     } else if (payload.contactType === "c5") {
       this.isRequired("hemoglobin", "number");
@@ -99,17 +103,11 @@ class AddAnteNatalCare extends DomainBase {
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
     } else if (payload.contactType === "c6") {
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
-      this.isRequired("hbsag", "string");
-      this.isRequired("hiv", "string");
-      this.isRequired("syphilis", "string");
     } else {
       this.isOptional("weight", "number");
       this.isOptional("height", "number");

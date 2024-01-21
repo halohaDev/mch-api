@@ -53,6 +53,9 @@ describe("HTTP server - ante natal cares", () => {
         bloodType: "A",
         usgCheckDate: "2021-08-01",
         placementId: "placement-123",
+        midwifeId: "midwife-123",
+        jorongId: "jorong-123",
+        upperArmCircumference: 10,
       };
 
       const server = await createServer(container);
@@ -116,6 +119,8 @@ describe("HTTP server - ante natal cares", () => {
             hiv: "negative",
             syphilis: "negative",
             placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -153,6 +158,8 @@ describe("HTTP server - ante natal cares", () => {
             bloodType: "A",
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -198,6 +205,8 @@ describe("HTTP server - ante natal cares", () => {
             bloodType: "A",
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -236,6 +245,8 @@ describe("HTTP server - ante natal cares", () => {
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
             proteinInUrine: "negative",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -280,6 +291,8 @@ describe("HTTP server - ante natal cares", () => {
             bloodType: "A",
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);
@@ -317,6 +330,8 @@ describe("HTTP server - ante natal cares", () => {
             bloodType: "A",
             usgCheckDate: "2021-08-01",
             placementId: "placement-123",
+            midwifeId: "midwife-123",
+            jorongId: "jorong-123",
           };
 
           const server = await createServer(container);

@@ -61,7 +61,9 @@ describe("AnteNatalCareRepositoryPostgres", () => {
         syphilis: "negative",
         bloodType: "A",
         usgCheckDate: "2021-08-01",
-        placementId: "placement-123",
+        jorongId: "jorong-123",
+        midwifeId: "midwife-123",
+        upperArmCircumference: 10,
       };
 
       const fakeIdGenerator = () => "123";
@@ -82,6 +84,20 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       expect(anteNatalCare.action).toStrictEqual("action");
       expect(anteNatalCare.tt_imunization).toStrictEqual("4");
       expect(anteNatalCare.height).toStrictEqual(160);
+      expect(anteNatalCare.hemoglobin).toStrictEqual(12);
+      expect(anteNatalCare.weight).toStrictEqual(50);
+      expect(anteNatalCare.blood_pressure).toStrictEqual(120);
+      expect(anteNatalCare.fundal_height).toStrictEqual(10);
+      expect(anteNatalCare.fetal_heart_rate).toStrictEqual(120);
+      expect(anteNatalCare.hbsag).toStrictEqual("negative");
+      expect(anteNatalCare.hiv).toStrictEqual("negative");
+      expect(anteNatalCare.syphilis).toStrictEqual("negative");
+      expect(anteNatalCare.blood_type).toStrictEqual("A");
+      expect(anteNatalCare.usg_check_date).toStrictEqual("2021-08-01");
+      expect(anteNatalCare.jorong_id).toStrictEqual("jorong-123");
+      expect(anteNatalCare.midwife_id).toStrictEqual("midwife-123");
+      expect(anteNatalCare.upper_arm_circumference).toStrictEqual(10);
+      expect(anteNatalCares).toHaveLength(1);
       expect(anteNatalCares).toBeDefined();
     });
   });
