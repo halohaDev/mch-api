@@ -8,7 +8,14 @@ exports.up = (pgm) => {
 
   // change column type
   pgm.alterColumn("ante_natal_cares", "blood_sugar", {
+    type: "string",
+  });
+
+  pgm.sql(`UPDATE "ante_natal_cares" SET "blood_sugar" = '0'`);
+
+  pgm.alterColumn("ante_natal_cares", "blood_sugar", {
     type: "integer",
+    using: "blood_sugar::integer",
   });
 
   // remove column
