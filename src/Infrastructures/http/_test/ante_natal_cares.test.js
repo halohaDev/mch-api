@@ -52,7 +52,6 @@ describe("HTTP server - ante natal cares", () => {
         syphilis: "negative",
         bloodType: "A",
         usgCheckDate: "2021-08-01",
-        placementId: "placement-123",
         midwifeId: "midwife-123",
         jorongId: "jorong-123",
         upperArmCircumference: 10,
@@ -118,7 +117,6 @@ describe("HTTP server - ante natal cares", () => {
             hbsag: "negative",
             hiv: "negative",
             syphilis: "negative",
-            placementId: "placement-123",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
           };
@@ -157,7 +155,6 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
           };
@@ -204,7 +201,6 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
           };
@@ -243,7 +239,6 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             proteinInUrine: "negative",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
@@ -290,7 +285,6 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
           };
@@ -329,7 +323,6 @@ describe("HTTP server - ante natal cares", () => {
             syphilis: "negative",
             bloodType: "A",
             usgCheckDate: "2021-08-01",
-            placementId: "placement-123",
             midwifeId: "midwife-123",
             jorongId: "jorong-123",
           };

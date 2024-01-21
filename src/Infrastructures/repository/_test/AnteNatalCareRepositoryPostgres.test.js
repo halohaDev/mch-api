@@ -79,7 +79,6 @@ describe("AnteNatalCareRepositoryPostgres", () => {
         await AnteNatalCareTableTestHelper.findAnteNatalCareById("anc-123");
 
       expect(anteNatalCare.id).toStrictEqual("anc-123");
-      expect(anteNatalCare.placement_id).toStrictEqual("placement-123");
       expect(anteNatalCare.contact_type).toStrictEqual("c1");
       expect(anteNatalCare.action).toStrictEqual("action");
       expect(anteNatalCare.tt_imunization).toStrictEqual("4");
@@ -150,7 +149,6 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       // Assert
       expect(anteNatalCares.data).toHaveLength(2);
       expect(anteNatalCares.data[0]).toHaveProperty("id");
-      expect(anteNatalCares.data[0]).toHaveProperty("placement_id");
       expect(anteNatalCares.data[0]).toHaveProperty("contact_type");
       expect(anteNatalCares.data[0]).toHaveProperty("weight");
       expect(anteNatalCares.data[0]).toHaveProperty("height");

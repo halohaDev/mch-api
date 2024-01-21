@@ -121,6 +121,10 @@ class Validator {
 
   output() {
     if (Object.keys(this.#errors).length > 0) {
+      if (process.env.NODE_ENV === "debug") {
+        console.log(this.#errors);
+      }
+
       throw new UnprocessableError(this.#errors);
     }
 

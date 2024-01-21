@@ -19,7 +19,7 @@ class AddAnteNatalCare extends DomainBase {
       bloodType,
       ttImunization,
       proteinInUrine,
-      sugarInUrine,
+      bloodSugar,
       hbsag,
       hiv,
       syphilis,
@@ -45,7 +45,7 @@ class AddAnteNatalCare extends DomainBase {
     this.bloodType = bloodType;
     this.ttImunization = ttImunization;
     this.proteinInUrine = proteinInUrine;
-    this.sugarInUrine = sugarInUrine;
+    this.bloodSugar = bloodSugar;
     this.hbsag = hbsag;
     this.hiv = hiv;
     this.syphilis = syphilis;
@@ -96,6 +96,7 @@ class AddAnteNatalCare extends DomainBase {
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
       this.isRequired("hemoglobin", "number");
+      this.isRequired("bloodSugar", "number");
     } else if (payload.contactType === "c5") {
       this.isRequired("hemoglobin", "number");
       this.isRequired("usgCheckDate", "string");
@@ -103,11 +104,13 @@ class AddAnteNatalCare extends DomainBase {
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
+      this.isRequired("bloodSugar", "number");
     } else if (payload.contactType === "c6") {
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");
       this.isRequired("fundalHeight", "number");
       this.isRequired("fetalHeartRate", "number");
+      this.isRequired("bloodSugar", "number");
     } else {
       this.isOptional("weight", "number");
       this.isOptional("height", "number");

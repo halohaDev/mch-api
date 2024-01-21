@@ -11,7 +11,6 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
 
   async addAnteNatalCare(payload) {
     const {
-      placementId,
       contactType,
       weight,
       height,
@@ -25,7 +24,7 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
       bloodType,
       ttImunization,
       proteinInUrine,
-      sugarInUrine,
+      bloodSugar,
       hbsag,
       hiv,
       syphilis,
@@ -39,8 +38,7 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
 
     const query = {
       text: `INSERT INTO ante_natal_cares (
-        id, 
-        placement_id, 
+        id,
         contact_type, 
         weight, 
         height, 
@@ -54,7 +52,7 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
         blood_type, 
         tt_imunization, 
         protein_in_urine, 
-        sugar_in_urine, 
+        blood_sugar, 
         hbsag, 
         hiv, 
         syphilis, 
@@ -84,12 +82,10 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
         $19, 
         $20, 
         $21, 
-        $22, 
-        $23
+        $22,
       ) RETURNING *`,
       values: [
         id,
-        placementId,
         contactType,
         weight,
         height,
@@ -103,7 +99,7 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
         bloodType,
         ttImunization,
         proteinInUrine,
-        sugarInUrine,
+        bloodSugar,
         hbsag,
         hiv,
         syphilis,

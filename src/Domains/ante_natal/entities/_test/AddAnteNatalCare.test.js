@@ -17,7 +17,7 @@ describe("a AddAnteNatalCare entities", () => {
       bloodType: "bloodType",
       ttImunization: "ttImunization",
       proteinInUrine: "proteinInUrine",
-      sugarInUrine: "sugarInUrine",
+      bloodSugar: "bloodSugar",
       hbsag: "hbsag",
       hiv: "hiv",
       syphilis: "syphilis",
@@ -32,7 +32,6 @@ describe("a AddAnteNatalCare entities", () => {
   it("should throw error when payload did not meet data type specification", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
       contactType: "c1",
       weight: "50",
       height: 160,
@@ -46,7 +45,7 @@ describe("a AddAnteNatalCare entities", () => {
       bloodType: "bloodType",
       ttImunization: "ttImunization",
       proteinInUrine: "proteinInUrine",
-      sugarInUrine: "sugarInUrine",
+      bloodSugar: "bloodSugar",
       hbsag: "hbsag",
       hiv: "hiv",
       syphilis: "syphilis",
@@ -66,7 +65,6 @@ describe("a AddAnteNatalCare entities", () => {
   it("should create addAnteNatalCare object correctly", () => {
     // Arrange
     const payload = {
-      placementId: "placement-123",
       contactType: "c1",
       weight: 50,
       height: 160,
@@ -80,7 +78,7 @@ describe("a AddAnteNatalCare entities", () => {
       bloodType: "bloodType",
       ttImunization: "ttImunization",
       proteinInUrine: "proteinInUrine",
-      sugarInUrine: "sugarInUrine",
+      bloodSugar: "bloodSugar",
       hbsag: "hbsag",
       hiv: "hiv",
       syphilis: "syphilis",
@@ -96,7 +94,6 @@ describe("a AddAnteNatalCare entities", () => {
 
     // Assert
     expect(addAnteNatalCare).toBeInstanceOf(AddAnteNatalCare);
-    expect(addAnteNatalCare.placementId).toEqual(payload.placementId);
     expect(addAnteNatalCare.contactType).toEqual(payload.contactType);
     expect(addAnteNatalCare.weight).toEqual(payload.weight);
     expect(addAnteNatalCare.height).toEqual(payload.height);
