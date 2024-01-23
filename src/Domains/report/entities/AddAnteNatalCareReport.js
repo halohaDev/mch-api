@@ -45,6 +45,7 @@ class AddAnteNatalCareReport extends DomainBase {
       "comeWithHivPositive",
       "hivCheck",
       "offeredHivTest",
+      "hivPositive",
       "gotArt",
       "vaginalDeliveryHivPositive",
       "abdominalDeliveryHivPositive",

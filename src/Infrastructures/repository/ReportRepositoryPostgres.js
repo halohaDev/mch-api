@@ -73,47 +73,50 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const selectQuery = `
       SELECT 
-        COUNT(DISTINCT CASE WHEN hemoglobin < 8 THEN maternal_histories.id END) AS anemiaLessThan8,
-        COUNT(DISTINCT CASE WHEN hemoglobin >= 8 AND hemoglobin <= 11.9 THEN maternal_histories.id END) AS anemia8And11,
-        COUNT(DISTINCT CASE WHEN hemoglobin IS NOT NULL THEN maternal_histories.id END) AS hemoglobinCheck,
-        COUNT(DISTINCT CASE WHEN protein_in_urine = 'positive' THEN maternal_histories.id END) AS proteinInUrinePositive,
-        COUNT(DISTINCT CASE WHEN protein_in_urine IS NOT NULL THEN maternal_histories.id END) AS proteinInUrineCheck,
-        COUNT(DISTINCT CASE WHEN sugar_in_urine = 'positive' THEN maternal_histories.id END) AS bloodSugarMoreThan140,
-        COUNT(DISTINCT CASE WHEN sugar_in_urine IS NOT NULL THEN maternal_histories.id END) AS bloodSugarCheck,
-        COUNT(DISTINCT CASE WHEN hiv = 'positive' THEN maternal_histories.id END) AS comeWithHivPositive,
-        COUNT(DISTINCT CASE WHEN hiv IS NOT NULL THEN maternal_histories.id END) AS hivCheck,
-        COUNT(DISTINCT CASE WHEN hbsag = 'positive' THEN maternal_histories.id END) AS hepatitisPositive,
-        COUNT(DISTINCT CASE WHEN hbsag IS NOT NULL THEN maternal_histories.id END) AS hepatitisCheck,
-        COUNT(DISTINCT CASE WHEN syphilis = 'positive' THEN maternal_histories.id END) AS syphilisPositive,
-        COUNT(DISTINCT CASE WHEN syphilis IS NOT NULL THEN maternal_histories.id END) AS syphilisCheck
+        COUNT(DISTINCT CASE WHEN hemoglobin < 8 THEN maternal_history_id END)::integer AS anemia_less_than_8,
+        COUNT(DISTINCT CASE WHEN hemoglobin >= 8 AND hemoglobin <= 11.9 THEN maternal_history_id END)::integer AS anemia_between_8_and_11,
+        COUNT(DISTINCT CASE WHEN hemoglobin IS NOT NULL THEN maternal_history_id END)::integer AS hemoglobin_check,
+        COUNT(DISTINCT CASE WHEN protein_in_urine = 'positive' THEN maternal_history_id END)::integer AS protein_in_urine_positive,
+        COUNT(DISTINCT CASE WHEN protein_in_urine IS NOT NULL THEN maternal_history_id END)::integer AS protein_in_urine_check,
+        COUNT(DISTINCT CASE WHEN blood_sugar > 140 THEN maternal_history_id END)::integer AS blood_sugar_more_than_140,
+        COUNT(DISTINCT CASE WHEN blood_sugar IS NOT NULL THEN maternal_history_id END)::integer AS blood_sugar_check,
+        COUNT(DISTINCT CASE WHEN hiv = 'positive_non_test' THEN maternal_history_id END)::integer AS come_with_hiv_positive,
+        COUNT(DISTINCT CASE WHEN hiv = 'positive' THEN maternal_history_id END)::integer AS hiv_positive,
+        COUNT(DISTINCT CASE WHEN hiv = 'rejected' OR hiv = 'positive' OR hiv = 'rejected' OR hiv = 'negative' THEN maternal_history_id END)::integer AS offered_hiv_test,
+        COUNT(DISTINCT CASE WHEN hiv = 'positive' OR hiv = 'negative' THEN maternal_history_id END)::integer AS hiv_check,
+        COUNT(DISTINCT CASE WHEN hbsag = 'positive' THEN maternal_history_id END)::integer AS hepatitis_positive,
+        COUNT(DISTINCT CASE WHEN hbsag IS NOT NULL THEN maternal_history_id END)::integer AS hepatitis_check,
+        COUNT(DISTINCT CASE WHEN syphilis = 'positive' THEN maternal_history_id END)::integer AS syphilis_positive,
+        COUNT(DISTINCT CASE WHEN syphilis IS NOT NULL THEN maternal_history_id END)::integer AS syphilis_check,
+        COUNT(DISTINCT CASE WHEN upper_arm_circumference IS NOT NULL THEN maternal_history_id END)::integer AS lila_check,
+        COUNT(DISTINCT CASE WHEN upper_arm_circumference < 23 THEN maternal_history_id END)::integer AS kek,
+        COUNT(DISTINCT CASE WHEN art_given = true THEN maternal_history_id END)::integer AS got_art
       FROM ante_natal_cares
     `;
 
     let indexWhere = 0;
     const jorongCondition = jorongId
-      ? `WHERE maternal_histories.jorong_id = $'${++indexWhere}'`
+      ? `WHERE ante_natal_cares.jorong_id = $${++indexWhere}`
       : "";
     const dateCondition =
       startDate && endDate
-        ? `AND maternal_histories.created_at BETWEEN $'${++indexWhere}' AND $'${++indexWhere}'`
+        ? `AND ante_natal_cares.created_at BETWEEN $${++indexWhere} AND $${++indexWhere}`
         : "";
 
     const query = {
       text: `
         ${selectQuery}
-        INNER JOIN maternal_histories ON maternal_histories.id = ante_natal_cares.maternal_history_id
         ${jorongCondition}
         ${dateCondition}
-        GROUP BY maternal_histories.id
+        GROUP BY ante_natal_cares.jorong_id
       `,
+      values: [jorongId, startDate, endDate],
     };
 
     const result = await this._pool.query(query);
 
-    return result.rows[0];
+    return result.rows;
   }
-
-  async calculateAnteNatalCareReport(queryParams) {}
 }
 
 module.exports = ReportRepositoryPostgres;

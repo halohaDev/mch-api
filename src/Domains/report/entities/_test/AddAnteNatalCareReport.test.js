@@ -119,6 +119,7 @@ describe("a AnteNatalCareReport entities", () => {
         bloodSugarMoreThan140: 9,
         comeWithHivPositive: 10,
         hivCheck: 11,
+        hivPositive: 12,
         offeredHivTest: 12,
         gotArt: 13,
         vaginalDeliveryHivPositive: 14,
