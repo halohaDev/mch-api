@@ -79,7 +79,7 @@ const createServer = async (container, tracker = null) => {
       });
       newResponse.code(500);
 
-      tracker?.captureException(response.stack);
+      tracker?.captureException(response);
 
       return newResponse;
     }
