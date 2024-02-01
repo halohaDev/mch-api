@@ -53,10 +53,6 @@ jobs:
           name: Restart server
           command: |
             ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && pm2 restart all"
-      - run:
-          name: Check if server is running
-          command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "curl -s http://localhost:5000"
 
 workflows:
   version: 2

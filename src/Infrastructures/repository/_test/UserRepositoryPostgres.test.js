@@ -94,6 +94,7 @@ describe("UserRepositoryPostgres", () => {
         email: "user@mail.com",
         password: "password",
         name: "user",
+        role: "admin",
       });
 
       const fakeIdGenerator = () => "123"; // stub!
@@ -116,6 +117,7 @@ describe("UserRepositoryPostgres", () => {
         email: "user@mail.com",
         password: "password",
         name: "user",
+        role: "admin",
       });
 
       const fakeIdGenerator = () => "123"; // stub!
