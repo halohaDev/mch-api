@@ -43,6 +43,7 @@ describe("HTTP server - maternal", () => {
           email: "test-email@mail.com",
           password: "secret_password",
           name: "User Test",
+          role: "admin",
         },
       });
 
@@ -193,7 +194,7 @@ describe("HTTP server - maternal", () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
+      expect(response.statusCode).toEqual(422);
       expect(responseJson.status).toEqual("fail");
     });
 

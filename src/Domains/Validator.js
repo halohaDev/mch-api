@@ -75,9 +75,10 @@ class Validator {
   }
 
   #validateDateFormat(date) {
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    // validate date format using Date.parse
+    const parseDate = new Date(date);
 
-    if (!dateRegex.test(date)) {
+    if (Number.isNaN(parseDate.getTime())) {
       const message = `${this.#key} is not a valid date format`;
 
       this.#pushErrors(this.#key, { message: message });

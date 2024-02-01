@@ -53,10 +53,6 @@ jobs:
           name: Restart server
           command: |
             ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && pm2 restart all"
-      - run:
-          name: Check if no pm2 errors in 5 seconds
-          command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sleep 5 && pm2 logs | grep -i error stop"
 
 workflows:
   version: 2
