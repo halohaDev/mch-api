@@ -38,6 +38,7 @@ describe("ReportRepository postgres implementation", () => {
       id: "user-123",
       role: "midwife",
     });
+
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 

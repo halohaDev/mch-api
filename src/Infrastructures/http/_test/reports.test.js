@@ -1,12 +1,17 @@
 const pool = require("../../database/postgres/pool");
-const ReportsTableTestHelper = require("../../../../tests/ReportsTableTestHelper");
+const ReportsTableTestHelper = require("../../../../tests/ReportTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
-const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistoryTableTestHelper");
-const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCareTableTestHelper");
+const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
+const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
+const {
+  randomNumber,
+  randomFromArray,
+  randomDate,
+} = require("../../../Commons/helper");
 
 describe("HTTP server - reports", () => {
   afterAll(async () => {
@@ -14,6 +19,9 @@ describe("HTTP server - reports", () => {
   });
 
   afterEach(async () => {
+    await AnteNatalCareTableTestHelper.cleanTable();
+    await MaternalHistoryTableTestHelper.cleanTable();
+    await MaternalTableTestHelper.cleanTable();
     await ReportsTableTestHelper.cleanTable();
     await JorongTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -21,6 +29,7 @@ describe("HTTP server - reports", () => {
 
   beforeEach(async () => {
     await UsersTableTestHelper.addUser({ id: "midwife-123" });
+    await UsersTableTestHelper.addUser({ id: "user-123" });
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 

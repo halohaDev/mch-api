@@ -4,7 +4,7 @@ const {
   randomNumber,
   randomFromArray,
   randomDate,
-} = require("../src/Commons/helpers");
+} = require("../src/Commons/helper");
 
 const AnteNatalCaresTableTestHelper = {
   // add ante natal care
@@ -81,11 +81,10 @@ const AnteNatalCaresTableTestHelper = {
   },
 
   // create many ante natal care according to number passed
-  async createManyAnteNatalCare(number, placementId) {
+  async createManyAnteNatalCare(number) {
     for (let i = 0; i < number; i++) {
       await this.addAnteNatalCare({
         id: `ante-natal-care-${i}`,
-        placementId,
       });
     }
   },
