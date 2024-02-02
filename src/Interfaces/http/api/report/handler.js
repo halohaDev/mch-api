@@ -1,4 +1,4 @@
-const CalculateAncReportUseCase = require("../../../use_cases/report/CalculateAncReportUseCase");
+const CalculateAncReportUseCase = require("../../../../Applications/use_case/report/CalculateAncReportUseCase");
 
 class ReportHandler {
   constructor(container) {
@@ -13,7 +13,6 @@ class ReportHandler {
     );
 
     const { reportType } = request.params;
-
     let report;
     if (reportType === "anc") {
       const ancReport = await calculateAncReportUseCase.execute(request.query);
@@ -22,12 +21,12 @@ class ReportHandler {
 
     const response = h.response({
       status: "success",
-      data: {
-        report,
-      },
+      data: report[0],
     });
 
     response.code(200);
     return response;
   }
 }
+
+module.exports = ReportHandler;

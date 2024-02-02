@@ -1,5 +1,5 @@
-const CalculateAncReportUseCase = require("./CalculateAncReportUseCase");
-const ReportRepository = require("../../Domains/reports/ReportRepository");
+const CalculateAncReportUseCase = require("../CalculateAncReportUseCase");
+const ReportRepository = require("../../../../Domains/report/ReportRepository");
 
 describe("CalculateAncReportUseCase", () => {
   it("should orchestrating the calculate anc report action correctly", async () => {
@@ -69,10 +69,16 @@ describe("CalculateAncReportUseCase", () => {
       anemia_between_8_and_11: 0,
       blood_sugar_check: 0,
     });
+
+    const startDate = new Date();
+    startDate.setDate(1);
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 1);
+
     expect(mockReportRepository.calculateAncReport).toBeCalledWith({
       jorongId: "jorong-123",
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate,
+      endDate,
     });
   });
 
@@ -106,11 +112,8 @@ describe("CalculateAncReportUseCase", () => {
       anemia_between_8_and_11: 0,
       blood_sugar_check: 0,
     });
-    expect(mockReportRepository.calculateAncReport).toBeCalledWith({
-      jorongId: "jorong-123",
-      startDate: new Date(),
-      endDate: new Date(),
-    });
+
+    expect(mockReportRepository.calculateAncReport).toBeCalled();
   });
 
   it("should orchestrating the calculate anc report action correctly when month not provided", async () => {

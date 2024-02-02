@@ -109,6 +109,19 @@ describe("HTTP server - reports", () => {
   });
 
   describe("when GET /api/v1/reports/calculate/{reportType}", () => {
+    let randomWeights = [];
+    let randomHeights = [];
+    let randomUpperArmCircumferences = [];
+    let randomSyphilis = [];
+    let randomHiv = [];
+    let randomHb = [];
+    let randomBloodPressure = [];
+    let randomBloodType = [];
+    let randomTtImunization = [];
+    let randomFundalHeight = [];
+    let randomFetalHeartRate = [];
+    let randomBloodSugar = [];
+
     beforeEach(async () => {
       // Arrange
       // create 20 users
@@ -135,19 +148,6 @@ describe("HTTP server - reports", () => {
           maternalStatus: "pregnant",
         });
       }
-
-      let randomWeights = [];
-      let randomHeights = [];
-      let randomUpperArmCircumferences = [];
-      let randomSyphilis = [];
-      let randomHiv = [];
-      let randomHb = [];
-      let randomBloodPressure = [];
-      let randomBloodType = [];
-      let randomTtImunization = [];
-      let randomFundalHeight = [];
-      let randomFetalHeartRate = [];
-      let randomBloodSugar = [];
 
       const startDate = new Date("2021-08-01");
       const endDate = new Date("2021-08-31");

@@ -8,7 +8,7 @@ class CalculateAncReportUseCase {
 
     const { startDate, endDate } = this._getStartAndEndDate(month, year);
 
-    const reports = await this._reportRepository.calculateAncReport({
+    const reports = await this._reportRepository.calculateAnteNatalCareReport({
       jorongId,
       startDate,
       endDate,
@@ -46,3 +46,5 @@ class CalculateAncReportUseCase {
     return { startDate, endDate };
   }
 }
+
+module.exports = CalculateAncReportUseCase;

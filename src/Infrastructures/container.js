@@ -17,6 +17,7 @@ const PlacementRepositoryPostgres = require("./repository/PlacementRepositoryPos
 const MaternalRepositoryPostgres = require("./repository/MaternalRepositoryPostgres");
 const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepositoryPostgres");
 const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
+const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -31,6 +32,7 @@ const PlacementRepository = require("../Domains/placements/PlacementRepository")
 const MaternalRepository = require("../Domains/maternal/MaternalRepository");
 const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
+const ReportRepository = require("../Domains/report/ReportRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -44,10 +46,25 @@ const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase"
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
 const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 const ShowAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/ShowAnteNatalCareUseCase");
+const CalculateAncReportUseCase = require("../Applications/use_case/report/CalculateAncReportUseCase");
 
 const container = createContainer();
 
 container.register([
+  {
+    key: ReportRepository.name,
+    Class: ReportRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
   {
     key: UserRepository.name,
     Class: UserRepositoryPostgres,
@@ -183,6 +200,19 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: CalculateAncReportUseCase.name,
+    Class: CalculateAncReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: ShowAnteNatalCareUseCase.name,
     Class: ShowAnteNatalCareUseCase,
