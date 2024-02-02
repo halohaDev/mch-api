@@ -254,7 +254,7 @@ describe("HTTP server - reports", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/api/v1/reports/calculate?jorongId=jorong-123&month=8&year=2021",
+        url: "/api/v1/reports/calculate/anc?jorongId=jorong-123&month=8&year=2021",
       });
 
       // Assert
