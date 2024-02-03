@@ -127,7 +127,7 @@ describe("HTTP server - reports", () => {
       // Action
       const response = await server.inject({
         method: "GET",
-        url: "/api/v1/reports?jorongId=jorong-123",
+        url: "/api/v1/reports?jorongId=jorong-345",
       });
 
       // Assert
