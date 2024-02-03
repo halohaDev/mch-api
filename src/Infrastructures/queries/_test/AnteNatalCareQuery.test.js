@@ -21,6 +21,7 @@ describe("Ante Natal Query", () => {
 
   beforeEach(async () => {
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
+    await JorongTableTestHelper.addJorong({ id: "jorong-345" });
     await UsersTableTestHelper.addUser({ id: "user-123" });
     await MaternalTableTestHelper.addMaternal({
       id: "maternal-123",
@@ -41,16 +42,19 @@ describe("Ante Natal Query", () => {
     await AnteNatalCaresTableTestHelper.addAnteNatalCare({
       maternalHistoryId: "maternal-history-123",
       id: "ante-natal-care-123",
+      dateOfVisit: "2022-08-01",
     });
     await AnteNatalCaresTableTestHelper.addAnteNatalCare({
       maternalHistoryId: "maternal-history-123",
       id: "ante-natal-care-124",
+      jorongId: "jorong-345",
     });
 
     // history 345
     await AnteNatalCaresTableTestHelper.addAnteNatalCare({
       maternalHistoryId: "maternal-history-345",
       id: "ante-natal-care-345",
+      dateOfVisit: "2022-08-04",
     });
     await AnteNatalCaresTableTestHelper.addAnteNatalCare({
       maternalHistoryId: "maternal-history-345",
@@ -59,6 +63,7 @@ describe("Ante Natal Query", () => {
     await AnteNatalCaresTableTestHelper.addAnteNatalCare({
       maternalHistoryId: "maternal-history-345",
       id: "ante-natal-care-347",
+      jorongId: "jorong-345",
     });
   });
 
@@ -98,6 +103,35 @@ describe("Ante Natal Query", () => {
       expect(queryResult.data[0]).toHaveProperty("upper_arm_circumference");
       expect(queryResult.data[0]).toHaveProperty("jorong_id");
       expect(queryResult.data[0]).toHaveProperty("midwife_id");
+    });
+
+    it("should return according to jorong id", async () => {
+      // Arrange
+      const anteNatalCareQuery = new AnteNatalCareQuery({ pool });
+
+      // Action
+      const queryResult = await anteNatalCareQuery
+        .wheres({ jorongId: "jorong-345" })
+        .paginate();
+
+      // Assert
+      expect(queryResult.data).toHaveLength(2);
+    });
+
+    it("should return according to date of visit", async () => {
+      // Arrange
+      const anteNatalCareQuery = new AnteNatalCareQuery({ pool });
+
+      // Action
+      const queryResult = await anteNatalCareQuery
+        .wheres({
+          dateOfVisitBiggerThan: "2022-08-01",
+          dateOfVisitSmallerThan: "2022-08-05",
+        })
+        .paginate();
+
+      // Assert
+      expect(queryResult.data).toHaveLength(2);
     });
   });
 });
