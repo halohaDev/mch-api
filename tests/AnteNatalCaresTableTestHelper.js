@@ -32,12 +32,13 @@ const AnteNatalCaresTableTestHelper = {
     midwifeId = "user-123",
     upperArmCircumference = 10,
     createdAt = "2021-08-21",
+    dateOfVisit = "2021-08-21",
   }) {
     const query = {
       text: `INSERT INTO ante_natal_cares (
-        id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, blood_sugar, hbsag, hiv, syphilis, maternal_history_id, jorong_id, midwife_id, upper_arm_circumference, created_at
+        id, weight, height, hemoglobin, blood_pressure, fundal_height, fetal_heart_rate, usg_check_date, temprature, action, blood_type, tt_imunization, contact_type, protein_in_urine, blood_sugar, hbsag, hiv, syphilis, maternal_history_id, jorong_id, midwife_id, upper_arm_circumference, created_at, date_of_visit
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24
       )`,
       values: [
         id,
@@ -63,6 +64,7 @@ const AnteNatalCaresTableTestHelper = {
         midwifeId,
         upperArmCircumference,
         createdAt,
+        dateOfVisit,
       ],
     };
 
