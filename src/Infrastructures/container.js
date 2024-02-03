@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { nanoid } = require("nanoid");
 const jwt = require("@hapi/jwt");
 const pool = require("./database/postgres/pool");
+const moment = require("moment");
 
 // service
 const UserRepositoryPostgres = require("./repository/UserRepositoryPostgres");
@@ -178,6 +179,9 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+        {
+          concrete: moment,
         },
       ],
     },
