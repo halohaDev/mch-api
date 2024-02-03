@@ -1,4 +1,5 @@
 const DomainBase = require("../../DomainBase");
+const ReportType = require("../../../Commons/constants/ReportType");
 
 class AddAnteNatalCareReport extends DomainBase {
   constructor(payload) {
@@ -54,7 +55,7 @@ class AddAnteNatalCareReport extends DomainBase {
       "hepatitisCheck",
       "hepatitisPositive",
     ]);
-    this.isRequired("reportType", "string");
+    this.isRequired("reportType", "containOf", Object.values(ReportType));
     this.isOptional("note", "string");
     this.isRequired("month", "number");
     this.isRequired("year", "number");
