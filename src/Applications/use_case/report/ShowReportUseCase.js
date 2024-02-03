@@ -1,13 +1,10 @@
 class ShowReportUseCase {
-  constructor({ reportRepositoryPostgres }) {
-    this._reportRepositoryPostgres = reportRepositoryPostgres;
+  constructor({ reportRepository }) {
+    this._reportRepository = reportRepository;
   }
 
   async execute(queryParams) {
-    const reports = await this._reportRepositoryPostgres.showReport(
-      queryParams
-    );
-
+    const reports = await this._reportRepository.showReport(queryParams);
     return reports;
   }
 }
