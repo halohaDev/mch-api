@@ -34,7 +34,7 @@ describe("HTTP server - reports", () => {
     await JorongTableTestHelper.addJorong({ id: "jorong-345" });
   });
 
-  describe.skip("when POST /api/v1/reports", () => {
+  describe("when POST /api/v1/reports", () => {
     it("should response 201 and persisted report", async () => {
       // Arrange
       const requestPayload = {
