@@ -34,7 +34,7 @@ describe("ShowReportUseCase", () => {
     const mockReportRepository = new ReportRepositoryPostgres();
     mockReportRepository.showReport = jest.fn(() => expectedReports);
     const showReportUseCase = new ShowReportUseCase({
-      reportRepositoryPostgres: mockReportRepository,
+      reportRepository: mockReportRepository,
     });
 
     // Action
