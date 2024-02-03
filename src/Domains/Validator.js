@@ -71,7 +71,18 @@ class Validator {
       this.#validateObject(value, schema);
     }
 
+    if (validator === "containOf") {
+      this.#validateContainOf(value, schema);
+    }
+
     this.#validatedOutput[this.#key] = value;
+  }
+
+  #validateContainOf(value, schema) {
+    if (!schema.includes(value)) {
+      const message = `${this.#key} is not valid`;
+      this.#pushErrors(this.#key, { message: message });
+    }
   }
 
   #validateDateFormat(date) {
