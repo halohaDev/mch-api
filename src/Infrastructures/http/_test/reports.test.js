@@ -31,6 +31,7 @@ describe("HTTP server - reports", () => {
     await UsersTableTestHelper.addUser({ id: "midwife-123" });
     await UsersTableTestHelper.addUser({ id: "user-123" });
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
+    await JorongTableTestHelper.addJorong({ id: "jorong-345" });
   });
 
   describe.skip("when POST /api/v1/reports", () => {
@@ -85,13 +86,25 @@ describe("HTTP server - reports", () => {
     });
   });
 
-  describe.skip("when GET /api/v1/reports", () => {
+  describe("when GET /api/v1/reports", () => {
+    beforeEach(async () => {
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+      });
+      await ReportsTableTestHelper.addReport({
+        id: "report-456",
+        month: "12",
+        year: "2020",
+      });
+      await ReportsTableTestHelper.addReport({
+        id: "report-789",
+        jorongId: "jorong-345",
+      });
+    });
+
     it("should response 200 and return all reports", async () => {
       // Arrange
-      await ReportsTableTestHelper.addReport({ id: "report-123" });
-      await ReportsTableTestHelper.addReport({ id: "report-456" });
-      await ReportsTableTestHelper.addReport({ id: "report-789" });
-
       const server = await createServer(container);
 
       // Action
@@ -105,6 +118,40 @@ describe("HTTP server - reports", () => {
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data.data).toHaveLength(3);
+    });
+
+    it("should response 200 and return filtered reports by jorongId", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/reports?jorongId=jorong-123",
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.data).toHaveLength(1);
+    });
+
+    it("should response 200 and return filtered reports by month & year", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/reports?month=12&year=2020",
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.data).toHaveLength(1);
     });
   });
 
