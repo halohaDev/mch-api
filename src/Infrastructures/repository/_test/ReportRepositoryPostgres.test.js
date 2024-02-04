@@ -216,7 +216,7 @@ describe("ReportRepository postgres implementation", () => {
     });
   });
 
-  describe("calculateAncReport function", () => {
+  describe("calculateAncReportJorongMonthly function", () => {
     it("should calculate correctly", async () => {
       // Arrange
       // create 20 users
@@ -358,11 +358,13 @@ describe("ReportRepository postgres implementation", () => {
 
       // Action
       const result =
-        await reportRepositoryPostgres.calculateAnteNatalCareReport({
-          jorongId: "jorong-123",
-          startDate: "2021-08-01",
-          endDate: "2021-08-31",
-        });
+        await reportRepositoryPostgres.calculateAnteNatalCareJorongMonthlyReport(
+          {
+            jorongId: "jorong-123",
+            startDate: "2021-08-01",
+            endDate: "2021-08-31",
+          }
+        );
 
       const firstResult = result[0];
 
@@ -409,6 +411,140 @@ describe("ReportRepository postgres implementation", () => {
         randomSyphilis.filter((syphilis) => syphilis === "positive").length
       );
       expect(firstResult.got_art).toEqual(0);
+    });
+  });
+
+  describe("calculateAnteNatalCarePuskesmasMonthlyReport function", () => {
+    it("should calculate correctly", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
+
+      // create 5 jorong
+      for (let i = 0; i < 5; i++) {
+        await JorongTableTestHelper.addJorong({ id: `jorong-${i}` });
+      }
+
+      // create report for each jorong
+      let hemoglobin_check = 0;
+      let anemia_less_than_8 = 0;
+      let anemia_between_8_and_11 = 0;
+      let lila_check = 0;
+      let kek = 0;
+      let protein_in_urine_check = 0;
+      let protein_in_urine_positive = 0;
+      let blood_sugar_check = 0;
+      let blood_sugar_more_than_140 = 0;
+      let come_with_hiv_positive = 0;
+      let hiv_check = 0;
+      let hiv_positive = 0;
+      let offered_hiv_test = 0;
+      let hepatitis_check = 0;
+      let hepatitis_positive = 0;
+      let syphilis_check = 0;
+      let syphilis_positive = 0;
+      let got_art = 0;
+
+      for (let i = 0; i < 5; i++) {
+        const randomHemoglobinCheck = randomNumber(1, 10);
+        const randomAnemiaLessThan8 = randomNumber(1, 10);
+        const randomAnemiaBetween8And11 = randomNumber(1, 10);
+        const randomLilaCheck = randomNumber(1, 10);
+        const randomKek = randomNumber(1, 10);
+        const randomProteinInUrineCheck = randomNumber(1, 10);
+        const randomProteinInUrinePositive = randomNumber(1, 10);
+        const randomBloodSugarCheck = randomNumber(1, 10);
+        const randomBloodSugarMoreThan140 = randomNumber(1, 10);
+        const randomComeWithHivPositive = randomNumber(1, 10);
+        const randomHivCheck = randomNumber(1, 10);
+        const randomHivPositive = randomNumber(1, 10);
+        const randomOfferedHivTest = randomNumber(1, 10);
+        const randomHepatitisCheck = randomNumber(1, 10);
+        const randomHepatitisPositive = randomNumber(1, 10);
+        const randomSyphilisCheck = randomNumber(1, 10);
+        const randomSyphilisPositive = randomNumber(1, 10);
+        const randomGotArt = randomNumber(1, 10);
+
+        hemoglobin_check += randomHemoglobinCheck;
+        anemia_less_than_8 += randomAnemiaLessThan8;
+        anemia_between_8_and_11 += randomAnemiaBetween8And11;
+        lila_check += randomLilaCheck;
+        kek += randomKek;
+        protein_in_urine_check += randomProteinInUrineCheck;
+        protein_in_urine_positive += randomProteinInUrinePositive;
+        blood_sugar_check += randomBloodSugarCheck;
+        blood_sugar_more_than_140 += randomBloodSugarMoreThan140;
+        come_with_hiv_positive += randomComeWithHivPositive;
+        hiv_check += randomHivCheck;
+        hiv_positive += randomHivPositive;
+        offered_hiv_test += randomOfferedHivTest;
+        hepatitis_check += randomHepatitisCheck;
+        hepatitis_positive += randomHepatitisPositive;
+        syphilis_check += randomSyphilisCheck;
+        syphilis_positive += randomSyphilisPositive;
+        got_art += randomGotArt;
+
+        await ReportTableTestHelper.addReport({
+          id: `report-${i}-jorong-${i}`,
+          midwifeId: "midwife-123",
+          jorongId: `jorong-${i}`,
+          data: {
+            hemoglobin_check: randomHemoglobinCheck,
+            anemia_less_than_8: randomAnemiaLessThan8,
+            anemia_between_8_and_11: randomAnemiaBetween8And11,
+            lila_check: randomLilaCheck,
+            kek: randomKek,
+            protein_in_urine_check: randomProteinInUrineCheck,
+            protein_in_urine_positive: randomProteinInUrinePositive,
+            blood_sugar_check: randomBloodSugarCheck,
+            blood_sugar_more_than_140: randomBloodSugarMoreThan140,
+            come_with_hiv_positive: randomComeWithHivPositive,
+            hiv_check: randomHivCheck,
+            hiv_positive: randomHivPositive,
+            offered_hiv_test: randomOfferedHivTest,
+            hepatitis_check: randomHepatitisCheck,
+            hepatitis_positive: randomHepatitisPositive,
+            syphilis_check: randomSyphilisCheck,
+            syphilis_positive: randomSyphilisPositive,
+            got_art: randomGotArt,
+          },
+          month: 8,
+          year: 2021,
+          reportType: "anc_jorong_monthly",
+          status: "approved",
+        });
+      }
+
+      // Action
+      const result =
+        await reportRepositoryPostgres.calculateAnteNatalCarePuskesmasMonthlyReport(
+          {
+            month: 8,
+            year: 2021,
+          }
+        );
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({
+        anemia_less_than_8: anemia_less_than_8,
+        anemia_between_8_and_11: anemia_between_8_and_11,
+        hemoglobin_check: hemoglobin_check,
+        protein_in_urine_positive: protein_in_urine_positive,
+        protein_in_urine_check: protein_in_urine_check,
+        blood_sugar_more_than_140: blood_sugar_more_than_140,
+        blood_sugar_check: blood_sugar_check,
+        come_with_hiv_positive: come_with_hiv_positive,
+        hiv_positive: hiv_positive,
+        offered_hiv_test: offered_hiv_test,
+        hiv_check: hiv_check,
+        hepatitis_positive: hepatitis_positive,
+        hepatitis_check: hepatitis_check,
+        syphilis_positive: syphilis_positive,
+        syphilis_check: syphilis_check,
+        lila_check: lila_check,
+        kek: kek,
+        got_art: got_art,
+      });
     });
   });
 });

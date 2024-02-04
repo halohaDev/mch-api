@@ -68,7 +68,7 @@ class ReportRepositoryPostgres extends ReportRepository {
     await this._pool.query(query);
   }
 
-  async calculateAnteNatalCareReport(queryParams) {
+  async calculateAnteNatalCareJorongMonthlyReport(queryParams) {
     const { jorongId, startDate, endDate } = queryParams;
 
     const selectQuery = `
@@ -111,6 +111,45 @@ class ReportRepositoryPostgres extends ReportRepository {
         GROUP BY ante_natal_cares.jorong_id
       `,
       values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
+  async calculateAnteNatalCarePuskesmasMonthlyReport(params) {
+    const month = params.month;
+    const year = params.year;
+
+    const textQuery = `
+      SELECT SUM((data->>'anemia_less_than_8')::integer)::integer AS anemia_less_than_8,
+      SUM((data->>'anemia_between_8_and_11')::integer)::integer AS anemia_between_8_and_11,
+      SUM((data->>'hemoglobin_check')::integer)::integer AS hemoglobin_check,
+      SUM((data->>'protein_in_urine_positive')::integer)::integer AS protein_in_urine_positive,
+      SUM((data->>'protein_in_urine_check')::integer)::integer AS protein_in_urine_check,
+      SUM((data->>'blood_sugar_more_than_140')::integer)::integer AS blood_sugar_more_than_140,
+      SUM((data->>'blood_sugar_check')::integer)::integer AS blood_sugar_check,
+      SUM((data->>'come_with_hiv_positive')::integer)::integer AS come_with_hiv_positive,
+      SUM((data->>'hiv_positive')::integer)::integer AS hiv_positive,
+      SUM((data->>'offered_hiv_test')::integer)::integer AS offered_hiv_test,
+      SUM((data->>'hiv_check')::integer)::integer AS hiv_check,
+      SUM((data->>'hepatitis_positive')::integer)::integer AS hepatitis_positive,
+      SUM((data->>'hepatitis_check')::integer)::integer AS hepatitis_check,
+      SUM((data->>'syphilis_positive')::integer)::integer AS syphilis_positive,
+      SUM((data->>'syphilis_check')::integer)::integer AS syphilis_check,
+      SUM((data->>'lila_check')::integer)::integer AS lila_check,
+      SUM((data->>'kek')::integer)::integer AS kek,
+      SUM((data->>'got_art')::integer)::integer AS got_art
+      FROM agg_report_data
+      WHERE month = $1 AND year = $2 AND report_type = 'anc_jorong_monthly'
+    `;
+
+    // squish the query into one line
+    const squishedQuery = textQuery.replace(/\s+/g, " ");
+    const query = {
+      text: squishedQuery,
+      values: [month, year],
     };
 
     const result = await this._pool.query(query);
