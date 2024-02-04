@@ -15,7 +15,11 @@ class ReportRepository {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateAnteNatalCareReport() {
+  async calculateAnteNatalCarePuskesmasMonthlyReport() {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async calculateAnteNatalCareJorongMonthlyReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
