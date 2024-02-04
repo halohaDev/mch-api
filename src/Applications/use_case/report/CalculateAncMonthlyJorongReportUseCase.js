@@ -1,4 +1,4 @@
-class CalculateAncReportUseCase {
+class CalculateAncMonthlyJorongReportUseCase {
   constructor({ reportRepository }) {
     this._reportRepository = reportRepository;
   }
@@ -48,4 +48,4 @@ class CalculateAncReportUseCase {
   }
 }
 
-module.exports = CalculateAncReportUseCase;
+module.exports = CalculateAncMonthlyJorongReportUseCase;

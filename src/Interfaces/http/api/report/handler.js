@@ -1,4 +1,4 @@
-const CalculateAncReportUseCase = require("../../../../Applications/use_case/report/CalculateAncReportUseCase");
+const CalculateAncMonthlyJorongReportUseCase = require("../../../../Applications/use_case/report/CalculateAncMonthlyJorongReportUseCase");
 const ShowReportUseCase = require("../../../../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../../../../Applications/use_case/report/AddReportUseCase");
 
@@ -12,14 +12,15 @@ class ReportHandler {
   }
 
   async calculateReportHandler(request, h) {
-    const calculateAncReportUseCase = this._container.getInstance(
-      CalculateAncReportUseCase.name
+    const calculateMonthlyJorongAnc = this._container.getInstance(
+      CalculateAncMonthlyJorongReportUseCase.name
     );
 
     const { reportType } = request.params;
     let report;
+
     if (reportType === "anc") {
-      const ancReport = await calculateAncReportUseCase.execute(request.query);
+      const ancReport = await calculateMonthlyJorongAnc.execute(request.query);
       report = ancReport;
     }
 

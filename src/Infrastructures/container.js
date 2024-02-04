@@ -47,7 +47,7 @@ const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase"
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
 const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 const ShowAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/ShowAnteNatalCareUseCase");
-const CalculateAncReportUseCase = require("../Applications/use_case/report/CalculateAncReportUseCase");
+const CalculateAncMonthlyJorongReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyJorongReportUseCase");
 const ShowReportUseCase = require("../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCase");
 
@@ -233,8 +233,8 @@ container.register([
     },
   },
   {
-    key: CalculateAncReportUseCase.name,
-    Class: CalculateAncReportUseCase,
+    key: CalculateAncMonthlyJorongReportUseCase.name,
+    Class: CalculateAncMonthlyJorongReportUseCase,
     parameter: {
       injectType: "destructuring",
       dependencies: [

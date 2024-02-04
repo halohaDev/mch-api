@@ -1,7 +1,7 @@
-const CalculateAncReportUseCase = require("../CalculateAncReportUseCase");
+const CalculateAncMonthlyJorongReportUseCase = require("../CalculateAncMonthlyJorongReportUseCase");
 const ReportRepository = require("../../../../Domains/report/ReportRepository");
 
-describe("CalculateAncReportUseCase", () => {
+describe("CalculateAncMonthlyJorongReportUseCase", () => {
   it("should orchestrating the calculate anc report action correctly", async () => {
     // Arrange
     const useCasePayload = {
@@ -22,7 +22,7 @@ describe("CalculateAncReportUseCase", () => {
         })
       );
 
-    const getAncReportUseCase = new CalculateAncReportUseCase({
+    const getAncReportUseCase = new CalculateAncMonthlyJorongReportUseCase({
       reportRepository: mockReportRepository,
     });
 
@@ -62,7 +62,7 @@ describe("CalculateAncReportUseCase", () => {
         })
       );
 
-    const getAncReportUseCase = new CalculateAncReportUseCase({
+    const getAncReportUseCase = new CalculateAncMonthlyJorongReportUseCase({
       reportRepository: mockReportRepository,
     });
 
@@ -109,7 +109,7 @@ describe("CalculateAncReportUseCase", () => {
         })
       );
 
-    const getAncReportUseCase = new CalculateAncReportUseCase({
+    const getAncReportUseCase = new CalculateAncMonthlyJorongReportUseCase({
       reportRepository: mockReportRepository,
     });
 
@@ -147,7 +147,7 @@ describe("CalculateAncReportUseCase", () => {
         })
       );
 
-    const getAncReportUseCase = new CalculateAncReportUseCase({
+    const getAncReportUseCase = new CalculateAncMonthlyJorongReportUseCase({
       reportRepository: mockReportRepository,
     });
 
