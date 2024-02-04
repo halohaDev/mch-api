@@ -5,27 +5,17 @@ class AddAnteNatalCareReport extends DomainBase {
   constructor(payload) {
     super(payload);
 
-    const {
-      midwifeId,
-      jorongId,
-      approvedBy,
-      data,
-      reportType,
-      approvedAt,
-      status,
-      note,
-      month,
-      year,
-    } = this.output();
+    const { midwifeId, jorongId, data, reportType, month, year } =
+      this.output();
 
     this.midwifeId = midwifeId;
     this.jorongId = jorongId;
-    this.approvedBy = approvedBy;
+    this.approvedBy = null;
     this.data = data;
     this.reportType = reportType;
-    this.approvedAt = approvedAt;
-    this.status = status;
-    this.note = note;
+    this.approvedAt = null;
+    this.status = "draft";
+    this.note = null;
     this.month = month;
     this.year = year;
   }

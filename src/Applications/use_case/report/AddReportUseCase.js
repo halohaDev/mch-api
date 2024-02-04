@@ -9,22 +9,40 @@ class AddReportUseCase {
 
   async execute(useCasePayload) {
     const reportType = useCasePayload.reportType;
+    const report = this._getReportData(reportType, useCasePayload);
 
-    const ancTypes = [
-      ReportType.ANC_JORONG_MONTHLY,
-      ReportType.ANC_JORONG_YEARLY,
-      ReportType.ANC_PUSKESMAS_MONTHLY,
-      ReportType.ANC_PUSKESMAS_YEARLY,
-    ];
-
-    if (ancTypes.includes(reportType)) {
-      const report = new AddAnteNatalCareReport(useCasePayload);
-      return this._reportRepository.addReport(report);
-    }
-
-    if (!report) {
+    if (report == null || report == undefined) {
       throw new UnprocessableError("Report type not found");
     }
+
+    return await this._reportRepository.addReport(report);
+  }
+
+  _getReportData(reportType, useCasePayload) {
+    if (reportType == undefined) {
+      return null;
+    }
+
+    const reportData = {
+      [ReportType.ANC_JORONG_MONTHLY]: new AddAnteNatalCareReport(
+        useCasePayload
+      ),
+      [ReportType.ANC_JORONG_YEARLY]: new AddAnteNatalCareReport(
+        useCasePayload
+      ),
+      [ReportType.ANC_PUSKESMAS_MONTHLY]: new AddAnteNatalCareReport(
+        useCasePayload
+      ),
+      [ReportType.ANC_PUSKESMAS_YEARLY]: new AddAnteNatalCareReport(
+        useCasePayload
+      ),
+    };
+
+    if (reportData[reportType] == null) {
+      return null;
+    }
+
+    return reportData[reportType];
   }
 }
 

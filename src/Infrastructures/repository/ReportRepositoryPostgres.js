@@ -33,7 +33,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     await this._pool.query(query);
 
-    return id;
+    return { id: id };
   }
 
   async showReport(queryParams) {
