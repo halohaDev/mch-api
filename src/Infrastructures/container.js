@@ -49,6 +49,7 @@ const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/Add
 const ShowAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/ShowAnteNatalCareUseCase");
 const CalculateAncReportUseCase = require("../Applications/use_case/report/CalculateAncReportUseCase");
 const ShowReportUseCase = require("../Applications/use_case/report/ShowReportUseCase");
+const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCase");
 
 const container = createContainer();
 
@@ -205,6 +206,19 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: AddReportUseCase.name,
+    Class: AddReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: ShowReportUseCase.name,
     Class: ShowReportUseCase,

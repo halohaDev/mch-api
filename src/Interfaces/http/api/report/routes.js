@@ -9,6 +9,11 @@ const routes = (handler) => [
     path: "/api/v1/reports",
     handler: handler.getReportHandler,
   },
+  {
+    method: "POST",
+    path: "/api/v1/reports",
+    handler: handler.addReportHandler,
+  },
 ];
 
 module.exports = routes;
