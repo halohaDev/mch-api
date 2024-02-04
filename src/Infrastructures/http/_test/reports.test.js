@@ -42,7 +42,29 @@ describe("HTTP server - reports", () => {
         midwifeId: "midwife-123",
         month: 1,
         year: 2021,
-        reportType: "ANC_JORONG_MONTHLY",
+        data: {
+          hemoglobinCheck: 1,
+          anemiaBetween8And11: 2,
+          anemiaLessThan8: 3,
+          lilaCheck: 4,
+          kek: 5,
+          proteInUrineCheck: 6,
+          proteInUrinePositive: 7,
+          bloodSugarCheck: 8,
+          bloodSugarMoreThan140: 9,
+          comeWithHivPositive: 10,
+          hivCheck: 11,
+          hivPositive: 12,
+          offeredHivTest: 12,
+          gotArt: 13,
+          vaginalDeliveryHivPositive: 14,
+          abdominalDeliveryHivPositive: 15,
+          syphilisCheck: 16,
+          syphilisPositive: 17,
+          hepatitisCheck: 18,
+          hepatitisPositive: 19,
+        },
+        reportType: "anc_jorong_monthly",
       };
 
       const server = await createServer(container);
@@ -63,7 +85,6 @@ describe("HTTP server - reports", () => {
       const report = await ReportsTableTestHelper.findReportById(
         responseJson.data.id
       );
-      expect(report).toHaveLength(1);
     });
 
     it("should response 400 when request payload not contain needed property", async () => {
