@@ -12,7 +12,7 @@ describe("CalculateAncReportUseCase", () => {
 
     const mockReportRepository = new ReportRepository();
 
-    mockReportRepository.calculateAnteNatalCareReport = jest
+    mockReportRepository.calculateAnteNatalCareJorongMonthlyReport = jest
       .fn()
       .mockImplementation(() =>
         Promise.resolve({
@@ -35,7 +35,9 @@ describe("CalculateAncReportUseCase", () => {
       anemia_between_8_and_11: 0,
       blood_sugar_check: 0,
     });
-    expect(mockReportRepository.calculateAnteNatalCareReport).toBeCalledWith({
+    expect(
+      mockReportRepository.calculateAnteNatalCareJorongMonthlyReport
+    ).toBeCalledWith({
       jorongId: "jorong-123",
       startDate: new Date(2021, 0, 1),
       endDate: new Date(2021, 1, 0),
@@ -50,7 +52,7 @@ describe("CalculateAncReportUseCase", () => {
 
     const mockReportRepository = new ReportRepository();
 
-    mockReportRepository.calculateAnteNatalCareReport = jest
+    mockReportRepository.calculateAnteNatalCareJorongMonthlyReport = jest
       .fn()
       .mockImplementation(() =>
         Promise.resolve({
@@ -79,7 +81,9 @@ describe("CalculateAncReportUseCase", () => {
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1);
 
-    expect(mockReportRepository.calculateAnteNatalCareReport).toBeCalledWith({
+    expect(
+      mockReportRepository.calculateAnteNatalCareJorongMonthlyReport
+    ).toBeCalledWith({
       jorongId: "jorong-123",
       startDate,
       endDate,
@@ -95,7 +99,7 @@ describe("CalculateAncReportUseCase", () => {
 
     const mockReportRepository = new ReportRepository();
 
-    mockReportRepository.calculateAnteNatalCareReport = jest
+    mockReportRepository.calculateAnteNatalCareJorongMonthlyReport = jest
       .fn()
       .mockImplementation(() =>
         Promise.resolve({
@@ -119,7 +123,9 @@ describe("CalculateAncReportUseCase", () => {
       blood_sugar_check: 0,
     });
 
-    expect(mockReportRepository.calculateAnteNatalCareReport).toBeCalled();
+    expect(
+      mockReportRepository.calculateAnteNatalCareJorongMonthlyReport
+    ).toBeCalled();
   });
 
   it("should orchestrating the calculate anc report action correctly when month not provided", async () => {
@@ -131,7 +137,7 @@ describe("CalculateAncReportUseCase", () => {
 
     const mockReportRepository = new ReportRepository();
 
-    mockReportRepository.calculateAnteNatalCareReport = jest
+    mockReportRepository.calculateAnteNatalCareJorongMonthlyReport = jest
       .fn()
       .mockImplementation(() =>
         Promise.resolve({
@@ -154,7 +160,9 @@ describe("CalculateAncReportUseCase", () => {
       anemia_between_8_and_11: 0,
       blood_sugar_check: 0,
     });
-    expect(mockReportRepository.calculateAnteNatalCareReport).toBeCalledWith({
+    expect(
+      mockReportRepository.calculateAnteNatalCareJorongMonthlyReport
+    ).toBeCalledWith({
       jorongId: "jorong-123",
       startDate: new Date(2021, 0, 1),
       endDate: new Date(2021, 12, 0),
