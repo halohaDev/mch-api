@@ -129,7 +129,6 @@ describe("a AnteNatalCareReport entities", () => {
         hepatitisCheck: 18,
         hepatitisPositive: 19,
       },
-      note: "note",
       month: 8,
       year: 2021,
       reportType: "anc_jorong_monthly",
@@ -198,8 +197,8 @@ describe("a AnteNatalCareReport entities", () => {
       AnteNatalCareReportInstance.data.abdominalDeliveryHivPositive
     ).toEqual(payload.data.abdominalDeliveryHivPositive);
     expect(AnteNatalCareReportInstance.reportType).toEqual(payload.reportType);
-    expect(AnteNatalCareReportInstance.note).toEqual(payload.note);
     expect(AnteNatalCareReportInstance.month).toEqual(payload.month);
     expect(AnteNatalCareReportInstance.year).toEqual(payload.year);
+    expect(AnteNatalCareReportInstance.status).toEqual("draft");
   });
 });
