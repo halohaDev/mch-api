@@ -3,13 +3,13 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  pgm.alterColumn("reports", "jorong_id", {
+  pgm.alterColumn("agg_report_data", "jorong_id", {
     notNull: false,
   });
 };
 
 exports.down = (pgm) => {
-  pgm.alterColumn("reports", "jorong_id", {
+  pgm.alterColumn("agg_report_data", "jorong_id", {
     notNull: true,
   });
 };
