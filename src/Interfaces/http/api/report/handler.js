@@ -1,4 +1,5 @@
 const CalculateAncMonthlyJorongReportUseCase = require("../../../../Applications/use_case/report/CalculateAncMonthlyJorongReportUseCase");
+const CalculateAncMonthlyPuskesmasReportUseCase = require("../../../../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
 const ShowReportUseCase = require("../../../../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../../../../Applications/use_case/report/AddReportUseCase");
 
@@ -12,17 +13,20 @@ class ReportHandler {
   }
 
   async calculateReportHandler(request, h) {
-    const calculateMonthlyJorongAnc = this._container.getInstance(
-      CalculateAncMonthlyJorongReportUseCase.name
-    );
+    // create key value hash that can be acceessed by the reportType
+    const calculatorTypes = {
+      "anc-monthly-jorong": CalculateAncMonthlyJorongReportUseCase.name,
+      "anc-monthly-puskesmas": CalculateAncMonthlyPuskesmasReportUseCase.name,
+    };
 
     const { reportType } = request.params;
-    let report;
+    const calculatorUseCaseName = calculatorTypes[reportType];
 
-    if (reportType === "anc") {
-      const ancReport = await calculateMonthlyJorongAnc.execute(request.query);
-      report = ancReport;
-    }
+    const calculatorUseCase = this._container.getInstance(
+      calculatorUseCaseName
+    );
+
+    const report = await calculatorUseCase.execute(request.query);
 
     const response = h.response({
       status: "success",
