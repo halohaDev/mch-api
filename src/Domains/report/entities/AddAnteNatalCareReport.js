@@ -22,7 +22,7 @@ class AddAnteNatalCareReport extends DomainBase {
 
   _verifyPayload() {
     this.isRequired("midwifeId", "string");
-    this.isRequired("jorongId", "string");
+    this.isOptional("jorongId", "string");
     this.isRequired("data", "object", [
       "hemoglobinCheck",
       "anemiaBetween8And11",
