@@ -156,6 +156,61 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     return result.rows;
   }
+
+  async calculateLbJorongMonthlyReport(params) {
+    const month = params.month;
+    const year = params.year;
+
+    const textQuery = `
+      SELECT
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type != 'c0' THEN maternal_histories.id END)::integer AS anc_visits,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' THEN maternal_histories.id END)::integer AS c1_visits,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.date_of_visit BETWEEN maternal_histories.edd AND DATE_ADD(maternal_histories.edd, INTERVAL 3 MONTH) THEN maternal_histories.id END)::integer AS first_trimester_visits,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' THEN maternal_histories.id END)::integer AS c4_visits,
+        COUNT(DISTINCT CASE WHEN EXTRACT(YEAR FROM AGE (CURRENT_TIMESTAMP, maternals.date_of_birth)) < 19 THEN maternal_histories.id END)::integer AS young_mothers,
+        COUNT(DISTINCT CASE WHEN EXTRACT(YEAR FROM AGE (CURRENT_TIMESTAMP, maternals.date_of_birth)) > 35 THEN maternal_histories.id END)::integer AS old_mothers,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND upper_arm_circumference IS NOT NULL THEN maternal_histories.id END)::integer AS c1_lila_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND upper_arm_circumference < 23.5 THEN maternal_histories.id END)::integer AS c1_kek,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND hemoglobin IS NOT NULL THEN maternal_histories.id END)::integer AS c1_hemoglobin_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND hemoglobin < 11 THEN maternal_histories.id END)::integer AS c1_anemia_less_than_11,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND protein_in_urine IS NOT NULL THEN maternal_histories.id END)::integer AS c1_protein_in_urine_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c1' AND protein_in_urine = 'positive' THEN maternal_histories.id END)::integer AS c1_protein_in_urine_positive,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND upper_arm_circumference IS NOT NULL THEN maternal_histories.id END)::integer AS c4_lila_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND upper_arm_circumference < 23.5 THEN maternal_histories.id END)::integer AS c4_kek,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND hemoglobin IS NOT NULL THEN maternal_histories.id END)::integer AS c4_hemoglobin_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND hemoglobin < 11 THEN maternal_histories.id END)::integer AS c4_anemia_less_than_11,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND protein_in_urine IS NOT NULL THEN maternal_histories.id END)::integer AS c4_protein_in_urine_check,
+        COUNT(DISTINCT CASE WHEN ante_natal_cares.contact_type = 'c4' AND protein_in_urine = 'positive' THEN maternal_histories.id END)::integer AS c4_protein_in_urine_positive,
+        COUNT(DISTINCT CASE WHEN upper_arm_circumference IS NOT NULL THEN maternal_histories.id END)::integer AS lila_check,
+        COUNT(DISTINCT CASE WHEN upper_arm_circumference < 23.5 THEN maternal_histories.id END)::integer AS kek,
+        COUNT(DISTINCT CASE WHEN hemoglobin IS NOT NULL THEN maternal_histories.id END)::integer AS hemoglobin_check,
+        COUNT(DISTINCT CASE WHEN hemoglobin < 11 THEN maternal_histories.id END)::integer AS anemia_less_than_11,
+        COUNT(DISTINCT CASE WHEN protein_in_urine IS NOT NULL THEN maternal_histories.id END)::integer AS protein_in_urine_check,
+        COUNT(DISTINCT CASE WHEN protein_in_urine = 'positive' THEN maternal_histories.id END)::integer AS protein_in_urine_positive,
+        COUNT(DISTINCT CASE WHEN hiv = 'positive' OR hiv = 'negative' THEN maternal_history_id END)::integer AS hiv_check,
+        COUNT(DISTINCT CASE WHEN hiv = 'positive' THEN maternal_history_id END)::integer AS hiv_positive,
+        COUNT(DISTINCT CASE WHEN syphilis = 'positive' THEN maternal_history_id END)::integer AS syphilis_positive,
+        COUNT(DISTINCT CASE WHEN syphilis IS NOT NULL THEN maternal_history_id END)::integer AS syphilis_check,
+        COUNT(DISTINCT CASE WHEN hbsag = 'positive' THEN maternal_history_id END)::integer AS hepatitis_positive,
+        COUNT(DISTINCT CASE WHEN hbsag IS NOT NULL THEN maternal_history_id END)::integer AS hepatitis_check
+      FROM ante_natal_cares
+      JOIN maternal_histories ON ante_natal_cares.maternal_history_id = maternal_histories.id
+      JOIN maternals ON maternal_histories.maternal_id = maternals.id
+      WHERE month = $1 AND year = $2 AND 
+      GROUP BY maternal_histories.id
+    `;
+
+    // squish the query into one line
+    const squishedQuery = textQuery.replace(/\s+/g, " ");
+    const query = {
+      text: squishedQuery,
+      values: [month, year],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
 }
 
 module.exports = ReportRepositoryPostgres;

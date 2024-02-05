@@ -24,5 +24,9 @@ describe("ReportRepository interface", () => {
     await expect(
       reportRepository.calculateAnteNatalCarePuskesmasMonthlyReport({})
     ).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+
+    await expect(
+      reportRepository.calculateLbJorongMonthlyReport({})
+    ).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });

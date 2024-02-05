@@ -22,6 +22,10 @@ class ReportRepository {
   async calculateAnteNatalCareJorongMonthlyReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async calculateLbJorongMonthlyReport() {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = ReportRepository;
