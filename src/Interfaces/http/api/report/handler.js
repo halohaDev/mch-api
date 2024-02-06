@@ -2,6 +2,7 @@ const CalculateAncMonthlyJorongReportUseCase = require("../../../../Applications
 const CalculateAncMonthlyPuskesmasReportUseCase = require("../../../../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
 const ShowReportUseCase = require("../../../../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../../../../Applications/use_case/report/AddReportUseCase");
+const UpdateReportStatusUseCase = require("../../../../Applications/use_case/report/UpdateReportStatusUseCase");
 
 class ReportHandler {
   constructor(container) {
@@ -10,6 +11,7 @@ class ReportHandler {
     this.calculateReportHandler = this.calculateReportHandler.bind(this);
     this.getReportHandler = this.getReportHandler.bind(this);
     this.addReportHandler = this.addReportHandler.bind(this);
+    this.updateReportHandler = this.updateReportHandler.bind(this);
   }
 
   async calculateReportHandler(request, h) {
@@ -62,6 +64,20 @@ class ReportHandler {
     });
 
     response.code(201);
+    return response;
+  }
+
+  async updateReportHandler(request, h) {
+    const report = await this._container
+      .getInstance(UpdateReportStatusUseCase.name)
+      .execute(request.params.id, request.payload);
+
+    const response = h.response({
+      status: "success",
+      data: report,
+    });
+
+    response.code(200);
     return response;
   }
 }

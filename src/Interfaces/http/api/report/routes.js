@@ -14,6 +14,11 @@ const routes = (handler) => [
     path: "/api/v1/reports",
     handler: handler.addReportHandler,
   },
+  {
+    method: "PATCH",
+    path: "/api/v1/reports/{id}/status",
+    handler: handler.updateReportHandler,
+  },
 ];
 
 module.exports = routes;

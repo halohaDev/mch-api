@@ -522,4 +522,34 @@ describe("HTTP server - reports", () => {
       });
     });
   });
+
+  describe("when PATCH /api/v1/reports/{id}/status", () => {
+    it("should response 200 and update status", async () => {
+      // Arrange
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "PATCH",
+        url: "/api/v1/reports/report-123/status",
+        payload: {
+          status: "approved",
+          note: "note",
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+
+      const report = await ReportsTableTestHelper.findReportById("report-123");
+      expect(report.status).toEqual("approved");
+    });
+  });
 });

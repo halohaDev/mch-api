@@ -51,6 +51,7 @@ const CalculateAncMonthlyJorongReportUseCase = require("../Applications/use_case
 const ShowReportUseCase = require("../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCase");
 const CalculateAncMonthlyPuskesmasReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
+const UpdateReportStatusUseCase = require("../Applications/use_case/report/UpdateReportStatusUseCase");
 
 const container = createContainer();
 
@@ -207,6 +208,19 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: UpdateReportStatusUseCase.name,
+    Class: UpdateReportStatusUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: CalculateAncMonthlyPuskesmasReportUseCase.name,
     Class: CalculateAncMonthlyPuskesmasReportUseCase,
