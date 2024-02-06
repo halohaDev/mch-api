@@ -2,10 +2,11 @@ const AnteNatalCareRepository = require("../../Domains/ante_natal/AnteNatalCareR
 const AnteNatalCareQuery = require("../queries/AnteNatalCareQuery");
 
 class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, moment) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._moment = moment;
     this._anteNatalCareQuery = new AnteNatalCareQuery({ pool });
   }
 
@@ -70,11 +71,58 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
   }
 
   async showAnteNatalCares(queryParams) {
+    const params = this._buildQueryParams(queryParams);
+
     const queryResult = await this._anteNatalCareQuery
-      .wheres(queryParams)
+      .wheres(params)
       .paginate();
 
     return queryResult;
+  }
+
+  _buildQueryParams(queryParams) {
+    if (queryParams === undefined) {
+      return {};
+    }
+
+    const dateRanges = this._getStartDateEndEndDate(
+      queryParams.month,
+      queryParams.year
+    );
+
+    if (dateRanges) {
+      const { startDate, endDate } = dateRanges;
+
+      // parsing date to string
+      queryParams.dateOfVisitBiggerThan = startDate.toISOString();
+      queryParams.dateOfVisitSmallerThan = endDate.toISOString();
+    }
+
+    return queryParams;
+  }
+
+  _getStartDateEndEndDate(month, year) {
+    if (!month && !year) {
+      return;
+    }
+
+    if (!month && year) {
+      const startDate = this._moment(`${year}-01-01`, "YYYY-MM-DD")
+        .startOf("year")
+        .toDate();
+
+      const endDate = this._moment(startDate).endOf("year").toDate();
+
+      return { startDate, endDate };
+    }
+
+    const startDate = this._moment(`${year}-${month}-01`, "YYYY-MM-DD")
+      .startOf("month")
+      .toDate();
+
+    const endDate = this._moment(startDate).endOf("month").toDate();
+
+    return { startDate, endDate };
   }
 }
 

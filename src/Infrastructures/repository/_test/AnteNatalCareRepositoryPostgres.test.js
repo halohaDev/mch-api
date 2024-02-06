@@ -1,4 +1,5 @@
 const pool = require("../../database/postgres/pool");
+const moment = require("moment");
 const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
 const AnteNatalCareRepositoryPostgres = require("../AnteNatalCareRepositoryPostgres");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
@@ -102,27 +103,11 @@ describe("AnteNatalCareRepositoryPostgres", () => {
   });
 
   describe("showAnteNatalCare function", () => {
-    it("should return ante natal care data correctly", async () => {
-      // Arrange
-      const anteNatalCareRepositoryPostgres =
-        new AnteNatalCareRepositoryPostgres(pool, {});
-
-      // Action
-      const anteNatalCares =
-        await anteNatalCareRepositoryPostgres.showAnteNatalCares();
-
-      // Assert
-      expect(anteNatalCares.data).toHaveLength(0);
-    });
-
-    it("should filter data correctly", async () => {
-      // Arrange
-      const anteNatalCareRepositoryPostgres =
-        new AnteNatalCareRepositoryPostgres(pool, {});
-
+    beforeEach(async () => {
       await AnteNatalCareTableTestHelper.addAnteNatalCare({
         maternalHistoryId: "maternal-history-123",
         id: "ante-natal-care-123",
+        dateOfVisit: "2021-09-01",
       });
 
       await AnteNatalCareTableTestHelper.addAnteNatalCare({
@@ -138,7 +123,27 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       await AnteNatalCareTableTestHelper.addAnteNatalCare({
         maternalHistoryId: "maternal-history-345",
         id: "ante-natal-care-345",
+        dateOfVisit: "2022-09-01",
       });
+    });
+
+    it("should return ante natal care data correctly", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {}, moment);
+
+      // Action
+      const anteNatalCares =
+        await anteNatalCareRepositoryPostgres.showAnteNatalCares();
+
+      // Assert
+      expect(anteNatalCares.data).toHaveLength(3);
+    });
+
+    it("should filter data correctly", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {});
 
       // Action
       const anteNatalCares =
@@ -152,6 +157,37 @@ describe("AnteNatalCareRepositoryPostgres", () => {
       expect(anteNatalCares.data[0]).toHaveProperty("contact_type");
       expect(anteNatalCares.data[0]).toHaveProperty("weight");
       expect(anteNatalCares.data[0]).toHaveProperty("height");
+    });
+
+    it("should filter data correctly using month and year", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {}, moment);
+
+      // Action
+      const anteNatalCares =
+        await anteNatalCareRepositoryPostgres.showAnteNatalCares({
+          month: "09",
+          year: "2021",
+        });
+
+      // Assert
+      expect(anteNatalCares.data).toHaveLength(1);
+    });
+
+    it("should return data correctly using only year", async () => {
+      // Arrange
+      const anteNatalCareRepositoryPostgres =
+        new AnteNatalCareRepositoryPostgres(pool, {}, moment);
+
+      // Action
+      const anteNatalCares =
+        await anteNatalCareRepositoryPostgres.showAnteNatalCares({
+          year: "2022",
+        });
+
+      // Assert
+      expect(anteNatalCares.data).toHaveLength(1);
     });
   });
 });

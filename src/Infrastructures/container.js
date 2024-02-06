@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { nanoid } = require("nanoid");
 const jwt = require("@hapi/jwt");
 const pool = require("./database/postgres/pool");
+const moment = require("moment");
 
 // service
 const UserRepositoryPostgres = require("./repository/UserRepositoryPostgres");
@@ -17,6 +18,7 @@ const PlacementRepositoryPostgres = require("./repository/PlacementRepositoryPos
 const MaternalRepositoryPostgres = require("./repository/MaternalRepositoryPostgres");
 const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepositoryPostgres");
 const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
+const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -31,6 +33,7 @@ const PlacementRepository = require("../Domains/placements/PlacementRepository")
 const MaternalRepository = require("../Domains/maternal/MaternalRepository");
 const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
+const ReportRepository = require("../Domains/report/ReportRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -44,10 +47,29 @@ const ShowAllUserUseCase = require("../Applications/use_case/ShowAllUserUseCase"
 const MaternalUseCase = require("../Applications/use_case/MaternalUseCase");
 const AddAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 const ShowAnteNatalCareUseCase = require("../Applications/use_case/ante_natal/ShowAnteNatalCareUseCase");
+const CalculateAncMonthlyJorongReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyJorongReportUseCase");
+const ShowReportUseCase = require("../Applications/use_case/report/ShowReportUseCase");
+const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCase");
+const CalculateAncMonthlyPuskesmasReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
+const UpdateReportStatusUseCase = require("../Applications/use_case/report/UpdateReportStatusUseCase");
 
 const container = createContainer();
 
 container.register([
+  {
+    key: ReportRepository.name,
+    Class: ReportRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
   {
     key: UserRepository.name,
     Class: UserRepositoryPostgres,
@@ -162,6 +184,9 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: moment,
+        },
       ],
     },
   },
@@ -183,6 +208,71 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: UpdateReportStatusUseCase.name,
+    Class: UpdateReportStatusUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateAncMonthlyPuskesmasReportUseCase.name,
+    Class: CalculateAncMonthlyPuskesmasReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddReportUseCase.name,
+    Class: AddReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: ShowReportUseCase.name,
+    Class: ShowReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateAncMonthlyJorongReportUseCase.name,
+    Class: CalculateAncMonthlyJorongReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: ShowAnteNatalCareUseCase.name,
     Class: ShowAnteNatalCareUseCase,
@@ -317,6 +407,10 @@ container.register([
         {
           name: "userRepository",
           internal: UserRepository.name,
+        },
+        {
+          name: "randomGenerator",
+          concrete: nanoid,
         },
       ],
     },

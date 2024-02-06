@@ -39,14 +39,8 @@ class BaseQuery {
 
     this.finalizeSQL();
 
-    const query = {
-      text: this.finalSQL,
-      values: this._finalObject.values,
-    };
+    const values = this._finalObject.values;
 
-    const results = await this._pool.query(query);
-
-    // reset this class state
     this._finalObject = {
       select: "*",
       where: "",
@@ -55,6 +49,13 @@ class BaseQuery {
       joins: "",
       currentIndex: 0,
     };
+
+    const query = {
+      text: this.finalSQL,
+      values: values,
+    };
+
+    const results = await this._pool.query(query);
 
     this._page = 1;
     this._perPage = 100;
@@ -74,7 +75,6 @@ class BaseQuery {
     }
 
     Object.keys(params).forEach((param) => {
-      this._finalObject.currentIndex += 1;
       const methodName = `getBy${
         param.charAt(0).toUpperCase() + param.slice(1)
       }`;
@@ -92,7 +92,7 @@ class BaseQuery {
       const [query, value] = result;
       const paramizeQuery = query.replace(
         /\?/g,
-        `$${this._finalObject.currentIndex}`
+        `$${++this._finalObject.currentIndex}`
       );
 
       whereSQL.push(paramizeQuery);

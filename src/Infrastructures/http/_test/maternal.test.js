@@ -89,12 +89,11 @@ describe("HTTP server - maternal", () => {
   });
 
   describe("when POST /api/v1/maternals/user", () => {
-    it("should response 200 and presist user and maternal", async () => {
+    it("should response 201 and presist user and maternal", async () => {
       // Arrange
       const useCasePayload = {
         name: "User test",
         email: "test@mail.com",
-        password: "secret",
         role: "mother",
         nik: "1234567890123456",
         phoneNumber: "081234567890",
@@ -131,6 +130,50 @@ describe("HTTP server - maternal", () => {
         responseJson.data.id
       );
       expect(maternal).toBeDefined();
+
+      const user = await UsersTableTestHelper.findUserById(maternal.user_id);
+      expect(user).toBeDefined();
+    });
+
+    it("should resposne 201 and presist user and maternal with random password", async () => {
+      // Arrange
+      const useCasePayload = {
+        name: "User test",
+        email: "test@mail.com",
+        password: "secret",
+        role: "mother",
+        nik: "1234567890123456",
+        phoneNumber: "081234567890",
+        address: "Jalan jalan",
+        birthplace: "Padang",
+        jobTitle: "IRT",
+        dateOfBirth: "2021-08-22",
+        religion: "Islam",
+        isActiveBpjs: true,
+        bpjsKesehatanNumber: "1234567890123456",
+        menarcheDate: "2021-08-22",
+        maritalDate: "2021-08-22",
+        numberOfMarriage: "1",
+        maritalStatus: "single",
+        jorongId: "jorong-123",
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternals/user",
+        payload: useCasePayload,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+
+      const maternal = await MaternalTableTestHelper.findMaternalById(
+        responseJson.data.id
+      );
 
       const user = await UsersTableTestHelper.findUserById(maternal.user_id);
       expect(user).toBeDefined();
