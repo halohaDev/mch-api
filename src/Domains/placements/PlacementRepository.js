@@ -1,10 +1,14 @@
 class PlacementRepository {
   async addPlacement() {
-    throw new Error('PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    throw new Error("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
   async findPlacementByIds() {
-    throw new Error('PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    throw new Error("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getPlacementByUserId() {
+    throw new Error("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
 
