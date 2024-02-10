@@ -13,7 +13,7 @@ describe("PlacementRepository interface", () => {
       placementRepository.findPlacementByIds("")
     ).rejects.toThrowError("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
     await expect(
-      placementRepository.getPlacementByUserId("")
+      placementRepository.getPlacementByMidwifeId("")
     ).rejects.toThrowError("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });

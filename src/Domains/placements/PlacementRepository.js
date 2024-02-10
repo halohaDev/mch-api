@@ -7,7 +7,7 @@ class PlacementRepository {
     throw new Error("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async getPlacementByUserId() {
+  async getPlacementByMidwifeId() {
     throw new Error("PLACEMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
