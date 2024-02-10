@@ -270,5 +270,25 @@ describe("HTTP server - authentications", () => {
       expect(responseJson.data.role).toEqual("admin");
       expect(responseJson.data.placements).toHaveLength(1);
     });
+
+    it("should response 404 if user not found", async () => {
+      // Arrange
+      const server = await createServer(container);
+      token = await authenticateUser("user-124", "admin");
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/auth",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual("fail");
+    });
   });
 });
