@@ -2,8 +2,15 @@ const pool = require("../../database/postgres/pool");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server - users", () => {
+  let token;
+
+  beforeEach(async () => {
+    token = await authenticateUser("user-123", "admin");
+  });
+
   afterAll(async () => {
     await pool.end();
   });
@@ -28,6 +35,9 @@ describe("HTTP server - users", () => {
       method: "POST",
       url: "/api/v1/users",
       payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Assert
@@ -51,6 +61,9 @@ describe("HTTP server - users", () => {
       method: "POST",
       url: "/api/v1/users",
       payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Assert
@@ -76,6 +89,9 @@ describe("HTTP server - users", () => {
       method: "POST",
       url: "/api/v1/users",
       payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Assert
@@ -101,6 +117,9 @@ describe("HTTP server - users", () => {
       method: "POST",
       url: "/api/v1/users",
       payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Assert
@@ -129,6 +148,9 @@ describe("HTTP server - users", () => {
       method: "POST",
       url: "/api/v1/users",
       payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Assert
@@ -138,6 +160,58 @@ describe("HTTP server - users", () => {
     expect(responseJson.message).toEqual(
       "tidak dapat membuat user baru karena email sudah digunakan"
     );
+  });
+
+  it("should response 401 when request not contain access token", async () => {
+    // Arrange
+    const payload = {
+      email: "user-test@mail.com",
+      password: "password",
+      name: "user test",
+      role: "midwife",
+    };
+
+    const server = await createServer(container);
+
+    // Action
+    const response = await server.inject({
+      method: "POST",
+      url: "/api/v1/users",
+      payload,
+    });
+
+    // Assert
+    const responseJson = JSON.parse(response.payload);
+    expect(response.statusCode).toEqual(401);
+    expect(responseJson.status).toEqual("fail");
+  });
+
+  it("should response 403 when request contain access token but not have admin role", async () => {
+    // Arrange
+    const payload = {
+      email: "user-test@mail.com",
+      password: "password",
+      name: "user test",
+      role: "midwife",
+    };
+
+    const server = await createServer(container);
+    token = await authenticateUser("user-123", "midwife");
+
+    // Action
+    const response = await server.inject({
+      method: "POST",
+      url: "/api/v1/users",
+      payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Assert
+    const responseJson = JSON.parse(response.payload);
+    expect(response.statusCode).toEqual(403);
+    expect(responseJson.status).toEqual("fail");
   });
 
   describe("when create user mother", () => {
@@ -164,6 +238,9 @@ describe("HTTP server - users", () => {
         method: "POST",
         url: "/api/v1/users",
         payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -199,6 +276,9 @@ describe("HTTP server - users", () => {
         method: "POST",
         url: "/api/v1/users",
         payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -234,6 +314,9 @@ describe("HTTP server - users", () => {
         method: "POST",
         url: "/api/v1/users",
         payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -271,6 +354,9 @@ describe("HTTP server - users", () => {
         method: "POST",
         url: "/api/v1/users",
         payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -307,6 +393,9 @@ describe("HTTP server - users", () => {
         method: "POST",
         url: "/api/v1/users",
         payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -330,6 +419,9 @@ describe("HTTP server - users", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/users",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -348,6 +440,9 @@ describe("HTTP server - users", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/users?perPage=3",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -369,6 +464,9 @@ describe("HTTP server - users", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/users?page=4&perPage=3",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
