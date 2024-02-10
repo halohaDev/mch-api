@@ -1,5 +1,5 @@
-const PlacementRepository = require('../../Domains/placements/PlacementRepository');
-const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const PlacementRepository = require("../../Domains/placements/PlacementRepository");
+const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class PlacementRepositoryPostgres extends PlacementRepository {
   constructor(pool) {
@@ -7,13 +7,9 @@ class PlacementRepositoryPostgres extends PlacementRepository {
     this._pool = pool;
   }
 
-  async addPlacement({
-    midwifeId,
-    jorongId,
-    placementDate,
-  }) {
+  async addPlacement({ midwifeId, jorongId, placementDate }) {
     const query = {
-      text: 'INSERT INTO placements(midwife_id, jorong_id, placement_date) VALUES($1, $2, $3) RETURNING midwife_id, jorong_id, placement_date',
+      text: "INSERT INTO placements(midwife_id, jorong_id, placement_date) VALUES($1, $2, $3) RETURNING midwife_id, jorong_id, placement_date",
       values: [midwifeId, jorongId, placementDate],
     };
 
@@ -23,17 +19,27 @@ class PlacementRepositoryPostgres extends PlacementRepository {
 
   async findPlacementByIds(midwifeId, jorongId) {
     const query = {
-      text: 'SELECT midwife_id, jorong_id FROM placements WHERE midwife_id = $1 AND jorong_id = $2',
+      text: "SELECT midwife_id, jorong_id FROM placements WHERE midwife_id = $1 AND jorong_id = $2",
       values: [midwifeId, jorongId],
     };
 
     const { rows } = await this._pool.query(query);
 
     if (!rows.length) {
-      throw new NotFoundError('placement tidak ditemukan');
+      throw new NotFoundError("placement tidak ditemukan");
     }
 
     return rows[0];
+  }
+
+  async getPlacementByMidwifeId(userId) {
+    const query = {
+      text: "SELECT jorong_id, placement_date FROM placements WHERE midwife_id = $1",
+      values: [userId],
+    };
+
+    const { rows } = await this._pool.query(query);
+    return rows;
   }
 }
 
