@@ -5,8 +5,11 @@ const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelp
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server - maternal", () => {
+  let token;
+
   afterAll(async () => {
     await pool.end();
   });
@@ -19,6 +22,7 @@ describe("HTTP server - maternal", () => {
   });
 
   beforeEach(async () => {
+    token = await authenticateUser("user-123", "admin");
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
   });
 
@@ -45,6 +49,9 @@ describe("HTTP server - maternal", () => {
           name: "User Test",
           role: "admin",
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       expect(userResponse.statusCode).toEqual(201);
@@ -54,6 +61,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals",
         payload: { ...requestPayload, userId: id },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -79,6 +89,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals",
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -118,6 +131,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals/user",
         payload: useCasePayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -165,6 +181,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals/user",
         payload: useCasePayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -190,6 +209,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals/user",
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -228,6 +250,9 @@ describe("HTTP server - maternal", () => {
         method: "POST",
         url: "/api/v1/maternals/user",
         payload: useCasePayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -265,6 +290,9 @@ describe("HTTP server - maternal", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/maternals",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
