@@ -35,13 +35,47 @@ const createServer = async (container, tracker = null) => {
       maxAgeSec: process.env.ACCESS_TOKEN_AGE,
     },
     validate: (artifacts) => {
-      const { id, role } = artifacts.payload;
+      const { id, role } = artifacts.decoded.payload;
 
       return {
         isValid: true,
         credentials: { id: id, role: role },
       };
     },
+  });
+
+  server.auth.default({ strategy: "mch-api-jwt", mode: "try" });
+
+  server.ext("onPreHandler", (request, h) => {
+    const roleAccess = request.route.settings.app.access;
+
+    if (roleAccess.includes("public") && !request.auth.isAuthenticated) {
+      return h.continue;
+    }
+
+    if (!request.auth.isAuthenticated) {
+      return h
+        .response({
+          status: "fail",
+          message: "You are not authenticated",
+        })
+        .code(401)
+        .takeover();
+    }
+
+    const { role: userRole } = request.auth.credentials;
+
+    if (roleAccess.includes(userRole) || roleAccess.includes("public")) {
+      return h.continue;
+    }
+
+    return h
+      .response({
+        status: "fail",
+        message: "You are not authorized to access this resource",
+      })
+      .code(403)
+      .takeover();
   });
 
   await server.register([
