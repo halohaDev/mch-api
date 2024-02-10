@@ -14,7 +14,11 @@ const {
   randomDate,
 } = require("../../../Commons/helper");
 
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
+
 describe("HTTP server - reports", () => {
+  let token;
+
   afterAll(async () => {
     await pool.end();
   });
@@ -33,6 +37,7 @@ describe("HTTP server - reports", () => {
     await UsersTableTestHelper.addUser({ id: "user-123" });
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
     await JorongTableTestHelper.addJorong({ id: "jorong-345" });
+    token = await authenticateUser("user-123", "admin");
   });
 
   describe("when POST /api/v1/reports", () => {
@@ -74,6 +79,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "POST",
         url: "/api/v1/reports",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         payload: requestPayload,
       });
 
@@ -98,6 +106,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "POST",
         url: "/api/v1/reports",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         payload: requestPayload,
       });
 
@@ -133,6 +144,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/reports",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -150,6 +164,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/reports?jorongId=jorong-345",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -167,6 +184,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/reports?month=12&year=2020",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -325,6 +345,9 @@ describe("HTTP server - reports", () => {
         const response = await server.inject({
           method: "GET",
           url: "/api/v1/reports/calculate/anc-monthly-jorong?jorongId=jorong-123&month=8&year=2021",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         // Assert
@@ -480,6 +503,9 @@ describe("HTTP server - reports", () => {
         const response = await server.inject({
           method: "GET",
           url: "/api/v1/reports/calculate/anc-monthly-puskesmas?month=8&year=2021",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         // Assert
@@ -537,6 +563,9 @@ describe("HTTP server - reports", () => {
       const response = await server.inject({
         method: "PATCH",
         url: "/api/v1/reports/report-123/status",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         payload: {
           status: "approved",
           note: "note",
