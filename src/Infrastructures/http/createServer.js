@@ -49,6 +49,10 @@ const createServer = async (container, tracker = null) => {
   server.ext("onPreHandler", (request, h) => {
     const roleAccess = request.route.settings.app.access;
 
+    if (!roleAccess) {
+      return h.continue;
+    }
+
     if (roleAccess.includes("public") && !request.auth.isAuthenticated) {
       return h.continue;
     }
