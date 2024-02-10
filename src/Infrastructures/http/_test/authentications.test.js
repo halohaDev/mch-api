@@ -3,8 +3,15 @@ const AuthenticationsTableTestHelper = require("../../../../tests/Authentication
 const container = require("../../container");
 const createServer = require("../createServer");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server - authentications", () => {
+  let token;
+
+  beforeEach(async () => {
+    token = await authenticateUser("user-123", "admin");
+  });
+
   afterAll(async () => {
     await pool.end();
   });
@@ -32,6 +39,9 @@ describe("HTTP server - authentications", () => {
           password: "password",
           name: "test",
           role: "admin",
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -71,6 +81,9 @@ describe("HTTP server - authentications", () => {
           password: requestPayload.password,
           name: "test",
           role: "admin",
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -143,6 +156,9 @@ describe("HTTP server - authentications", () => {
           email: "user@mail.com",
           password: "password",
           name: "test",
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
 
