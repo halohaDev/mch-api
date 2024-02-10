@@ -1,4 +1,6 @@
 const Hapi = require("@hapi/hapi");
+const Jwt = require("@hapi/jwt");
+
 const DomainErrorTranslator = require("../../Commons/exceptions/DomainErrorTranslator");
 const ClientError = require("../../Commons/exceptions/ClientError");
 
@@ -19,6 +21,26 @@ const createServer = async (container, tracker = null) => {
       cors: {
         origin: ["*"],
       },
+    },
+  });
+
+  await server.register([{ plugin: Jwt }]);
+
+  server.auth.strategy("mch-api-jwt", "jwt", {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => {
+      const { id, role } = artifacts.payload;
+
+      return {
+        isValid: true,
+        credentials: { id: id, role: role },
+      };
     },
   });
 
