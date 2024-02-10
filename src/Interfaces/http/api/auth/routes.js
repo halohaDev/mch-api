@@ -9,6 +9,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "GET",
+    path: "/api/v1/auth",
+    handler: handler.getAuthenticationHandler,
+    options: {
+      app: {
+        access: ["admin", "midwife", "mother", "chairperson"],
+      },
+    },
+  },
 ];
 
 module.exports = routes;

@@ -3,6 +3,8 @@ const AuthenticationsTableTestHelper = require("../../../../tests/Authentication
 const container = require("../../container");
 const createServer = require("../createServer");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
+const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
+const PlacementsTableTestHelper = require("../../../../tests/PlacementsTableTestHelper");
 const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server - authentications", () => {
@@ -17,6 +19,8 @@ describe("HTTP server - authentications", () => {
   });
 
   afterEach(async () => {
+    await PlacementsTableTestHelper.cleanTable();
+    await JorongTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
   });
@@ -179,6 +183,92 @@ describe("HTTP server - authentications", () => {
       expect(responseJson.message).toEqual(
         "autentikasi gagal, payload tidak sesuai"
       );
+    });
+  });
+
+  describe("when GET /api/v1/auth", () => {
+    beforeEach(async () => {
+      await UsersTableTestHelper.addUser({
+        id: "user-123",
+        email: "user@mail.com",
+        password: "password",
+        name: "dicoding",
+        role: "admin",
+      });
+
+      await JorongTableTestHelper.addJorong({ id: "jorong-123" });
+    });
+
+    it("should response 200 and return authenticated user", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/auth",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.id).toEqual("user-123");
+      expect(responseJson.data.name).toEqual("dicoding");
+      expect(responseJson.data.email).toEqual("user@mail.com");
+      expect(responseJson.data.role).toEqual("admin");
+      expect(responseJson.data.placements).toEqual([]);
+    });
+
+    it("should response 401 if access token not valid", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/auth",
+        headers: {
+          Authorization: `Bearer invalid_token`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(401);
+      expect(responseJson.status).toEqual("fail");
+      expect(responseJson.message).toEqual("You are not authenticated");
+    });
+
+    it("should response 200 with placements data", async () => {
+      // Arrange
+      const server = await createServer(container);
+      await PlacementsTableTestHelper.addPlacement({
+        midwifeId: "user-123",
+        jorongId: "jorong-123",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/auth",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.id).toEqual("user-123");
+      expect(responseJson.data.name).toEqual("dicoding");
+      expect(responseJson.data.email).toEqual("user@mail.com");
+      expect(responseJson.data.role).toEqual("admin");
+      expect(responseJson.data.placements).toHaveLength(1);
     });
   });
 });

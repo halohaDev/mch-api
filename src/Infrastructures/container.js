@@ -326,6 +326,10 @@ container.register([
           name: "tokenManager",
           internal: AuthTokenManager.name,
         },
+        {
+          name: "placementRepository",
+          internal: PlacementRepository.name,
+        },
       ],
     },
   },
