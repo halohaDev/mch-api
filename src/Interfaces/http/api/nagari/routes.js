@@ -4,9 +4,9 @@ const routes = (handler) => [
     path: "/api/v1/nagari",
     handler: handler.postNagariHandler,
     options: {
-      auth: "mch-api-jwt",
-      pre: [
-        
+      app: {
+        access: ["admin"],
+      },
     },
   },
 ];
