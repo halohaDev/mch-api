@@ -52,11 +52,11 @@ class AuthUseCase {
   async showAuthenticatedUser(useCasePayload) {
     const { userId } = useCasePayload;
     const user = await this._userRepository.getUserById(userId);
-    const placement = await this._placementRepository.getPlacementByUserId(
+    const placements = await this._placementRepository.getPlacementByMidwifeId(
       userId
     );
 
-    return new Authenticated({ ...user, placement });
+    return new Authenticated({ ...user, placements });
   }
 
   _verifyRefreshTokenPayload(payload) {

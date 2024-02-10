@@ -241,7 +241,7 @@ describe("AuthUseCase interface", () => {
           role: "user",
         })
       );
-      mockPlacementRepository.getPlacementsByUserId = jest.fn(() =>
+      mockPlacementRepository.getPlacementByMidwifeId = jest.fn(() =>
         Promise.resolve([{ id: "placement-123", name: "placement" }])
       );
 
@@ -268,16 +268,18 @@ describe("AuthUseCase interface", () => {
       // mock dependency
       const mockAuthRepository = new AuthRepository();
       const mockUserRepository = new UserRepository();
+      const mockPlacementRepository = new PlacementRepository();
 
-      // mock function to return error
+      // mock function to return NotFoundError
       mockUserRepository.getUserById = jest.fn(() =>
-        Promise.resolve(NotFoundError)
+        Promise.reject(new NotFoundError("user not found"))
       );
 
       // use case instance
       const authUseCase = new AuthUseCase({
         authRepository: mockAuthRepository,
         userRepository: mockUserRepository,
+        placementRepository: mockPlacementRepository,
       });
 
       // Action & Assert
