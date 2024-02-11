@@ -67,7 +67,7 @@ jobs:
       - run:
           name: Copy build files to new directory
           command: |
-            scp -o StrictHostKeyChecking=no -r ./* $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
+            sudo scp -o StrictHostKeyChecking=no -r ./* $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
       - run:
           name: Remove old releases
           command: |
