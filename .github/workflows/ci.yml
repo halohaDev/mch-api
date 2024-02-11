@@ -36,9 +36,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
+    - name: build and install
+      run: | 
+        npm install
+        npm run build
+
     - name: npm install migrate and test
       run: |
-        npm install
         npm run migrate up
         npm run test
       env:

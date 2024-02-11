@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
+    "build": "rollup --config --bundleConfigAsCjs",
+    "start": "node build/bundle.js",
     "start:dev": "nodemon src/app.js",
     "test": "jest --runInBand --setupFiles dotenv/config",
     "test:watch:change": "jest --watch --runInBand --setupFiles dotenv/config -i",
@@ -18,7 +19,9 @@
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
     "@hapi/jwt": "^3.2.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@sentry/node": "^7.93.0",
+    "@sentry/rollup-plugin": "^2.14.0",
     "awilix": "^8.0.1",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.1.4",
@@ -28,12 +31,19 @@
     "pg": "^8.11.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/jest": "^29.5.2",
     "eslint": "^8.42.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
     "jest": "^29.5.0",
     "node-pg-migrate": "^6.2.2",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "rollup": "^4.10.0"
   }
 }
