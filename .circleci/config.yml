@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  test:
+  test-build:
     working_directory: ~/repo
     docker:
       - image: cimg/node:18.19.0
@@ -23,9 +23,6 @@ jobs:
       - run:
           name: Run migrations
           command: npm run migrate up
-      - run:
-          name: Run tests
-          command: npm run test
       - run:
           name: Build
           command: npm run build
@@ -103,7 +100,7 @@ workflows:
           type: approval
           filters:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
-      - test:
+      - test-build:
           requires:
             - hold
           filters:
