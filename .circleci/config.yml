@@ -83,15 +83,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo npm install"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo npm install"
       - run:
           name: Run migrations
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo npm run migrate up"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo npm run migrate up"
       - run:
           name: Start server using pm2
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo pm2 restart-all"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo pm2 restart-all"
 
 workflows:
   version: 2
