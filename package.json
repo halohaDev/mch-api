@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rollup -c",
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
     "test": "jest --runInBand --setupFiles dotenv/config",
@@ -32,6 +33,7 @@
     "@babel/preset-env": "^7.23.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/jest": "^29.5.2",
     "eslint": "^8.42.0",
