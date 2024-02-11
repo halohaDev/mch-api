@@ -81,17 +81,21 @@ jobs:
       enabled: true
     steps:
       - run:
+          name: Get latest release directory
+          command: |
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "export LATEST_RELEASES=$(ls -t ~/mch-api/releases | head -n 1) >> $BASH_ENV"
+      - run:
           name: Install dependencies
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo npm install"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$LATEST_RELEASES && sudo npm install"
       - run:
           name: Run migrations
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo npm run migrate up"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$LATEST_RELEASES && sudo npm run migrate up"
       - run:
           name: Start server using pm2
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$(ls -t ~/mch-api/releases | head -n 1) && sudo pm2 restart-all"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases/$LATEST_RELEASES && sudo pm2 restart-all"
 
 workflows:
   version: 2
