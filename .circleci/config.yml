@@ -59,7 +59,7 @@ jobs:
       - run:
           name: Create new directory for release
           command: |
-            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            echo "export TIMESTAMP=$(date +%s)" >> $BASH_ENV
             ssh -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_IP "sudo mkdir ~/mch-api/releases/$TIMESTAMP"
       - run:
           name: Copy build files to new directory
