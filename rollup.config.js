@@ -25,5 +25,12 @@ export default {
       project: "node",
     }),
   ],
-  external: ["cloudflare:sockets", "aws-sdk", "mock-aws-s3", "nock"],
+  external: [
+    "cloudflare:sockets",
+    "aws-sdk",
+    "mock-aws-s3",
+    "nock",
+    "dotenv",
+    "instances-container",
+  ],
 };

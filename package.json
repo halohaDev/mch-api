@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config --bundleConfigAsCjs",
-    "start": "node build/bundle.js",
+    "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
     "test": "jest --runInBand --setupFiles dotenv/config",
     "test:watch:change": "jest --watch --runInBand --setupFiles dotenv/config -i",
