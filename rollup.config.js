@@ -13,14 +13,11 @@ export default {
     sourcemap: true, // generate source maps
   },
   plugins: [
-    resolve({
-      preferBuiltins: true,
-    }),
     commonjs(),
+    json(),
     babel({
       exclude: ["node_modules/**", "**/_test/**"],
     }),
-    json(),
     terser(),
     sentryRollupPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -28,5 +25,5 @@ export default {
       project: "node",
     }),
   ],
-  external: ["aws-sdk", "nock", "mock-aws-s3", "cloudflare:sockets"],
+  external: ["cloudflare:sockets", "aws-sdk", "mock-aws-s3", "nock"],
 };
