@@ -2,8 +2,15 @@ const pool = require("../../database/postgres/pool");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server", () => {
+  let token;
+
+  beforeEach(async () => {
+    token = await authenticateUser("user-123", "admin");
+  });
+
   afterAll(async () => {
     await pool.end();
   });
@@ -27,6 +34,9 @@ describe("HTTP server", () => {
       const response = await server.inject({
         method: "POST",
         url: "/api/v1/users",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
         payload,
       });
 
@@ -48,6 +58,9 @@ describe("HTTP server", () => {
       const response = await server.inject({
         method: "GET",
         url: "/unregisteredRoute",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert

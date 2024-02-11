@@ -7,8 +7,11 @@ const PlacementsTableTestHelper = require("../../../../tests/PlacementsTableTest
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCaresTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server - ante natal cares", () => {
+  let token;
+
   afterAll(async () => {
     await pool.end();
   });
@@ -31,6 +34,8 @@ describe("HTTP server - ante natal cares", () => {
     await MaternalHistoriesTableTestHelper.addMaternalHistory({
       maternalId: "maternal-123",
     });
+
+    token = await authenticateUser("user-123", "midwife");
   });
 
   describe("when POST /api/v1/ante_natal_cares", () => {
@@ -64,6 +69,9 @@ describe("HTTP server - ante natal cares", () => {
         method: "POST",
         url: "/api/v1/ante_natal_cares",
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -90,6 +98,9 @@ describe("HTTP server - ante natal cares", () => {
         method: "POST",
         url: "/api/v1/ante_natal_cares",
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -128,6 +139,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -167,6 +181,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -213,6 +230,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -253,6 +273,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -298,6 +321,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -338,6 +364,9 @@ describe("HTTP server - ante natal cares", () => {
             method: "POST",
             url: "/api/v1/ante_natal_cares",
             payload: requestPayload,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           // Assert
@@ -368,6 +397,9 @@ describe("HTTP server - ante natal cares", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/ante_natal_cares",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -403,6 +435,9 @@ describe("HTTP server - ante natal cares", () => {
       const response = await server.inject({
         method: "GET",
         url: "/api/v1/ante_natal_cares?maternalHistoryId=maternal-history-345",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert

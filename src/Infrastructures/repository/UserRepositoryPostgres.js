@@ -103,7 +103,7 @@ class UserRepositoryPostgres extends UserRepository {
 
   async getUserById(userId) {
     const query = {
-      text: "SELECT id, name, email, phone_number, nik FROM users WHERE id = $1",
+      text: "SELECT id, name, email, phone_number, nik, role FROM users WHERE id = $1",
       values: [userId],
     };
 

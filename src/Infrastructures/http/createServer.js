@@ -1,4 +1,6 @@
 const Hapi = require("@hapi/hapi");
+const Jwt = require("@hapi/jwt");
+
 const DomainErrorTranslator = require("../../Commons/exceptions/DomainErrorTranslator");
 const ClientError = require("../../Commons/exceptions/ClientError");
 
@@ -20,6 +22,64 @@ const createServer = async (container, tracker = null) => {
         origin: ["*"],
       },
     },
+  });
+
+  await server.register([{ plugin: Jwt }]);
+
+  server.auth.strategy("mch-api-jwt", "jwt", {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => {
+      const { id, role } = artifacts.decoded.payload;
+
+      return {
+        isValid: true,
+        credentials: { id: id, role: role },
+      };
+    },
+  });
+
+  server.auth.default({ strategy: "mch-api-jwt", mode: "try" });
+
+  server.ext("onPreHandler", (request, h) => {
+    const roleAccess = request.route.settings.app.access;
+
+    if (!roleAccess) {
+      return h.continue;
+    }
+
+    if (roleAccess.includes("public") && !request.auth.isAuthenticated) {
+      return h.continue;
+    }
+
+    if (!request.auth.isAuthenticated) {
+      return h
+        .response({
+          status: "fail",
+          message: "You are not authenticated",
+        })
+        .code(401)
+        .takeover();
+    }
+
+    const { role: userRole } = request.auth.credentials;
+
+    if (roleAccess.includes(userRole) || roleAccess.includes("public")) {
+      return h.continue;
+    }
+
+    return h
+      .response({
+        status: "fail",
+        message: "You are not authorized to access this resource",
+      })
+      .code(403)
+      .takeover();
   });
 
   await server.register([
