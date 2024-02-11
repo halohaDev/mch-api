@@ -45,7 +45,7 @@ jobs:
           name: Copy build files to new directory
           command: |
             sudo apt-get install -y rsync
-            rsync -avz --exclude='node_modules' --exclude='.git' -e "ssh -o StrictHostKeyChecking=no" . $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
+            sudo rsync -avz --exclude='node_modules' --exclude='.git' -e "ssh -o StrictHostKeyChecking=no" . $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
       - run:
           name: Remove old releases
           command: |
