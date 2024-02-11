@@ -104,9 +104,14 @@ workflows:
           type: approval
           filters:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
-      - build:
+      - test:
           requires:
             - hold
+          filters:
+            branches: { only: [main, /(release|hotfix|v)\/.*/] }
+      - build:
+          requires:
+            - test
           filters:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
       - deploy:
