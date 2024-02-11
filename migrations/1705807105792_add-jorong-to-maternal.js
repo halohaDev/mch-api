@@ -6,7 +6,7 @@ exports.up = (pgm) => {
   pgm.addColumns("maternals", {
     jorong_id: {
       type: "string",
-      notNull: true,
+      notNull: false,
     },
   });
 
