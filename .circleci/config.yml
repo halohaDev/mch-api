@@ -20,6 +20,10 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - $SSH_FINGERPRINT
+
+      - run:
+          name: Refresh update
+          command: sudo apt-get update
       - run:
           name: Install dependencies
           command: npm install
@@ -35,6 +39,7 @@ jobs:
       - run:
           name: Copy updated files to VM except node_modules
           command: |
+            apt-get install -y rsync
             rsync -avz --exclude='node_modules' -e "ssh -o StrictHostKeyChecking=no" . $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api
       - run:
           name: Copy environment file to VM
