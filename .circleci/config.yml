@@ -91,4 +91,3 @@ workflows:
             - build
           filters:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
-    auto-cancel: true
