@@ -10,3 +10,5 @@ build
 
 coverage
 ```
+# Sentry Config File
+.env.sentry-build-plugin
