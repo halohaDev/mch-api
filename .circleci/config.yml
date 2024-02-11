@@ -104,6 +104,6 @@ workflows:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
       - deploy:
           requires:
-            - build
+            - test-build
           filters:
             branches: { only: [main, /(release|hotfix|v)\/.*/] }
