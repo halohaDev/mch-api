@@ -59,14 +59,14 @@ jobs:
       - run:
           name: Get current timestamp
           command: |
-            echo "export TIMESTAMP=$(date +%s)" >> $BASH_ENV
+            echo "export TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $BASH_ENV
       - run:
           name: Create new directory for release
           command: |
             ssh -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_IP "mkdir ~/mch-api/releases/$TIMESTAMP && chmod 777 ~/mch-api/releases/$TIMESTAMP"
       - run:
           name: Copy build files to new directory
-          command: sudo scp -o StrictHostKeyChecking=no -r ./* $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
+          command: scp -o StrictHostKeyChecking=no -r ./* $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP/
       - run:
           name: Remove old releases
           command: |
