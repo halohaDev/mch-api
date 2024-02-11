@@ -6,6 +6,7 @@ node_modules
 config/database/*
 !config/database/.example.test.json
 
+build
 
 coverage
 ```
