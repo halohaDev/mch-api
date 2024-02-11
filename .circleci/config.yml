@@ -57,9 +57,12 @@ jobs:
           name: Remove node_modules and .git
           command: rm -rf node_modules .git
       - run:
-          name: Create new directory for release
+          name: Get current timestamp
           command: |
             echo "export TIMESTAMP=$(date +%s)" >> $BASH_ENV
+      - run:
+          name: Create new directory for release
+          command: |
             ssh -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_IP "sudo mkdir ~/mch-api/releases/$TIMESTAMP"
       - run:
           name: Copy build files to new directory
