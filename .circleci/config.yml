@@ -37,14 +37,23 @@ jobs:
           name: Build
           command: npm run build
       - run:
-          name: Copy updated files to VM except node_modules
+          name: Create new directory for release
+          command: |
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "sudo mkdir ~/mch-api/releases/$TIMESTAMP"
+      - run:
+          name: Copy build files to new directory
           command: |
             sudo apt-get install -y rsync
-            rsync -avz --exclude='node_modules' -e "ssh -o StrictHostKeyChecking=no" . $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api
+            rsync -avz --exclude='node_modules' --exclude='.git' -e "ssh -o StrictHostKeyChecking=no" . $AZURE_VM_USER@$AZURE_VM_IP:~/mch-api/releases/$TIMESTAMP
+      - run:
+          name: Remove old releases
+          command: |
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd ~/mch-api/releases && ls -t | tail -n +4 | sudo xargs rm -rf"
       - run:
           name: Copy environment file to VM
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "sudo cp ~/config/.env ~/mch-api/.env"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "sudo cp ~/config/.env ~/mch-api/releases/$TIMESTAMP/.env"
 
   deploy:
     machine:
@@ -53,15 +62,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm install"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo npm install"
       - run:
           name: Run migrations
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo npm run migrate up"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo npm run migrate up"
       - run:
           name: Start server using pm2
           command: |
-            ssh $AZURE_VM_USER@$AZURE_VM_IP "cd mch-api && sudo pm2 restart-all"
+            ssh $AZURE_VM_USER@$AZURE_VM_IP "to-app && sudo pm2 restart-all"
 
 workflows:
   version: 2
