@@ -35,11 +35,11 @@ const createServer = async (container, tracker = null) => {
       maxAgeSec: process.env.ACCESS_TOKEN_AGE,
     },
     validate: (artifacts) => {
-      const { id, role } = artifacts.decoded.payload;
+      const { userId, role } = artifacts.decoded.payload;
 
       return {
         isValid: true,
-        credentials: { id: id, role: role },
+        credentials: { id: userId, role: role },
       };
     },
   });

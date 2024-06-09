@@ -5,7 +5,7 @@ const routes = (handler) => [
     handler: handler.postUserHandler,
     options: {
       app: {
-        access: ["public"],
+        access: ["admin", "chairperson"],
       },
     },
   },
@@ -15,7 +15,7 @@ const routes = (handler) => [
     handler: handler.getUsersHandler,
     options: {
       app: {
-        access: ["public"],
+        access: ["admin", "chairperson"],
       },
     },
   },
@@ -25,7 +25,7 @@ const routes = (handler) => [
     handler: handler.putUserByIdHandler,
     options: {
       app: {
-        access: ["public"],
+        access: ["admin", "chairperson"],
       },
     },
   }

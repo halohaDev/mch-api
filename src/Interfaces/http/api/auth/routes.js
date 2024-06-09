@@ -15,7 +15,7 @@ const routes = (handler) => [
     handler: handler.getAuthenticationHandler,
     options: {
       app: {
-        access: ["admin", "midwife", "mother", "chairperson"],
+        access: ["admin", "mother", "midwife", "chairperson", "coordinator"],
       },
     },
   },

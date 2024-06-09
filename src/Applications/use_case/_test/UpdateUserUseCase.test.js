@@ -50,7 +50,7 @@ describe('UpdateUserUseCase', () => {
     // Assert
     expect(updatedUser).toStrictEqual(mockUpdatedUser);
     expect(mockUserRepository.getUserById).toBeCalledWith(useCasePayload.id);
-    expect(mockUserRepository.verifyAvailableEmail).toBeCalledWith(useCasePayload.email);
-    expect(mockUserRepository.verifyAvailableNik).toBeCalledWith(useCasePayload.nik);
+    expect(mockUserRepository.verifyAvailableEmail).toBeCalledWith(useCasePayload.email, useCasePayload.id);
+    expect(mockUserRepository.verifyAvailableNik).toBeCalledWith(useCasePayload.nik, useCasePayload.id);
   });
 });

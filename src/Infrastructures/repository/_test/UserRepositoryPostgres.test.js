@@ -1,4 +1,5 @@
 const pool = require("../../database/postgres/pool");
+const { snakeToCamelObject } = require('../../../Commons/helper');
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const InvariantError = require("../../../Commons/exceptions/InvariantError");
 const CreateUser = require("../../../Domains/users/entities/CreateUser");
@@ -198,7 +199,7 @@ describe("UserRepositoryPostgres", () => {
       const id = "user-123";
       await UsersTableTestHelper.addUser({ id });
 
-      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {});
+      const userRepositoryPostgres = new UserRepositoryPostgres(pool, {}, snakeToCamelObject);
 
       // Action
       const user = await userRepositoryPostgres.getUserById(id);

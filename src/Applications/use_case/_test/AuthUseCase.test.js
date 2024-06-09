@@ -42,6 +42,12 @@ describe("AuthUseCase interface", () => {
       mockUserRepository.getIdByEmail = jest.fn(() =>
         Promise.resolve("user-123")
       );
+
+      mockUserRepository.getUserById = jest.fn(() => Promise.resolve({
+        id: "user-123",
+        role: "admin",
+      }));
+
       mockAuthRepository.addRefreshToken = jest.fn(() => Promise.resolve());
 
       // use case instance
@@ -65,14 +71,17 @@ describe("AuthUseCase interface", () => {
         "encrypted_password"
       );
       expect(mockAuthTokenManager.createAccessToken).toBeCalledWith({
-        userId: "user-123",
+        userId: "user-123", role: "admin"
       });
       expect(mockAuthTokenManager.createRefreshToken).toBeCalledWith({
-        userId: "user-123",
+        userId: "user-123", role: "admin"
       });
       expect(mockUserRepository.getIdByEmail).toBeCalledWith(
         useCasePayload.email
       );
+
+      expect(mockUserRepository.getUserById).toBeCalledWith("user-123");
+
       expect(mockAuthRepository.addRefreshToken).toBeCalledWith(
         expectedAuth.refreshToken
       );
