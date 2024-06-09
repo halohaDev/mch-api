@@ -28,12 +28,12 @@ class UserRepositoryPostgres extends UserRepository {
   }
 
   async addUser(registerUser) {
-    const { email, password, name } = registerUser;
+    const { email, password, name, nik, role, address, birthPlace, dateOfBirth, jobTitle, religion, isActiveBpjs, bpjsKesehatanNumber } = registerUser;
     const id = `user-${this._idGenerator()}`;
 
     const query = {
-      text: "INSERT INTO users(id, email, name, password) VALUES($1, $2, $3, $4) RETURNING id, email, name",
-      values: [id, email, name, password],
+      text: "INSERT INTO users(id, email, password, name, nik, role, address, birthplace, date_of_birth, job_title, religion, is_active_bpjs, bpjs_kesehatan_number) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, email, name, role",
+      values: [id, email, password, name, nik, role, address, birthPlace, dateOfBirth, jobTitle, religion, isActiveBpjs, bpjsKesehatanNumber],
     };
 
     const result = await this._pool.query(query);
@@ -103,7 +103,7 @@ class UserRepositoryPostgres extends UserRepository {
 
   async getUserById(userId) {
     const query = {
-      text: "SELECT id, name, email, phone_number, nik, role FROM users WHERE id = $1",
+      text: "SELECT * FROM users WHERE id = $1",
       values: [userId],
     };
 
@@ -119,6 +119,23 @@ class UserRepositoryPostgres extends UserRepository {
   async getUsers(queryParams) {
     const result = await this._userQuery.wheres(queryParams).paginate();
     return result;
+  }
+
+  async updateUserPetugas(id, updatedUser) {
+    const { email, name, address, phoneNumber, role, nik } = updatedUser;
+
+    const query = {
+      text: "UPDATE users SET email = $1, name = $2, address = $3, phone_number = $4, role = $5, nik = $6 WHERE id = $7 RETURNING id, email, name, role",
+      values: [email, name, address, phoneNumber, role, nik, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("Gagal memperbarui petugas. Id tidak ditemukan");
+    }
+
+    return new CreatedUser({ ...result.rows[0] });
   }
 }
 
