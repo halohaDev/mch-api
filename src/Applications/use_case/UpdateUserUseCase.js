@@ -7,22 +7,20 @@ class UpdateUserUseCase {
 
   async execute(useCasePayload) {
     const { id } = useCasePayload;
-    
+
     const user = await this._userRepository.getUserById(id);
 
     const newUser = {
       ...user,
       ...useCasePayload,
     };
-
-    console.log(newUser);
-
+  
     const updatedUser = new UpdateUser(newUser);
     const { email, nik, phoneNumber } = updatedUser;
 
-    await this._userRepository.verifyAvailableEmail(email);
-    await this._userRepository.verifyAvailableNik(nik);
-    await this._userRepository.verifyAvailablePhoneNumber(phoneNumber);
+    await this._userRepository.verifyAvailableEmail(email, id);
+    await this._userRepository.verifyAvailableNik(nik, id);
+    await this._userRepository.verifyAvailablePhoneNumber(phoneNumber, id);
 
     const result = await this._userRepository.updateUserPetugas(id, updatedUser);
 

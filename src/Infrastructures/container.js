@@ -24,6 +24,9 @@ const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres"
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
 const JsonWebToken = require("./security/JsonWebToken");
 
+// helper
+const { snakeToCamelObject } = require("../Commons/helper");
+
 // interface
 const UserRepository = require("../Domains/users/UserRepository");
 const AuthRepository = require("../Domains/auth/AuthRepository");
@@ -52,6 +55,7 @@ const ShowReportUseCase = require("../Applications/use_case/report/ShowReportUse
 const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCase");
 const CalculateAncMonthlyPuskesmasReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
 const UpdateReportStatusUseCase = require("../Applications/use_case/report/UpdateReportStatusUseCase");
+const UpdateUserUseCase = require("../Applications/use_case/UpdateUserUseCase");
 
 const container = createContainer();
 
@@ -81,6 +85,9 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: snakeToCamelObject,
+        }
       ],
     },
   },
@@ -208,6 +215,19 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: UpdateUserUseCase.name,
+    Class: UpdateUserUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: UpdateReportStatusUseCase.name,
     Class: UpdateReportStatusUseCase,

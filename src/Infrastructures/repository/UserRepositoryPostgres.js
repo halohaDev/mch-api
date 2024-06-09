@@ -5,19 +5,24 @@ const UserRepository = require("../../Domains/users/UserRepository");
 const UserQuery = require("../queries/UserQuery");
 
 class UserRepositoryPostgres extends UserRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamelObject) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._snakeToCamelObject = snakeToCamelObject;
     this._userQuery = new UserQuery({ pool });
   }
 
-  async verifyAvailableEmail(email) {
-    const query = {
-      text: "SELECT email FROM users WHERE email = $1",
-      values: [email],
-    };
+  async verifyAvailableEmail(email, userId) {
+    let textQuery = "SELECT email FROM users WHERE email = $1";
+    let values = [email];
 
+    if (userId) {
+      textQuery += " AND id != $2";
+      values.push(userId);
+    }
+
+    const query = { text: textQuery, values }
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
@@ -71,12 +76,16 @@ class UserRepositoryPostgres extends UserRepository {
     return result.rows[0].id;
   }
 
-  async verifyAvailableNik(nik) {
-    const query = {
-      text: "SELECT nik FROM users WHERE nik = $1",
-      values: [nik],
-    };
+  async verifyAvailableNik(nik, userId) {
+    let textQuery = "SELECT nik FROM users WHERE nik = $1";
+    let values = [nik];
 
+    if (userId) {
+      textQuery += " AND id != $2";
+      values.push(userId);
+    }
+
+    const query = { text: textQuery, values }
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
@@ -86,12 +95,16 @@ class UserRepositoryPostgres extends UserRepository {
     return true;
   }
 
-  async verifyAvailablePhoneNumber(phoneNumber) {
-    const query = {
-      text: "SELECT phone_number FROM users WHERE phone_number = $1",
-      values: [phoneNumber],
-    };
+  async verifyAvailablePhoneNumber(phoneNumber, userId) {
+    let textQuery = "SELECT phone_number FROM users WHERE phone_number = $1";
+    let values = [phoneNumber];
+    
+    if (userId) {
+      textQuery += " AND id != $2";
+      values.push(userId);
+    }
 
+    const query = { text: textQuery, values }
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
@@ -113,7 +126,7 @@ class UserRepositoryPostgres extends UserRepository {
       throw new NotFoundError("user tidak ditemukan");
     }
 
-    return result.rows[0];
+    return this._snakeToCamelObject(result.rows[0]);
   }
 
   async getUsers(queryParams) {

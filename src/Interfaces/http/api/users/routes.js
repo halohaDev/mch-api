@@ -5,7 +5,7 @@ const routes = (handler) => [
     handler: handler.postUserHandler,
     options: {
       app: {
-        access: ["admin"],
+        access: ["public"],
       },
     },
   },
@@ -15,10 +15,20 @@ const routes = (handler) => [
     handler: handler.getUsersHandler,
     options: {
       app: {
-        access: ["admin"],
+        access: ["public"],
       },
     },
   },
+  {
+    method: "PUT",
+    path: "/api/v1/users/{id}",
+    handler: handler.putUserByIdHandler,
+    options: {
+      app: {
+        access: ["public"],
+      },
+    },
+  }
 ];
 
 module.exports = routes;

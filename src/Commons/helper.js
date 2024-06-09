@@ -13,4 +13,28 @@ const randomDate = (start, end) => {
   );
 };
 
-module.exports = { randomNumber, randomFromArray, randomDate };
+const snakeToCamel = (str) => {
+  return str.replace(/(_\w)/g, (m) => m[1].toUpperCase());
+};
+
+const snakeToCamelObject = (obj) => {
+  // validat is object
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+  // array
+  if (Array.isArray(obj)) {
+    return obj.map((v) => snakeToCamelObject(v));
+    }
+    
+  // object
+  const newObj = {};
+  Object.keys(obj).forEach((key) => {
+    newObj[snakeToCamel(key)] = snakeToCamelObject(obj[key]);
+  });
+
+  return newObj;
+}
+  
+
+module.exports = { randomNumber, randomFromArray, randomDate, snakeToCamelObject };

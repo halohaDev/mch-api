@@ -29,7 +29,7 @@ class UpdateUserPetugas extends DomainBase {
     this.isRequired("email", "string");
     this.isRequired("role", "string");
     this.isRequired("nik", "string");
-    this.isRequired("address", "string");
+    this.isOptional("address", "string");
     this.isRequired("phoneNumber", "number");
   }
 }
