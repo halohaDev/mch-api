@@ -29,7 +29,7 @@ class NagariRepositoryPostgres extends NagariRepository {
 
   async addNagari(createNagari) {
     const { name } = createNagari;
-    const id = `nagari-${this._idGenerator(3)}`;
+    const id = `n-${this._idGenerator(8)}`;
     const lowerName = name.toLowerCase();
     const query = {
       text: 'INSERT INTO nagari(id, name) VALUES($1, $2) RETURNING id, name',
