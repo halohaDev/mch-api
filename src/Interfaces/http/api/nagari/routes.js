@@ -9,6 +9,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "GET",
+    path: "/api/v1/nagari",
+    handler: handler.getNagariHandler,
+    options: {
+      app: {
+        access: ["admin"]
+      }
+    }
+  }
 ];
 
 module.exports = routes;

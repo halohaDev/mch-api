@@ -20,6 +20,7 @@ describe("AuthUseCase interface", () => {
       const expectedAuth = new Auth({
         refreshToken: "refresh_token",
         accessToken: "access_token",
+        userId: "user-123",
       });
 
       // mock dependency

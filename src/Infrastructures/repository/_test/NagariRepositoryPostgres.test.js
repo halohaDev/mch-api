@@ -85,4 +85,20 @@ describe('NagariRepositoryPostgres', () => {
         .resolves.not.toThrowError(NotFoundError);
     });
   });
+
+  describe('getNagari function', () => {
+    it('should return nagari correctly', async () => {
+      // Arrange
+      const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
+
+      await NagariTableTestHelper.addNagari({ name: 'Nagari Test' });
+
+      // Action
+      const result = await nagariRepositoryPostgres.getNagari({ search: 'Nagari Test' });
+
+      // Assert
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toBeDefined();
+    });
+  });
 });

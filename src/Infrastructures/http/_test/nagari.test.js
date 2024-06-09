@@ -174,4 +174,29 @@ describe("HTTP server - nagari", () => {
       expect(response.statusCode).toEqual(403);
     });
   });
+
+  describe("when GET /api/v1/nagari", () => {
+    it("should response 200 and return nagari list", async () => {
+      // Arrange
+      await NagariTableTestHelper.addNagari({ name: "Nagari Test" });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/nagari",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toHaveLength(1);
+      expect(responseJson.meta).toBeDefined();
+    });
+  });
 });

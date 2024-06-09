@@ -12,6 +12,16 @@ class NagariUseCase {
     const createdNagari = await this._nagariRepository.addNagari(createNagari);
     return new ShowNagari(createdNagari);
   }
+
+  async showNagari(useCasePayload) {
+    const result = await this._nagariRepository.getNagari(useCasePayload);
+
+    result?.data?.map((nagari) => {
+      return new ShowNagari(nagari);
+    });
+
+    return result;
+  }
 }
 
 module.exports = NagariUseCase;

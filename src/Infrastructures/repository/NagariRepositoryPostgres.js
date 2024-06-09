@@ -2,12 +2,14 @@ const InvariantError = require('../../Commons/exceptions/InvariantError');
 const ShowNagari = require('../../Domains/nagari/entities/ShowNagari');
 const NagariRepository = require('../../Domains/nagari/NagariRepository');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const NagariQuery = require('../queries/NagariQuery');
 
 class NagariRepositoryPostgres extends NagariRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._nagariQuery = new NagariQuery({ pool });
   }
 
   async verifyAvailableNagariName(name) {
@@ -52,6 +54,11 @@ class NagariRepositoryPostgres extends NagariRepository {
     }
 
     return new ShowNagari({ ...result.rows[0] });
+  }
+
+  async getNagari(queryParams) {
+    const results = await this._nagariQuery.wheres(queryParams).paginate();
+    return results;
   }
 }
 
