@@ -65,6 +65,9 @@ describe("HTTP server - authentications", () => {
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data.accessToken).toBeDefined();
       expect(responseJson.data.refreshToken).toBeDefined();
+      expect(responseJson.data.user).toBeDefined();
+      expect(responseJson.data.user.id).toBeDefined();
+      expect(responseJson.data.user.email).toEqual(requestPayload.email);
     });
 
     it("should reponse 401 if password wrong", async () => {

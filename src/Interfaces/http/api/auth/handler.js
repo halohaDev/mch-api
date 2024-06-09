@@ -10,12 +10,14 @@ class AuthHandler {
 
   async postAuthenticationHandler(request, h) {
     const authUseCase = this._container.getInstance(AuthUseCase.name);
-    const result = await authUseCase.login(request.payload);
+    const { userId, ...result } = await authUseCase.login(request.payload);
+    const user = await authUseCase.showAuthenticatedUser({ userId });
 
     const response = h.response({
       status: "success",
       data: {
         ...result,
+        user,
       },
     });
 

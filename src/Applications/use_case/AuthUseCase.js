@@ -33,6 +33,7 @@ class AuthUseCase {
     return new Auth({
       accessToken,
       refreshToken,
+      userId,
     });
   }
 
