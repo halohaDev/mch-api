@@ -14,6 +14,10 @@ class JorongUseCase {
 
     return this._jorongRepository.addJorong(createJorong);
   }
+
+  async getJorong(queryParams) {
+    return this._jorongRepository.getJorong(queryParams);
+  }
 }
 
 module.exports = JorongUseCase;

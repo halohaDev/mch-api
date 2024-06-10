@@ -3,8 +3,11 @@ const NagariTableTestHelper = require('../../../../tests/NagariTableTestHelper')
 const JorongTableTestHelper = require('../../../../tests/JorongTableTestHelper');
 const container = require('../../container');
 const createServer = require('../createServer');
+const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe('HTTP server - jorong', () => {
+  let token;
+
   afterAll(async () => {
     await pool.end();
   });
@@ -12,6 +15,10 @@ describe('HTTP server - jorong', () => {
   afterEach(async () => {
     await NagariTableTestHelper.cleanTable();
     await JorongTableTestHelper.cleanTable();
+  });
+
+  beforeEach(async () => {
+    token = await authenticateUser("user-123", "admin");
   });
 
   describe('when POST /api/v1/jorong', () => {
@@ -31,6 +38,9 @@ describe('HTTP server - jorong', () => {
         method: 'POST',
         url: '/api/v1/jorong',
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -54,6 +64,9 @@ describe('HTTP server - jorong', () => {
         method: 'POST',
         url: '/api/v1/jorong',
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -77,6 +90,9 @@ describe('HTTP server - jorong', () => {
         method: 'POST',
         url: '/api/v1/jorong',
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -100,6 +116,9 @@ describe('HTTP server - jorong', () => {
         method: 'POST',
         url: '/api/v1/jorong',
         payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       // Assert
@@ -107,6 +126,31 @@ describe('HTTP server - jorong', () => {
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('nagari tidak ditemukan');
+    });
+  });
+
+  describe('when GET /api/v1/jorong', () => {
+    it('should response 200 and return jorong', async () => {
+      // Arrange
+      await NagariTableTestHelper.addNagari({ id: 'nagari-123' });
+      await JorongTableTestHelper.addJorong({ id: 'jorong-123', name: 'Jorong Test', nagariId: 'nagari-123' });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/api/v1/jorong',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toHaveLength(1);
     });
   });
 });

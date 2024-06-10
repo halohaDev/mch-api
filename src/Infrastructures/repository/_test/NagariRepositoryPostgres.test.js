@@ -29,9 +29,9 @@ describe('NagariRepositoryPostgres', () => {
       const createdNagari = await nagariRepositoryPostgres.addNagari(createNagari);
 
       // Assert
-      const nagari = await NagariTableTestHelper.findNagariById('nagari-123');
+      const nagari = await NagariTableTestHelper.findNagariById('n-123');
       expect(createdNagari).toStrictEqual(new ShowNagari({
-        id: 'nagari-123',
+        id: 'n-123',
         name: 'nagari test',
       }));
       expect(nagari).toHaveLength(1);
