@@ -5,6 +5,7 @@ class PlacementHandler {
     this._container = container;
 
     this.postPlacementHandler = this.postPlacementHandler.bind(this);
+    this.getPlacementByMidwifeIdHandler = this.getPlacementByMidwifeIdHandler.bind(this);
   }
 
   async postPlacementHandler(request, h) {
@@ -20,6 +21,16 @@ class PlacementHandler {
 
     response.code(201);
     return response;
+  }
+
+  async getPlacementByMidwifeIdHandler(request, h) {
+    const placementUseCase = this._container.getInstance(PlacementUseCase.name);
+    const placements = await placementUseCase.getPlacementByMidwifeId(request.params.midwifeId);
+
+    return {
+      status: 'success',
+      data: placements,
+    };
   }
 }
 

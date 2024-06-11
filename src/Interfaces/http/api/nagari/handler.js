@@ -5,6 +5,7 @@ class NagariHandler {
     this._container = container;
 
     this.postNagariHandler = this.postNagariHandler.bind(this);
+    this.getNagariHandler = this.getNagariHandler.bind(this);
   }
 
   async postNagariHandler(request, h) {
@@ -19,6 +20,19 @@ class NagariHandler {
     });
 
     response.code(201);
+    return response;
+  }
+
+  async getNagariHandler(request, h) {
+    const nagariUseCase = this._container.getInstance(NagariUseCase.name);
+    const result = await nagariUseCase.showNagari(request.query);
+
+    const response = h.response({
+      status: 'success',
+      ...result,
+    });
+
+    response.code(200);
     return response;
   }
 }

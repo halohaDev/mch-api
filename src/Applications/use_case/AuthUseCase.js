@@ -24,15 +24,16 @@ class AuthUseCase {
     await this._passwordHash.comparePassword(password, hashedPassword);
 
     const userId = await this._userRepository.getIdByEmail(email);
-    const accessToken = await this._tokenManager.createAccessToken({ userId });
-    const refreshToken = await this._tokenManager.createRefreshToken({
-      userId,
-    });
+    const { role } = await this._userRepository.getUserById(userId);
+
+    const accessToken = await this._tokenManager.createAccessToken({ userId, role });
+    const refreshToken = await this._tokenManager.createRefreshToken({ userId, role });
     await this._authRepository.addRefreshToken(refreshToken);
 
     return new Auth({
       accessToken,
       refreshToken,
+      userId,
     });
   }
 
@@ -44,9 +45,9 @@ class AuthUseCase {
     await this._authRepository.verifyRefreshToken(refreshToken);
     await this._tokenManager.verifyRefreshToken(refreshToken);
 
-    const { userId } = await this._tokenManager.decodePayload(refreshToken);
+    const { userId, role } = await this._tokenManager.decodePayload(refreshToken);
 
-    return this._tokenManager.createAccessToken({ userId });
+    return this._tokenManager.createAccessToken({ userId, role });
   }
 
   async showAuthenticatedUser(useCasePayload) {

@@ -9,5 +9,6 @@ describe('JorongRepository interface', () => {
     await expect(jorongRepository.addJorong({})).rejects.toThrowError('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(jorongRepository.verifyAvailableJorongName('')).rejects.toThrowError('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(jorongRepository.getJorongById('')).rejects.toThrowError('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(jorongRepository.getJorong()).rejects.toThrowError('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

@@ -10,6 +10,10 @@ class JorongRepository {
   async getJorongById() {
     throw new Error('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
+
+  async getJorong() {
+    throw new Error('JORONG_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = JorongRepository;

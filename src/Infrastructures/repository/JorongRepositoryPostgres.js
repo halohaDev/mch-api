@@ -1,12 +1,14 @@
 const JorongRepository = require('../../Domains/jorong/JorongRepository');
 const InvariantError = require('../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const JorongQuery = require('../queries/JorongQuery');
 
 class JorongRepositoryPostgres extends JorongRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._jorongQuery = new JorongQuery({ pool });
   }
 
   async verifyAvailableJorongName(name) {
@@ -53,6 +55,11 @@ class JorongRepositoryPostgres extends JorongRepository {
     }
 
     return result.rows[0];
+  }
+
+  async getJorong(queryParams) {
+    const result = this._jorongQuery.wheres(queryParams).paginate();
+    return result;
   }
 }
 

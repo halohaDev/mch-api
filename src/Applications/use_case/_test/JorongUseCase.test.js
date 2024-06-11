@@ -40,4 +40,38 @@ describe('JorongUseCase', () => {
       expect(mockJorongRepository.addJorong).toBeCalledWith(useCasePayload);
     });
   });
+
+  describe('getJorong function', () => {
+    it('should orchestrating the get jorong action correctly', async () => {
+      // Arrange
+      const queryParams = {
+        nagariId: 'nagari-123',
+      };
+      const expectedJorong = [{
+        id: 'jorong-123',
+        name: 'Jorong Test',
+        nagariId: 'nagari-123',
+      }];
+
+      /** creating dependency of use case */
+      const mockJorongRepository = new JorongRepository();
+      const mockNagarirepository = new NagariRepository();
+
+      /** mocking needed function */
+      mockJorongRepository.getJorong = jest.fn(() => Promise.resolve(expectedJorong));
+
+      /** creating use case instance */
+      const getJorongUseCase = new JorongUseCase({
+        jorongRepository: mockJorongRepository,
+        nagariRepository: mockNagarirepository,
+      });
+
+      // Action
+      const jorong = await getJorongUseCase.getJorong(queryParams);
+
+      // Assert
+      expect(jorong).toStrictEqual(expectedJorong);
+      expect(mockJorongRepository.getJorong).toBeCalledWith(queryParams);
+    });
+  });
 });

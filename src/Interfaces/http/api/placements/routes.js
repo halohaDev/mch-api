@@ -9,6 +9,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "GET",
+    path: "/api/v1/placements/{midwifeId}",
+    handler: handler.getPlacementByMidwifeIdHandler,
+    options: {
+      app: {
+        access: ["admin", "coordinator", "chairperson", "midwife"],
+      },
+    },
+  }
 ];
 
 module.exports = routes;

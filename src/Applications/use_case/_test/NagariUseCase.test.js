@@ -39,4 +39,36 @@ describe('NagariUseCase', () => {
       }));
     });
   });
+
+  describe('showNagari function', () => {
+    it('should orchestrating the show nagari action correctly', async () => {
+      // Arrange
+      const useCasePayload = {
+        search: 'Nagari Test',
+      };
+
+      const mockNagari = new ShowNagari({
+        id: 'nagari-123',
+        name: useCasePayload.search,
+      });
+
+      // creating dependency of use case
+      const mockNagariRepository = new NagariRepository();
+
+      // mocking needed function
+      mockNagariRepository.getNagari = jest.fn(() => Promise.resolve({ data: [mockNagari] }));
+
+      // creating use case instance
+      const nagariUseCase = new NagariUseCase({
+        nagariRepository: mockNagariRepository,
+      });
+
+      // Action
+      const nagari = await nagariUseCase.showNagari(useCasePayload);
+
+      // Assert
+      expect(nagari).toStrictEqual({ data: [mockNagari]});
+      expect(mockNagariRepository.getNagari).toBeCalledWith(useCasePayload);
+    });
+  });
 });

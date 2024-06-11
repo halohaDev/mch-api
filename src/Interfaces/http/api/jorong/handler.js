@@ -5,6 +5,7 @@ class JorongHandler {
     this._container = container;
 
     this.postJorongHandler = this.postJorongHandler.bind(this);
+    this.getJorongHandler = this.getJorongHandler.bind(this);
   }
 
   async postJorongHandler(request, h) {
@@ -20,6 +21,16 @@ class JorongHandler {
 
     response.code(201);
     return response;
+  }
+
+  async getJorongHandler(request, h) {
+    const jorongUseCase = this._container.getInstance(JorongUseCase.name);
+    const results = await jorongUseCase.getJorong(request.query);
+
+    return {
+      status: 'success',
+      ...results,
+    };
   }
 }
 

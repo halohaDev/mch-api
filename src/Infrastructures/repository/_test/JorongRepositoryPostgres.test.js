@@ -96,4 +96,40 @@ describe('JorongRepositoryPostgres', () => {
       });
     });
   });
+
+  describe('getJorong function', () => {
+    it('should return jorong correctly', async () => {
+      // Arrange
+      const jorongRepositoryPostgres = new JorongRepositoryPostgres(pool, {});
+
+      await NagariTableTestHelper.addNagari({ name: 'Nagari Test' });
+      await JorongTableTestHelper.addJorong({ id: 'nn', name: 'Jorong Test', nagariId: 'nagari-123' });
+
+      // Action
+      const jorong = await jorongRepositoryPostgres.getJorong();
+
+      // Assert
+      expect(jorong.data).toHaveLength(1);
+    });
+
+    it('should return onyl on nagari ID', async () => {
+      // Arrange
+      const jorongRepositoryPostgres = new JorongRepositoryPostgres(pool, {});
+
+      await NagariTableTestHelper.addNagari({ id: 'j-1', name: 'Nagari Test' });
+      await JorongTableTestHelper.addJorong({ name: 'Jorong Test', nagariId: 'j-1' });
+
+      await NagariTableTestHelper.addNagari({ id: 'j-2', name: 'Nagari Test 2' });
+      await JorongTableTestHelper.addJorong({ id: 'jn-2', name: 'Jorong Test 2', nagariId: 'j-2' });
+      await JorongTableTestHelper.addJorong({ id: 'jn-3', name: 'Jorong Test 3', nagariId: 'j-2' });
+      await JorongTableTestHelper.addJorong({ id: 'jn-4', name: 'Jorong Test 4', nagariId: 'j-2' });
+      await JorongTableTestHelper.addJorong({ id: 'jn-5', name: 'Jorong Test 5', nagariId: 'j-2' });
+
+      // Action
+      const jorong = await jorongRepositoryPostgres.getJorong({ nagariId: 'j-2' });
+
+      // Assert
+      expect(jorong.data).toHaveLength(4);
+    });
+  });
 });

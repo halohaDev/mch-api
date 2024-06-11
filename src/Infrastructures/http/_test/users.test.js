@@ -481,4 +481,38 @@ describe("HTTP server - users", () => {
       expect(responseJson.meta.totalPages).toEqual(4);
     });
   });
+
+  describe("wehen update user", () => {
+    beforeEach(async () => {
+      await UsersTableTestHelper.addUser({ id: "user-123", email: "a@email.com" });
+    });
+
+    it("should response 200 and updated user", async () => {
+      // Arrange
+      const payload = {
+        email: "test_email.com"
+      }
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "PUT",
+        url: "/api/v1/users/user-123",
+        payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.email).toEqual(payload.email);
+
+      const updatedUser = await UsersTableTestHelper.findUserById("user-123");
+      expect(updatedUser[0].email).toEqual(payload.email);
+    });
+  });
 });

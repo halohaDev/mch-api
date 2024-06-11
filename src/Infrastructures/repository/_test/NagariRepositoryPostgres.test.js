@@ -29,9 +29,9 @@ describe('NagariRepositoryPostgres', () => {
       const createdNagari = await nagariRepositoryPostgres.addNagari(createNagari);
 
       // Assert
-      const nagari = await NagariTableTestHelper.findNagariById('nagari-123');
+      const nagari = await NagariTableTestHelper.findNagariById('n-123');
       expect(createdNagari).toStrictEqual(new ShowNagari({
-        id: 'nagari-123',
+        id: 'n-123',
         name: 'nagari test',
       }));
       expect(nagari).toHaveLength(1);
@@ -83,6 +83,22 @@ describe('NagariRepositoryPostgres', () => {
       // Action & Assert
       await expect(nagariRepositoryPostgres.getNagariById(id))
         .resolves.not.toThrowError(NotFoundError);
+    });
+  });
+
+  describe('getNagari function', () => {
+    it('should return nagari correctly', async () => {
+      // Arrange
+      const nagariRepositoryPostgres = new NagariRepositoryPostgres(pool, {});
+
+      await NagariTableTestHelper.addNagari({ name: 'Nagari Test' });
+
+      // Action
+      const result = await nagariRepositoryPostgres.getNagari({ search: 'Nagari Test' });
+
+      // Assert
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toBeDefined();
     });
   });
 });
