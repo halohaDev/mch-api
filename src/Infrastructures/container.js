@@ -163,6 +163,9 @@ container.register([
         {
           concrete: pool,
         },
+        {
+          concrete: snakeToCamelObject,
+        }
       ],
     },
   },

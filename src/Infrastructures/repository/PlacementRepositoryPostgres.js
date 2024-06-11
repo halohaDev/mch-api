@@ -1,10 +1,12 @@
 const PlacementRepository = require("../../Domains/placements/PlacementRepository");
+const showedPlacement = require("../../Domains/placements/entities/ShowedPlacement");
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class PlacementRepositoryPostgres extends PlacementRepository {
-  constructor(pool) {
+  constructor(pool, snakeToCamelObject) {
     super();
     this._pool = pool;
+    this._snakeToCamelObject = snakeToCamelObject;
   }
 
   async addPlacement({ midwifeId, jorongId, placementDate }) {
@@ -34,12 +36,18 @@ class PlacementRepositoryPostgres extends PlacementRepository {
 
   async getPlacementByMidwifeId(userId) {
     const query = {
-      text: "SELECT jorong_id, placement_date FROM placements WHERE midwife_id = $1",
+      text: `SELECT  p.jorong_id, p.midwife_id, j.name AS jorong_name, p.placement_date, n.name AS nagari_name
+        FROM placements p 
+        LEFT JOIN jorong j ON j.id = p.jorong_id 
+        LEFT JOIN nagari n ON n.id = j.nagari_id 
+        WHERE p.midwife_id = $1`,
       values: [userId],
     };
 
     const { rows } = await this._pool.query(query);
-    return rows;
+
+    const modifiedRows = this._snakeToCamelObject(rows);
+    return modifiedRows.map((row) => new showedPlacement(row));
   }
 }
 

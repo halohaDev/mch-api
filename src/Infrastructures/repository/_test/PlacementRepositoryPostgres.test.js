@@ -1,15 +1,19 @@
 const PlacementRepositoryPostgres = require("../PlacementRepositoryPostgres");
 const UserTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
+const NagariTableTestHelper = require("../../../../tests/NagariTableTestHelper");
 const PlacementTableTestHelper = require("../../../../tests/PlacementsTableTestHelper");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 const pool = require("../../database/postgres/pool");
+const { snakeToCamelObject } = require("../../../Commons/helper");
+const ShowedPlacement = require("../../../Domains/placements/entities/ShowedPlacement");
 
 describe("PlacementRepository postgres implementation", () => {
   afterEach(async () => {
     await PlacementTableTestHelper.cleanTable();
     await UserTableTestHelper.cleanTable();
     await JorongTableTestHelper.cleanTable();
+    await NagariTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -18,7 +22,8 @@ describe("PlacementRepository postgres implementation", () => {
 
   beforeEach(async () => {
     await UserTableTestHelper.addUser({ id: "midwife-123" });
-    await JorongTableTestHelper.addJorong({ id: "jorong-123" });
+    await NagariTableTestHelper.addNagari({ id: "nagari-123", name: "Nagari Test" });
+    await JorongTableTestHelper.addJorong({ id: "jorong-123", nagariId: "nagari-123", name: "Jorong Test" });
   });
 
   describe("addPlacement function", () => {
@@ -100,10 +105,21 @@ describe("PlacementRepository postgres implementation", () => {
         jorongId: "jorong-123",
         placementDate: date,
       });
+
       const placementRepositoryPostgres = new PlacementRepositoryPostgres(
         pool,
-        {}
+        snakeToCamelObject
       );
+
+      const expectedPlacements = [
+        new ShowedPlacement({
+          midwifeId: "midwife-123",
+          jorongId: "jorong-123",
+          jorongName: "Jorong Test",
+          placementDate: date,
+          nagariName: "Nagari Test",
+        }),
+      ];
 
       // Action
       const placements =
@@ -112,19 +128,14 @@ describe("PlacementRepository postgres implementation", () => {
         );
 
       // Assert
-      expect(placements).toStrictEqual([
-        {
-          jorong_id: "jorong-123",
-          placement_date: date,
-        },
-      ]);
+      expect(placements).toStrictEqual(expectedPlacements);
     });
 
     it("should return empty array when placements not found", async () => {
       // Arrange
       const placementRepositoryPostgres = new PlacementRepositoryPostgres(
         pool,
-        {}
+        snakeToCamelObject
       );
 
       // Action

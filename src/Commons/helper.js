@@ -18,14 +18,30 @@ const snakeToCamel = (str) => {
 };
 
 const snakeToCamelObject = (obj) => {
-  // validat is object
+  // validate is object
   if (typeof obj !== "object" || obj === null) {
     return obj;
   }
+
+  // date
+  if (obj instanceof Date) {
+    return obj;
+  }
+
+  // string
+  if (typeof obj === "string") {
+    return obj;
+  }
+
+  // number
+  if (typeof obj === "number") {
+    return obj;
+  }
+
   // array
   if (Array.isArray(obj)) {
     return obj.map((v) => snakeToCamelObject(v));
-    }
+  }
     
   // object
   const newObj = {};

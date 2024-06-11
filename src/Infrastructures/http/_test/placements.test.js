@@ -113,4 +113,35 @@ describe("HTTP server - placements", () => {
       expect(responseJson.status).toEqual("fail");
     });
   });
+
+  describe("when GET /api/v1/placements/{userId}", () => {
+    it("should response 200 and return placements", async () => {
+      // Arrange
+      const userId = "user-123";
+
+      await PlacementsTableTestHelper.addPlacement({
+        midwifeId: userId,
+        jorongId: "jorong-123",
+        placementDate: "2021-08-22",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: `/api/v1/placements/${userId}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data).toHaveLength(1);
+    });
+  });
 });
