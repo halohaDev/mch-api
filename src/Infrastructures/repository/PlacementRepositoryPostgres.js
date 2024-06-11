@@ -34,14 +34,19 @@ class PlacementRepositoryPostgres extends PlacementRepository {
     return rows[0];
   }
 
-  async getPlacementByMidwifeId(userId) {
+  async getPlacementByMidwifeId(userIds) {
+    // convert to array
+    if (!Array.isArray(userIds)) {
+      userIds = [userIds];
+    }
+
     const query = {
       text: `SELECT  p.jorong_id, p.midwife_id, j.name AS jorong_name, p.placement_date, n.name AS nagari_name
         FROM placements p 
         LEFT JOIN jorong j ON j.id = p.jorong_id 
         LEFT JOIN nagari n ON n.id = j.nagari_id 
-        WHERE p.midwife_id = $1`,
-      values: [userId],
+        WHERE p.midwife_id = ANY($1)`,
+      values: [userIds],
     };
 
     const { rows } = await this._pool.query(query);

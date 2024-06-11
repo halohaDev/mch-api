@@ -418,6 +418,10 @@ container.register([
           name: "userRepository",
           internal: UserRepository.name,
         },
+        {
+          name: "placementRepository",
+          internal: PlacementRepository.name,
+        }
       ],
     },
   },
