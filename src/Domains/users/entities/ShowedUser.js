@@ -3,6 +3,7 @@ class ShowedUser {
     this.id = payload.id;
     this.name = payload.name;
     this.nik = payload.nik;
+    this.email = payload.email;
     this.role = payload.role;
     this.address = payload.address;
     this.phoneNumber = payload.phoneNumber;
