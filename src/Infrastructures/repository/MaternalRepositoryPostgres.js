@@ -3,10 +3,11 @@ const MaternalRepository = require("../../Domains/maternal/MaternalRepository");
 const MaternalQuery = require("../queries/MaternalQuery");
 
 class MaternalRepositoryPostgres extends MaternalRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamelCaseObject) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._snakeToCamelCaseObject = snakeToCamelCaseObject;
     this._maternalQuery = new MaternalQuery({ pool });
   }
 
@@ -91,6 +92,21 @@ class MaternalRepositoryPostgres extends MaternalRepository {
       .paginate();
 
     return maternals;
+  }
+
+  async findMaternalById(id) {
+    const query = {
+      text: "SELECT * FROM maternals WHERE id = $1",
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("maternal tidak ditemukan");
+    }
+
+    return this._snakeToCamelCaseObject(result.rows[0]);
   }
 }
 

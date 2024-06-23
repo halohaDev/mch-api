@@ -6,6 +6,7 @@ class MaternalHandler {
     this.postMaternalHandler = this.postMaternalHandler.bind(this);
     this.postMaternalUserHandler = this.postMaternalUserHandler.bind(this);
     this.getMaternalHandler = this.getMaternalHandler.bind(this);
+    this.getMaternalByIdHandler = this.getMaternalByIdHandler.bind(this);
   }
 
   async postMaternalHandler(request, h) {
@@ -49,6 +50,19 @@ class MaternalHandler {
       status: "success",
       data: maternals.data,
       meta: maternals.meta,
+    };
+  }
+
+  async getMaternalByIdHandler(request, h) {
+    const maternalUseCase = this._container.getInstance(MaternalUseCase.name);
+
+    const result = await maternalUseCase.getMaternalUserById(request.params.id);
+
+    return {
+      status: "success",
+      data: {
+        ...result,
+      }
     };
   }
 }

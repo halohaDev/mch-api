@@ -18,7 +18,16 @@ class MaternalQuery extends BaseQuery {
     return `LEFT JOIN (
       SELECT maternal_id, MAX(created_at) as latest_created_at FROM maternal_histories GROUP BY maternal_id        
     ) latest_histories ON maternals.id = latest_histories.maternal_id
-    LEFT JOIN maternal_histories ON maternal_histories.maternal_id = latest_histories.maternal_id AND maternal_histories.created_at = latest_histories.latest_created_at`;
+    LEFT JOIN maternal_histories ON maternal_histories.maternal_id = latest_histories.maternal_id AND maternal_histories.created_at = latest_histories.latest_created_at
+    LEFT JOIN (
+      SELECT 
+        anc.contact_type, 
+        MAX(anc.created_at), 
+        mh.maternal_id
+      FROM ante_natal_cares anc 
+      INNER JOIN maternal_histories mh ON anc.maternal_history_id = mh.id 
+      GROUP BY anc.contact_type, mh.maternal_id
+    ) latest_services ON latest_services.maternal_id = maternals.id`;
   }
 }
 

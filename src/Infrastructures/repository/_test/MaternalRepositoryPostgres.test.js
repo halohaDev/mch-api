@@ -6,6 +6,7 @@ const pool = require("../../database/postgres/pool");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
+const { snakeToCamelObject } = require("../../../Commons/helper");
 
 describe("MaternalRepositoryPostgres", () => {
   afterAll(async () => {
@@ -223,6 +224,41 @@ describe("MaternalRepositoryPostgres", () => {
 
       // Assert
       expect(maternals).toHaveLength(0);
+    });
+  });
+
+  describe("findMaternalById function", () => {
+    it("should return maternal correctly", async () => {
+      // Arrange
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-123" });
+
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {},
+        snakeToCamelObject
+      );
+
+      // Action
+      const maternal = await maternalRepositoryPostgres.findMaternalById(
+        "maternal-123"
+      );
+
+      // Assert
+      expect(maternal).toBeDefined();
+    });
+
+    it("should throw NotFoundError when maternal not found", async () => {
+      // Arrange
+      const maternalRepositoryPostgres = new MaternalRepositoryPostgres(
+        pool,
+        {},
+        snakeToCamelObject
+      );
+
+      // Action & Assert
+      await expect(
+        maternalRepositoryPostgres.findMaternalById("maternal-123")
+      ).rejects.toThrowError(NotFoundError);
     });
   });
 });

@@ -3,10 +3,12 @@ const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
+const AnteNatalTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
 const MaternalQuery = require("../MaternalQuery");
 
 describe("MaternalQuery", () => {
   afterEach(async () => {
+    await AnteNatalTableTestHelper.cleanTable();
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -80,6 +82,52 @@ describe("MaternalQuery", () => {
       expect(queryResult.data[0]).toHaveProperty("name");
     });
   });
+
+  describe("joinByLastMaternalService", () => {
+    it("should return maternal data correctly", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const maternalQuery = new MaternalQuery({ pool });
+
+      await UsersTableTestHelper.addUser({ id: userId });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+
+      await AnteNatalTableTestHelper.addAnteNatalCare({
+        maternalHistoryId: "maternal-history-123",
+        contactType: "c1",
+        createdAt: '2024-1-1'
+      });
+
+      await AnteNatalTableTestHelper.addAnteNatalCare({
+        id: 'ante-natal-2',
+        maternalHistoryId: "maternal-history-123",
+        contactType: "c2",
+        createdAt: '2024-1-2'
+      });
+
+      const queryParams = ["users", "lastMaternalStatus"];
+
+      const columns = [
+        "maternals.id",
+        "users.name",
+        "latest_services.contact_type"
+      ];
+
+      // Action
+      const queryResult = await maternalQuery.selects(columns).joins(queryParams).paginate();
+
+      // Assert
+      expect(queryResult.data).toHaveLength(1);
+      expect(queryResult.data[0]).toHaveProperty("last_service");
+      expect(queryResult.data[0].last_service).toEqual("c2");
+    });
+  });
+
 
   describe.skip("getBySearch", () => {
     it("should return maternal data correctly", async () => {

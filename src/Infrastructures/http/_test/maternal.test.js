@@ -295,6 +295,7 @@ describe("HTTP server - maternal", () => {
         },
       });
 
+      
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
@@ -303,6 +304,63 @@ describe("HTTP server - maternal", () => {
       expect(responseJson.data[0].id).toEqual(maternalId);
       expect(responseJson.data[0].user_id).toEqual(userId);
       expect(responseJson.data[0].name).toEqual("Test");
+    });
+  });
+
+  describe("when GET /api/v1/maternals/{id}", () => {
+    it("should response 200 and show maternal by id", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        name: "Test",
+        nik: "1234",
+      });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: `/api/v1/maternals/${maternalId}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.id).toEqual(maternalId);
+      expect(responseJson.data.userId).toEqual(userId);
+      expect(responseJson.data.user.name).toEqual("Test");
+    });
+
+    it("should response 404 when maternal not found", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/maternals/maternal-123",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual("fail");
     });
   });
 });

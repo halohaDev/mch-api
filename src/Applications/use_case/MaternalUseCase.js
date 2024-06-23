@@ -58,6 +58,13 @@ class MaternalUseCase {
   async showAllMaternal(queryParams) {
     return await this._maternalRepository.showAllMaternal(queryParams);
   }
+
+  async getMaternalUserById(maternalId) {
+    const maternal = await this._maternalRepository.findMaternalById(maternalId);
+    const user = await this._userRepository.getUserById(maternal.userId);
+    
+    return { ...maternal, user };
+  }
 }
 
 module.exports = MaternalUseCase;
