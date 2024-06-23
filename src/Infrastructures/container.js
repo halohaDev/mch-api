@@ -56,10 +56,23 @@ const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCa
 const CalculateAncMonthlyPuskesmasReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
 const UpdateReportStatusUseCase = require("../Applications/use_case/report/UpdateReportStatusUseCase");
 const UpdateUserUseCase = require("../Applications/use_case/UpdateUserUseCase");
+const DatabaseManager = require("../Applications/DatabaseManager");
+const PostgreManager = require("./database/postgres/PostgreManager");
 
 const container = createContainer();
 
 container.register([
+  {
+    key: DatabaseManager.name,
+    Class: PostgreManager,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+      ],
+    },
+  },
   {
     key: ReportRepository.name,
     Class: ReportRepositoryPostgres,
