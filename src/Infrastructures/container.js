@@ -476,6 +476,10 @@ container.register([
           name: "maternalHistoryRepository",
           internal: MaternalHistoryRepository.name,
         },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        },
       ],
     },
   },
