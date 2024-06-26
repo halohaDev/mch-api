@@ -15,7 +15,7 @@ const routes = (handler) => ([
     handler: handler.getJorongHandler,
     options: {
       app: {
-        access: ['admin']
+        access: ['admin', 'midwife', 'chairperson']
       }
     }
   }

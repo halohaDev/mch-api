@@ -15,7 +15,7 @@ const routes = (handler) => [
     handler: handler.getNagariHandler,
     options: {
       app: {
-        access: ["admin"]
+        access: ["admin", "midwife", "chairperson"],
       }
     }
   }

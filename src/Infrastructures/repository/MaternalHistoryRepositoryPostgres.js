@@ -144,6 +144,15 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
 
     return rows[0];
   }
+
+  async getMaternalHistories() {
+    const query = {
+      text: "SELECT * FROM maternal_histories",
+    };
+
+    const { rows } = await this._pool.query(query);
+    return rows;
+  }
 }
 
 module.exports = MaternalHistoryRepositoryPostgres;

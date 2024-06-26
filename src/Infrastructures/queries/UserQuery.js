@@ -18,7 +18,8 @@ class UserQuery extends BaseQuery {
   }
 
   getBySearch(query) {
-    return ["name LIKE %?% ", query];
+    const searchQuery = `%${query}%`;
+    return ["name ILIKE ? OR nik ILIKE ?",  , searchQuery];
   }
 
   getById(id) {
