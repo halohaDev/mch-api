@@ -23,6 +23,40 @@ describe("MaternalQuery", () => {
     await pool.end();
   });
 
+  describe("joinByLastMaternalStatus", () => {
+    it("should return maternal data correctly", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const maternalQuery = new MaternalQuery({ pool });
+
+      await UsersTableTestHelper.addUser({ id: userId });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+
+      const queryParams = ["lastMaternalStatus"];
+
+      const columns = [
+        "maternals.id",
+        "maternals.user_id",
+        "maternal_histories.maternal_status as last_maternal_status",
+      ];
+
+      // Action
+      const queryResult = await maternalQuery
+        .selects(columns)
+        .joins(queryParams)
+        .paginate();
+
+      // Assert
+      expect(queryResult.data).toHaveLength(1);
+      expect(queryResult.data[0]).toHaveProperty("last_maternal_status");
+    });
+  });
+
   describe("joinByUsers", () => {
     it("should return maternal data correctly", async () => {
       // Arrange
