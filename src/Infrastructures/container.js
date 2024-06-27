@@ -19,6 +19,7 @@ const MaternalRepositoryPostgres = require("./repository/MaternalRepositoryPostg
 const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepositoryPostgres");
 const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
 const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
+const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -37,6 +38,7 @@ const MaternalRepository = require("../Domains/maternal/MaternalRepository");
 const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
 const ReportRepository = require("../Domains/report/ReportRepository");
+const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -58,10 +60,22 @@ const UpdateReportStatusUseCase = require("../Applications/use_case/report/Updat
 const UpdateUserUseCase = require("../Applications/use_case/UpdateUserUseCase");
 const DatabaseManager = require("../Applications/DatabaseManager");
 const PostgreManager = require("./database/postgres/PostgreManager");
+const MaternalServiceUseCase = require("../Applications/use_case/MaternalServiceUseCase");
 
 const container = createContainer();
 
 container.register([
+  {
+    key: MaternalServiceRepository.name,
+    Class: MaternalServiceRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+      ],
+    },
+  },
   {
     key: DatabaseManager.name,
     Class: PostgreManager,
@@ -234,6 +248,31 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: MaternalServiceUseCase.name,
+    Class: MaternalServiceUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "maternalServiceRepository",
+          internal: MaternalServiceRepository.name,
+        },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        },
+        {
+          name: "snakeToCamelObject",
+          internal: snakeToCamelObject,
+        },
+      ],
+    },
+  },
   {
     key: UpdateUserUseCase.name,
     Class: UpdateUserUseCase,
