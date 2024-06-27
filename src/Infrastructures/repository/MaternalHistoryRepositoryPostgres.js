@@ -153,6 +153,21 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     const { rows } = await this._pool.query(query);
     return rows;
   }
+
+  async getLatestMaternalHistoryByMaternalid(id) {
+    const query = {
+      text: `SELECT * FROM maternal_histories WHERE maternal_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      values: [id],
+    };
+
+    const { rows } = await this._pool.query(query);
+
+    if (!rows.length) {
+      throw new NotFoundError("maternal history tidak ditemukan");
+    }
+
+    return rows[0];
+  }
 }
 
 module.exports = MaternalHistoryRepositoryPostgres;

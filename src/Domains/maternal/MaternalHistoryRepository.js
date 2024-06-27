@@ -18,6 +18,10 @@ class MaternalHistoryRepository {
   async getMaternalHistoriesById(id) {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async getLatestMaternalHistoryByMaternalid(id) {
+    throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = MaternalHistoryRepository;

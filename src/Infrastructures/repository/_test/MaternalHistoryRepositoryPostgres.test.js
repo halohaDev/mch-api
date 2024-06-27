@@ -216,4 +216,33 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       ).rejects.toThrowError(NotFoundError);
     });
   });
+
+  describe("getLatestMaternalHistoryByMaternalid function", () => {
+    it("should return latest maternal history correctly", async () => {
+      const fakeIdGenerator = () => "123";
+
+      const maternalHistoryRepositoryPostgres =
+        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      
+      await MaternalHistoryTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId: "maternal-123",
+      });
+
+      await MaternalHistoryTableTestHelper.addMaternalHistory({
+        id: "maternal-history-124",
+        maternalId: "maternal-123",
+      });
+
+      // Action
+      const maternalHistory =
+        await maternalHistoryRepositoryPostgres.getLatestMaternalHistoryByMaternalid(
+          "maternal-123"
+        );
+
+      // Assert
+      expect(maternalHistory).toBeDefined();
+      expect(maternalHistory.id).toEqual("maternal-history-124");
+    });
+  });
 });

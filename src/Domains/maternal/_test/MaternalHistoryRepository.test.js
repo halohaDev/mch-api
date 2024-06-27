@@ -27,5 +27,8 @@ describe("MaternalHistoryRepository interface", () => {
     await expect(maternalHistoryRepository.getMaternalHistoriesById("")).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
+    await expect(
+      maternalHistoryRepository.getLatestMaternalHistoryByMaternalid("")
+    ).rejects.toThrowError("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });
