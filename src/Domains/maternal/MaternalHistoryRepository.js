@@ -15,11 +15,11 @@ class MaternalHistoryRepository {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async getMaternalHistoriesById(id) {
+  async getMaternalHistoryById(id) {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async getLatestMaternalHistoryByMaternalid(id) {
+  async getLatestMaternalHistoryByMaternalId(id) {
     throw new Error("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }

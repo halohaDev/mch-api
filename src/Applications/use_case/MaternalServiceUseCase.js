@@ -1,45 +1,42 @@
 const AddAnteNatalCare = require('../../Domains/ante_natal/entities/AddAnteNatalCare');
 const NewMaternalHistory = require('../../Domains/maternal/entities/NewMaternalHistory');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
 class MaternalServiceUseCase {
-  constructor({ anteNatalCareRepository, maternalHistoryRepository, maternalRepository, databaseManager }) {
+  constructor({ anteNatalCareRepository, maternalHistoryRepository, maternalRepository, databaseManager, maternalServiceRepository, snakeToCamelObject }) {
     this._anteNatalCareRepository = anteNatalCareRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
+    this._maternalServiceRepository = maternalServiceRepository;
     this._maternalRepository = maternalRepository;
     this._databaseManager = databaseManager;
   }
 
-  async addAnteNatalCareService(useCasePayload) {
-    const maternalHistoryId = useCasePayload.maternalHistoryId;
+  async getLastServiceByMaternalId(maternalId, currentAuth) {
+    const { id: authenticatedId, role: authenticatedRole } = currentAuth;
+    const maternal = await this._maternalRepository.findMaternalById(maternalId);
 
-    this._databaseManager.beginTransaction();
-
-    if (maternalHistoryId === undefined || maternalHistoryId === '') {
-      const newMaternalHistory = new NewMaternalHistory(useCasePayload);
-      const { id: maternalHistoryId } = await this._maternalHistoryRepository.addMaternalHistory(newMaternalHistory);
-    } else {
-      if (useCasePayload.contactType === 'k1') {
-        await this._maternalHistoryRepository.updateMaternalHistoryById(maternalHistoryId, { ...useCasePayload });
-      }
+    if (maternal.userId !== authenticatedId && authenticatedRole === 'mother') {
+      throw new AuthorizationError();
     }
 
-    const addAnteNatalCare = new AddAnteNatalCare({
-      ...useCasePayload,
-      maternalHistoryId,
-    });
+    const maternalHistory = await this._maternalHistoryRepository.getLatestMaternalHistoryByMaternalId(maternalId);
+    const lastService = await this._maternalServiceRepository.getLatestServiceByMaternalHistoryId(maternalHistory.id);
 
-    const addedAnteNatalCare = await this._anteNatalCareRepository.addAnteNatalCare(addAnteNatalCare);
-
-    this._databaseManager.commitTransaction();
-
-    return addedAnteNatalCare;
+    return lastService;
   }
 
-  async getLastServiceByMaternalId(maternalId) {
-    
-  }
+  async getLastServiceByMaternalHistoryId(maternalHistoryId, currentAuth) {
+    const { id: authenticatedId, role: authenticatedRole } = currentAuth;
+    const maternalHistory = await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
+    const maternal = await this._maternalRepository.findMaternalById(maternalHistory.maternalId);
 
-  async getLastServiceByMaternalHistoryId(maternalHistoryId) {
+    if (maternal.userId !== authenticatedId && authenticatedRole === 'mother') {
+      throw new AuthorizationError();
+    }
+
+    const lastService = await this._maternalServiceRepository.getLatestServiceByMaternalHistoryId(maternalHistoryId);
+
+    return lastService;
   }
 }
 

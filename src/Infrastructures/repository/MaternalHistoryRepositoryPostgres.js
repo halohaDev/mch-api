@@ -24,7 +24,10 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
   }) {
     const idMaternalHistory = `maternal-history-${this._idGenerator()}`;
     const query = {
-      text: "INSERT INTO maternal_histories(id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13)",
+      text: `INSERT INTO maternal_histories(
+          id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status
+        ) VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      `,
       values: [
         idMaternalHistory,
         maternalId,
@@ -154,7 +157,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     return rows;
   }
 
-  async getLatestMaternalHistoryByMaternalid(id) {
+  async getLatestMaternalHistoryByMaternalId(id) {
     const query = {
       text: `SELECT * FROM maternal_histories WHERE maternal_id = $1 ORDER BY created_at DESC LIMIT 1`,
       values: [id],

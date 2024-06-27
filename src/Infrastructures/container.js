@@ -73,6 +73,9 @@ container.register([
         {
           concrete: pool,
         },
+        {
+          concrete: snakeToCamelObject,
+        }
       ],
     },
   },
@@ -267,9 +270,9 @@ container.register([
           internal: DatabaseManager.name,
         },
         {
-          name: "snakeToCamelObject",
-          internal: snakeToCamelObject,
-        },
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        }
       ],
     },
   },

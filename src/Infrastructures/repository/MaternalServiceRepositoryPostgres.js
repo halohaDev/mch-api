@@ -1,9 +1,10 @@
 const MaternalServiceRepository = require("../../Domains/maternal/MaternalServiceRepository");
 
 class MaternalServiceRepositoryPostgres extends MaternalServiceRepository {
-  constructor(pool) {
+  constructor(pool, snakeToCamelObject) {
     super();
     this._pool = pool;
+    this._snakeToCamelObject = snakeToCamelObject;
   }
 
   async getLatestServiceByMaternalHistoryId(maternalHistoryId) {
@@ -18,7 +19,7 @@ class MaternalServiceRepositoryPostgres extends MaternalServiceRepository {
     };
 
     const result = await this._pool.query(query);
-    return result.rows[0];
+    return this._snakeToCamelObject(result.rows[0]);
   }
 
   async getService() {

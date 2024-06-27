@@ -1,10 +1,13 @@
 const AddAnteNatalCareUseCase = require('../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase');
+const MaternalServiceUseCase = require('../../../../Applications/use_case/MaternalServiceUseCase');
 
 class MaternalServiceHandler {
   constructor(container) {
     this._container = container;
 
     this.postAnteNatalCareHandler = this.postAnteNatalCareHandler.bind(this);
+    this.getLatestMaternalServiceByMaternalIdHandler = this.getLatestMaternalServiceByMaternalIdHandler.bind(this);
+    this.getLatestMaternalServiceByMaternalHistoryIdHandler = this.getLatestMaternalServiceByMaternalHistoryIdHandler.bind(this);
   }
 
   async postAnteNatalCareHandler(request, h) {
@@ -24,6 +27,40 @@ class MaternalServiceHandler {
     });
 
     response.code(201);
+    return response;
+  }
+
+  async getLatestMaternalServiceByMaternalIdHandler(request, h) {
+    const { maternalId } = request.params;
+    const maternalServiceUseCase = this._container.getInstance(MaternalServiceUseCase.name);
+
+    const currentAuth = request.auth.credentials;
+    const latestMaternalService = await maternalServiceUseCase.getLastServiceByMaternalId(maternalId, currentAuth);
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        ...latestMaternalService,
+      },
+    });
+
+    return response;
+  }
+
+  async getLatestMaternalServiceByMaternalHistoryIdHandler(request, h) {
+    const { maternalHistoryId } = request.params;
+    const maternalServiceUseCase = this._container.getInstance(MaternalServiceUseCase.name);
+
+    const currentAuth = request.auth.credentials;
+    const latestMaternalService = await maternalServiceUseCase.getLastMaternalServiceByMaternalHistoryId(maternalHistoryId, currentAuth);
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        ...latestMaternalService,
+      },
+    });
+
     return response;
   }
 }

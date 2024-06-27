@@ -8,6 +8,26 @@ const routes = (handler) => [
         access: ['admin', 'midwife', 'coordinator'],
       },
     },
+  },
+  {
+    method: 'GET',
+    path: '/api/v1/maternal_services/maternal/{maternalId}/latest',
+    handler: handler.getLatestMaternalServiceByMaternalIdHandler,
+    options: {
+      app: {
+        access: ['admin', 'midwife', 'coordinator', 'chairperson', 'mother'],
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/api/v1/maternal_services/maternal_history/{maternalHistoryId}/latest',
+    handler: handler.getLatestMaternalServiceByMaternalHistoryIdHandler,
+    options: {
+      app: {
+        access: ['admin', 'midwife', 'coordinator', 'chairperson', 'mother'],
+      },
+    },
   }
 ];
 

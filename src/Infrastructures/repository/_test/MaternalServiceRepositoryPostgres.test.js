@@ -33,15 +33,15 @@ describe("MaternalServiceRepository", () => {
   describe("getLatestServiceByMaternalHistoryId", () => {
     it("should return latest service correctly", async () => {
       // Arrange
-      const maternalServiceRepository = new MaternalServiceRepositoryPostgres(pool);
+      const maternalServiceRepository = new MaternalServiceRepositoryPostgres(pool, snakeToCamelObject);
 
       // Action
       const service = await maternalServiceRepository.getLatestServiceByMaternalHistoryId("maternal-history-123");
 
       // Assert
       expect(service.id).toEqual("ante-natal-care-123");
-      expect(service.service_type).toEqual("anc");
-      expect(service.sub_service_type).toEqual("c1");
+      expect(service.serviceType).toEqual("anc");
+      expect(service.subServiceType).toEqual("c1");
     })
   });
 });
