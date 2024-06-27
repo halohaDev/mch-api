@@ -23,40 +23,6 @@ describe("MaternalQuery", () => {
     await pool.end();
   });
 
-  describe("joinByLastMaternalStatus", () => {
-    it("should return maternal data correctly", async () => {
-      // Arrange
-      const userId = "user-123";
-      const maternalId = "maternal-123";
-      const maternalQuery = new MaternalQuery({ pool });
-
-      await UsersTableTestHelper.addUser({ id: userId });
-      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
-      await MaternalHistoriesTableTestHelper.addMaternalHistory({
-        maternalId,
-        maternalStatus: "pregnant",
-      });
-
-      const queryParams = ["lastMaternalStatus"];
-
-      const columns = [
-        "maternals.id",
-        "maternals.user_id",
-        "maternal_histories.maternal_status as last_maternal_status",
-      ];
-
-      // Action
-      const queryResult = await maternalQuery
-        .selects(columns)
-        .joins(queryParams)
-        .paginate();
-
-      // Assert
-      expect(queryResult.data).toHaveLength(1);
-      expect(queryResult.data[0]).toHaveProperty("last_maternal_status");
-    });
-  });
-
   describe("joinByUsers", () => {
     it("should return maternal data correctly", async () => {
       // Arrange
@@ -80,51 +46,6 @@ describe("MaternalQuery", () => {
       // Assert
       expect(queryResult.data).toHaveLength(1);
       expect(queryResult.data[0]).toHaveProperty("name");
-    });
-  });
-
-  describe("joinByLastMaternalService", () => {
-    it("should return maternal data correctly", async () => {
-      // Arrange
-      const userId = "user-123";
-      const maternalId = "maternal-123";
-      const maternalQuery = new MaternalQuery({ pool });
-
-      await UsersTableTestHelper.addUser({ id: userId });
-      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
-      await MaternalHistoriesTableTestHelper.addMaternalHistory({
-        maternalId,
-        maternalStatus: "pregnant",
-      });
-
-      await AnteNatalTableTestHelper.addAnteNatalCare({
-        maternalHistoryId: "maternal-history-123",
-        contactType: "c1",
-        createdAt: '2024-1-1'
-      });
-
-      await AnteNatalTableTestHelper.addAnteNatalCare({
-        id: 'ante-natal-2',
-        maternalHistoryId: "maternal-history-123",
-        contactType: "c2",
-        createdAt: '2024-1-2'
-      });
-
-      const queryParams = ["users", "lastMaternalStatus"];
-
-      const columns = [
-        "maternals.id",
-        "users.name",
-        "latest_services.contact_type"
-      ];
-
-      // Action
-      const queryResult = await maternalQuery.selects(columns).joins(queryParams).paginate();
-
-      // Assert
-      expect(queryResult.data).toHaveLength(1);
-      expect(queryResult.data[0]).toHaveProperty("last_service");
-      expect(queryResult.data[0].last_service).toEqual("c2");
     });
   });
 
@@ -174,31 +95,29 @@ describe("MaternalQuery", () => {
     });
   });
 
-  it("should return maternal data even when maternal history not present", async () => {
-    // Arrange
-    const userId = "user-123";
-    const maternalId = "maternal-123";
-    const maternalQuery = new MaternalQuery({ pool });
+  describe("joinByJorong", () => {
+    it("should return maternal data correctly", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const maternalQuery = new MaternalQuery({ pool });
 
-    await UsersTableTestHelper.addUser({ id: userId, name: "user" });
-    await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await UsersTableTestHelper.addUser({ id: userId });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId, jorongId: "jorong-123" });
 
-    // Action
-    const queryResult = await maternalQuery
-      .joins(["users", "lastMaternalStatus"])
-      .selects([
-        "maternals.id",
-        "users.name",
-        "maternal_histories.maternal_status as last_maternal_status",
-      ])
-      .paginate();
+      const queryParams = ["jorong"];
+      const columns = ["maternals.id", "jorong.name as jorong_name"];
 
-    // Assert
-    expect(queryResult.data).toHaveLength(1);
-
-    expect(queryResult.data[0]).toHaveProperty("name");
-    expect(queryResult.data[0]).toHaveProperty("last_maternal_status");
-    expect(queryResult.data[0].last_maternal_status).toBeNull();
+      // Action
+      const queryResult = await maternalQuery
+        .selects(columns)
+        .joins(queryParams)
+        .paginate();
+      
+      // Assert
+      expect(queryResult.data).toHaveLength(1);
+      expect(queryResult.data[0]).toHaveProperty("jorong_name");
+    });
   });
 
   it("should return maternal data correctly when combined with other query", async () => {
@@ -209,28 +128,20 @@ describe("MaternalQuery", () => {
 
     await UsersTableTestHelper.addUser({ id: userId, name: "user" });
     await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
-    await MaternalHistoriesTableTestHelper.addMaternalHistory({
-      id: "maternal-history-122",
-      maternalStatus: "pregnant",
-    });
-    await MaternalHistoriesTableTestHelper.addMaternalHistory({
-      id: "maternal-history-123",
-      maternalStatus: "not_pregnant",
-    });
 
     // Action
     const queryResult = await maternalQuery
-      .joins(["users", "lastMaternalStatus"])
+      .joins(["users", "jorong"])
       .selects([
         "maternals.id",
         "users.name",
-        "maternal_histories.maternal_status as last_maternal_status",
+        "jorong.name as jorong_name",
       ])
       .paginate();
 
     // Assert
     expect(queryResult.data).toHaveLength(1);
     expect(queryResult.data[0]).toHaveProperty("name");
-    expect(queryResult.data[0]).toHaveProperty("last_maternal_status");
+    expect(queryResult.data[0]).toHaveProperty("jorong_name");
   });
 });
