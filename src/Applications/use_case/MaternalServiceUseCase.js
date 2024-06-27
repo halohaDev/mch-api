@@ -34,6 +34,13 @@ class MaternalServiceUseCase {
 
     return addedAnteNatalCare;
   }
+
+  async getLastServiceByMaternalId(maternalId) {
+    
+  }
+
+  async getLastServiceByMaternalHistoryId(maternalHistoryId) {
+  }
 }
 
 module.exports = MaternalServiceUseCase;
