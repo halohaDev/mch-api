@@ -7,11 +7,13 @@ class MaternalUseCase {
     userRepository,
     maternalHistoryRepository,
     randomGenerator,
+    databaseManager,
   }) {
     this._maternalRepository = maternalRepository;
     this._userRepository = userRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
     this._randomGenerator = randomGenerator;
+    this._databaseManager = databaseManager;
   }
 
   async addMaternal(useCasePayload) {
@@ -28,12 +30,28 @@ class MaternalUseCase {
       useCasePayload.password = this._randomGenerator();
     }
 
-    const createUser = new CreateUser(useCasePayload);
-    const { id: userId } = await this._userRepository.addUser(createUser);
+    try {
+      this._databaseManager.beginTransaction();
 
-    const newMaternal = new NewMaternal({ ...useCasePayload, userId });
-    const maternalId = await this._maternalRepository.addMaternal(newMaternal);
-    return { id: maternalId };
+      await this._userRepository.verifyAvailableEmail(useCasePayload.email);
+      await this._userRepository.verifyAvailablePhoneNumber(useCasePayload.phoneNumber);
+      await this._userRepository.verifyAvailableNik(useCasePayload.nik);
+      
+      const createUser = new CreateUser(useCasePayload);
+      
+      const { id: userId } = await this._userRepository.addUser(createUser);
+
+      const newMaternal = new NewMaternal({ ...useCasePayload, userId });
+      const maternalId = await this._maternalRepository.addMaternal(newMaternal);
+
+      this._databaseManager.commitTransaction();
+      return { id: maternalId };
+    } catch (error) {
+      this._databaseManager.rollbackTransaction();
+      throw error;
+    } finally {
+      this._databaseManager.releaseClient();
+    }
   }
 
   async updateMaternalStatus(useCasePayload) {
@@ -56,7 +74,9 @@ class MaternalUseCase {
   }
 
   async showAllMaternal(queryParams) {
-    return await this._maternalRepository.showAllMaternal(queryParams);
+    const result = await this._maternalRepository.showAllMaternal(queryParams);
+
+    return result;
   }
 
   async getMaternalUserById(maternalId) {

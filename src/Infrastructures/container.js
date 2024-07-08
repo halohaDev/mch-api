@@ -272,7 +272,7 @@ container.register([
         {
           name: "maternalRepository",
           internal: MaternalRepository.name,
-        }
+        },
       ],
     },
   },
@@ -501,6 +501,10 @@ container.register([
           name: "randomGenerator",
           concrete: nanoid,
         },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        }
       ],
     },
   },

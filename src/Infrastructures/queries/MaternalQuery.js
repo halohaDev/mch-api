@@ -5,6 +5,10 @@ class MaternalQuery extends BaseQuery {
     super({ pool });
   }
 
+  getByNik(nik) {
+    return ["users.nik = ?", nik];
+  }
+
   getBySearch(keyword) {
     const queryKeyword = `${keyword}%`;
     return ["users.name ILIKE ? OR users.nik ILIKE ?", queryKeyword, queryKeyword];

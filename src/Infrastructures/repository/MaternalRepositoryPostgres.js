@@ -80,18 +80,27 @@ class MaternalRepositoryPostgres extends MaternalRepository {
 
   async showAllMaternal(queryParams) {
     const maternals = await this._maternalQuery
-      .joins(["users", "lastMaternalStatus"])
+      .joins(["users", "jorong", "lastMaternalStatus"])
       .selects([
         "maternals.id",
         "users.name as name",
         "users.nik as nik",
-        "maternal_histories.maternal_status as last_maternal_status",
-        "maternal_histories.id as last_maternal_history_id",
+        "users.address",
+        "jorong.name as jorong_name",
         "maternals.user_id",
+        "maternal_histories.maternal_status as status"
       ])
+      .wheres(queryParams)
       .paginate();
 
-    return maternals;
+    const convertedData = maternals.data.map((maternal) => {
+      return this._snakeToCamelCaseObject(maternal);
+    });
+
+    return {
+      data: convertedData,
+      meta: maternals.meta,
+    };
   }
 
   async findMaternalById(id) {
