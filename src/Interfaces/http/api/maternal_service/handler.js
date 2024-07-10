@@ -12,10 +12,11 @@ class MaternalServiceHandler {
 
   async postAnteNatalCareHandler(request, h) {
     const { id: userId } = request.auth.credentials;
-    const { payload } = {
+    const payload = {
       ...request.payload,
-      userId,
+      midwifeId: userId,
     };
+
     const addAnteNatalCareUseCase = this._container.getInstance(AddAnteNatalCareUseCase.name);
     const addedAnteNatalCare = await addAnteNatalCareUseCase.execute(payload);
 

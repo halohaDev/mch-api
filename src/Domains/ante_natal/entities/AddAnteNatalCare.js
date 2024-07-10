@@ -73,7 +73,7 @@ class AddAnteNatalCare extends DomainBase {
     if (payload.contactType === "c1") {
       this.isRequired("height", "number");
       this.isRequired("hemoglobin", "number");
-      this.isRequired("bloodType", "string");
+      this.isOptional("bloodType", "string");
       this.isRequired("usgCheckDate", "string");
       this.isRequired("weight", "number");
       this.isRequired("bloodPressure", "number");

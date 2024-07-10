@@ -37,7 +37,7 @@ class NewMaternalHistory extends DomainBase {
     this.isOptional("periodDuration", "number");
     this.isOptional("periodAmount", "number");
     this.isOptional("periodConcern", "string");
-    this.isOptional("periodCycle", "string");
+    this.isOptional("periodCycle", "number");
     this.isOptional("lastIllness", "string");
     this.isOptional("gemeli", "string");
     this.isOptional("edd", "date");
