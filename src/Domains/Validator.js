@@ -168,6 +168,7 @@ class Validator {
 
   output() {
     if (Object.keys(this.#errors).length > 0) {
+      console.log(this.#errors);
       throw new UnprocessableError(this.#errors);
     }
 

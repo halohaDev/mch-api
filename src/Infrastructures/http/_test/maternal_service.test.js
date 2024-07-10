@@ -7,12 +7,14 @@ const PlacementsTableTestHelper = require("../../../../tests/PlacementsTableTest
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoriesTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCaresTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
+const PostNatalCareTableTestHelper = require("../../../../tests/PostNatalCareTableTestHelper");
 const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
 describe("HTTP server", () => {
   let token = "";
 
   beforeAll(async () => {
+    await PostNatalCareTableTestHelper.cleanTable();
     await AnteNatalCaresTableTestHelper.cleanTable();
     await MaternalHistoriesTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
@@ -100,6 +102,90 @@ describe("HTTP server", () => {
         url: "/api/v1/maternal_services/maternal/maternal-123/latest",
         headers: {
           Authorization: `Bearer ${token}`,
+        }
+      });
+
+      expect(response.statusCode).toEqual(403);
+    });
+  });
+
+  describe("POST /api/v1/maternal_services/post_natal_care", () => {
+    it ("should response 201", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/post_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          jorongId: "jorong-123",
+          bloodPressure: 120,
+          temperature: 36,
+          dateOfVisit: "2021-08-21",
+          vitA: false,
+          fe: false,
+          contactType: "c1",
+        }
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+      expect(responseJson.data.id).toBeDefined();
+      expect(responseJson.data.bloodPressure).toEqual(120);
+      expect(responseJson.data.temperature).toEqual(36);
+      expect(responseJson.data.vitA).toEqual(false);
+      expect(responseJson.data.fe).toEqual(false);
+      expect(responseJson.data.contactType).toEqual("c1");
+    });
+
+    it ("should response 422 when payload not complete", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/post_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          jorongId: "jorong-123",
+          bloodPressure: 120,
+          temperature: 36,
+          vitA: false,
+          fe: false,
+        }
+      });
+
+      expect(response.statusCode).toEqual(422);
+    });
+
+    it ("should response 403 when user is mother", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-124", "mother");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/post_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          jorongId: "jorong-123",
+          bloodPressure: 120,
+          temperature: 36,
+          vitA: false,
+          fe: false,
+          contactType: "c1",
         }
       });
 

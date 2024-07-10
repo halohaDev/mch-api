@@ -20,6 +20,7 @@ const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepos
 const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
 const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
 const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceRepositoryPostgres");
+const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -39,6 +40,7 @@ const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepo
 const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
 const ReportRepository = require("../Domains/report/ReportRepository");
 const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRepository");
+const PostNatalCareRepository = require("../Domains/post_natal/PostNatalCareRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -61,10 +63,29 @@ const UpdateUserUseCase = require("../Applications/use_case/UpdateUserUseCase");
 const DatabaseManager = require("../Applications/DatabaseManager");
 const PostgreManager = require("./database/postgres/PostgreManager");
 const MaternalServiceUseCase = require("../Applications/use_case/MaternalServiceUseCase");
+const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
 
 const container = createContainer();
 
+// repository
 container.register([
+  {
+    key: PostNatalCareRepository.name,
+    Class: PostNatalCareRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
+        }
+      ],
+    },
+  },
   {
     key: MaternalServiceRepository.name,
     Class: MaternalServiceRepositoryPostgres,
@@ -525,6 +546,28 @@ container.register([
         {
           name: "databaseManager",
           internal: DatabaseManager.name,
+        },
+      ],
+    },
+  },
+  // AddPostNatalCareUseCase
+  {
+    key: AddPostNatalCareUseCase.name,
+    Class: AddPostNatalCareUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "postNatalCareRepository",
+          internal: PostNatalCareRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
         },
       ],
     },

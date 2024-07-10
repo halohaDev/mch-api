@@ -10,6 +10,16 @@ const routes = (handler) => [
     },
   },
   {
+    method: 'POST',
+    path: '/api/v1/maternal_services/post_natal_care',
+    handler: handler.postPostNatalCareHandler,
+    options: {
+      app: {
+        access: ['admin', 'midwife', 'coordinator'],
+      },
+    },
+  },
+  {
     method: 'GET',
     path: '/api/v1/maternal_services/maternal/{maternalId}/latest',
     handler: handler.getLatestMaternalServiceByMaternalIdHandler,
