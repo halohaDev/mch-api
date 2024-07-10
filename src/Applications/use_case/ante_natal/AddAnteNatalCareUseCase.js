@@ -9,20 +9,24 @@ class AddAnteNatalCareUseCase {
   }
 
   async execute(payload) {
-    const { maternalId } = payload;
+    const { maternalId, maternalHistoryId } = payload;
 
     try {
       this._databaseManager.beginTransaction();
 
-      const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
-      const updatedMaternalHistoryId = await this.#updateOrCreateMaternalHistory(
-        payload,
-        maternalHistory
-      );
+      if (!!maternalHistoryId) {
+        await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
+      } else {
+        const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
+        const newMaternalHistoryId = await this.#updateOrCreateMaternalHistory(
+          payload,
+          maternalHistory
+        );
+      }
   
       const updatedPayload = {
         ...payload,
-        maternalHistoryId: updatedMaternalHistoryId,
+        maternalHistoryId: maternalHistoryId || newMaternalHistoryId,
       };
   
       const addAnteNatal = new AddAnteNatal(updatedPayload);
