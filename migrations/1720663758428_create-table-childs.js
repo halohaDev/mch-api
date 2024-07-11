@@ -1,20 +1,11 @@
 /* eslint-disable camelcase */
 
 exports.up = (pgm) => {
-  pgm.createType("delivery_places", [
-    "RS",
-    "PUSKESMAS",
-    "RUMAH",
-    "BPS",
-    "POLINDES",
-    "PUSTU",
-    "KLINIK",
-    "POSKESRI",
-  ]);
+  pgm.createType("delivery_places", ["RS", "PUSKESMAS", "RUMAH", "BPS", "POLINDES", "PUSTU", "KLINIK", "POSKESRI"]);
   pgm.createType("delivery_methods", ["NORMAL", "SC", "VAKUM", "FORCEPS"]);
   pgm.createType("helpers", ["DOKTER", "BIDAN", "PERAWAT", "DUKUN"]);
 
-  pgm.createTable("maternal_complications", {
+  pgm.createTable("children", {
     id: {
       type: "varchar",
       primaryKey: true,
@@ -77,7 +68,7 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable("maternal_complications");
+  pgm.dropTable("children");
   pgm.dropType("delivery_places");
   pgm.dropType("delivery_methods");
   pgm.dropType("helpers");

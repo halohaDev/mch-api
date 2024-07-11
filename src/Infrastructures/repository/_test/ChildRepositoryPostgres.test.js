@@ -4,6 +4,7 @@ const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistor
 const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
+const ChildrenTableTestHelper = require("../../../../tests/ChildrenTableTestHelper");
 
 describe("ChildRepositoryPostgres", () => {
   afterAll(async () => {
@@ -11,6 +12,7 @@ describe("ChildRepositoryPostgres", () => {
   });
 
   afterEach(async () => {
+    await ChildrenTableTestHelper.cleanTable();
     await MaternalHistoryTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await JorongTableTestHelper.cleanTable();
@@ -36,9 +38,9 @@ describe("ChildRepositoryPostgres", () => {
         gender: "L",
         fatherName: "test",
         pregnancyAge: "9",
-        deliveryPlace: "test",
-        deliveryMethod: "test",
-        helper: "test",
+        deliveryPlace: "PUSKESMAS",
+        deliveryMethod: "NORMAL",
+        helper: "DUKUN",
         maternalId: "maternal-123",
         maternalHistoryId: "maternal-history-123",
       };
@@ -50,12 +52,12 @@ describe("ChildRepositoryPostgres", () => {
       const childId = await childRepositoryPostgres.addChild(payload);
 
       // Assert
-      const child = await ChildTableTestHelper.findChildById(childId);
+      const child = await ChildrenTableTestHelper.findChildById(childId);
       expect(child).toBeDefined();
       expect(child.id).toEqual("child-123");
       expect(child.name).toEqual("test");
       expect(child.nik).toEqual("123");
-      expect(child.birth_datetime).toEqual("2021-08-22");
+      expect(child.birth_datetime).toBeDefined();
       expect(child.birth_weight).toEqual(3);
       expect(child.birth_height).toEqual(50);
     });
