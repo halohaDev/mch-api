@@ -47,7 +47,7 @@ class ChildRepositoryPostgres extends ChildRepository {
     };
 
     const result = await this._pool.query(query);
-    return result.rows[0].id;
+    return result.rows[0];
   }
 }
 

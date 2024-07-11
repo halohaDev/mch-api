@@ -1,6 +1,6 @@
-const AddAnteNatalCareUseCase = require('../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase');
-const AddPostNatalCareUseCase = require('../../../../Applications/use_case/post_natal/AddPostNatalCareUseCase');
-const MaternalServiceUseCase = require('../../../../Applications/use_case/MaternalServiceUseCase');
+const AddAnteNatalCareUseCase = require("../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
+const AddPostNatalCareUseCase = require("../../../../Applications/use_case/post_natal/AddPostNatalCareUseCase");
+const MaternalServiceUseCase = require("../../../../Applications/use_case/MaternalServiceUseCase");
 
 class MaternalServiceHandler {
   constructor(container) {
@@ -10,6 +10,7 @@ class MaternalServiceHandler {
     this.getLatestMaternalServiceByMaternalIdHandler = this.getLatestMaternalServiceByMaternalIdHandler.bind(this);
     this.getLatestMaternalServiceByMaternalHistoryIdHandler = this.getLatestMaternalServiceByMaternalHistoryIdHandler.bind(this);
     this.postPostNatalCareHandler = this.postPostNatalCareHandler.bind(this);
+    this.postDeliverChild = this.postDeliverChild.bind(this);
   }
 
   async postAnteNatalCareHandler(request, h) {
@@ -23,7 +24,7 @@ class MaternalServiceHandler {
     const addedAnteNatalCare = await addAnteNatalCareUseCase.execute(payload);
 
     const response = h.response({
-      status: 'success',
+      status: "success",
       data: {
         addedAnteNatalCare,
       },
@@ -33,26 +34,26 @@ class MaternalServiceHandler {
     return response;
   }
 
-   async postPostNatalCareHandler(request, h) {
-      const { id: userId } = request.auth.credentials;
-      const payload = {
-        ...request.payload,
-        midwifeId: userId,
-      };
-      
-      const addPostNatalCareUseCase = this._container.getInstance(AddPostNatalCareUseCase.name);
-      const addedPostNatalCare = await addPostNatalCareUseCase.execute(payload);
+  async postPostNatalCareHandler(request, h) {
+    const { id: userId } = request.auth.credentials;
+    const payload = {
+      ...request.payload,
+      midwifeId: userId,
+    };
 
-      const response = h.response({
-        status: 'success',
-        data: {
-          ...addedPostNatalCare,
-        },
-      });
+    const addPostNatalCareUseCase = this._container.getInstance(AddPostNatalCareUseCase.name);
+    const addedPostNatalCare = await addPostNatalCareUseCase.execute(payload);
 
-      response.code(201);
-      return response;
-    }
+    const response = h.response({
+      status: "success",
+      data: {
+        ...addedPostNatalCare,
+      },
+    });
+
+    response.code(201);
+    return response;
+  }
 
   async getLatestMaternalServiceByMaternalIdHandler(request, h) {
     const { maternalId } = request.params;
@@ -62,7 +63,7 @@ class MaternalServiceHandler {
     const latestMaternalService = await maternalServiceUseCase.getLastServiceByMaternalId(maternalId, currentAuth);
 
     const response = h.response({
-      status: 'success',
+      status: "success",
       data: {
         ...latestMaternalService,
       },
@@ -79,12 +80,25 @@ class MaternalServiceHandler {
     const latestMaternalService = await maternalServiceUseCase.getLastMaternalServiceByMaternalHistoryId(maternalHistoryId, currentAuth);
 
     const response = h.response({
-      status: 'success',
+      status: "success",
       data: {
         ...latestMaternalService,
       },
     });
 
+    return response;
+  }
+
+  async postDeliverChild(request, h) {
+    const maternalSerivceUseCase = this._container.getInstance(MaternalServiceUseCase.name);
+    const data = await maternalSerivceUseCase.deliverChild(request.payload);
+
+    const response = h.response({
+      status: "success",
+      data,
+    });
+
+    response.code(201);
     return response;
   }
 }

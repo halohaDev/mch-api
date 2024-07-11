@@ -21,6 +21,7 @@ const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryR
 const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
 const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceRepositoryPostgres");
 const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
+const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -41,6 +42,7 @@ const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRe
 const ReportRepository = require("../Domains/report/ReportRepository");
 const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRepository");
 const PostNatalCareRepository = require("../Domains/post_natal/PostNatalCareRepository");
+const ChildRepository = require("../Domains/child/ChildRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -82,7 +84,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -96,7 +98,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -138,7 +140,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -216,7 +218,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -233,7 +235,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -268,10 +270,26 @@ container.register([
       ],
     },
   },
+
+  {
+    key: ChildRepository.name,
+    Class: ChildRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
 ]);
 
 // use case
 container.register([
+  // Maternal Service Use Case
   {
     key: MaternalServiceUseCase.name,
     Class: MaternalServiceUseCase,
@@ -293,6 +311,10 @@ container.register([
         {
           name: "maternalRepository",
           internal: MaternalRepository.name,
+        },
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
         },
       ],
     },
@@ -500,7 +522,7 @@ container.register([
         {
           name: "placementRepository",
           internal: PlacementRepository.name,
-        }
+        },
       ],
     },
   },
@@ -525,7 +547,7 @@ container.register([
         {
           name: "databaseManager",
           internal: DatabaseManager.name,
-        }
+        },
       ],
     },
   },
