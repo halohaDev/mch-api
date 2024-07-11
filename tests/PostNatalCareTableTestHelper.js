@@ -14,7 +14,7 @@ const PostNatalCareTableTestHelper = {
     temprature = 36,
     vit_a = false,
     fe = false,
-    contactType = "c1",
+    postNatalType = 'pnc_1',
     maternalHistoryId = "maternal-history-123",
     jorongId = "jorong-123",
     midwifeId = "user-123",
@@ -22,7 +22,7 @@ const PostNatalCareTableTestHelper = {
   }) {
     const query = {
       text: `INSERT INTO post_natal_cares (
-        id, blood_pressure, temprature, vit_a, fe, contact_type, maternal_history_id, jorong_id, midwife_id, date_of_visit
+        id, blood_pressure, temprature, vit_a, fe, post_natal_type, maternal_history_id, jorong_id, midwife_id, date_of_visit
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
       )`,
@@ -32,7 +32,7 @@ const PostNatalCareTableTestHelper = {
         temprature,
         vit_a,
         fe,
-        contactType,
+        postNatalType,
         maternalHistoryId,
         jorongId,
         midwifeId,

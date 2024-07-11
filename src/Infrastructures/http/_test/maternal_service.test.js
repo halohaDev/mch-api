@@ -129,7 +129,7 @@ describe("HTTP server", () => {
           dateOfVisit: "2021-08-21",
           vitA: false,
           fe: false,
-          contactType: "c1",
+          postNatalType: "pnc_1",
         }
       });
 
@@ -140,7 +140,7 @@ describe("HTTP server", () => {
       expect(responseJson.data.temperature).toEqual(36);
       expect(responseJson.data.vitA).toEqual(false);
       expect(responseJson.data.fe).toEqual(false);
-      expect(responseJson.data.contactType).toEqual("c1");
+      expect(responseJson.data.postNatalType).toEqual("pnc_1");
     });
 
     it ("should response 422 when payload not complete", async () => {
@@ -185,7 +185,7 @@ describe("HTTP server", () => {
           temperature: 36,
           vitA: false,
           fe: false,
-          contactType: "c1",
+          postNatalType: "pnc_1",
         }
       });
 

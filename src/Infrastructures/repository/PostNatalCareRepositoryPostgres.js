@@ -17,14 +17,14 @@ class PostNatalCareRepositoryPostgres extends PostNatalCareRepository {
       temperature,
       vitA,
       fe,
-      contactType
+      postNatalType
     } = payload;
 
     const id = `pnc-${this._idGenerator()}`;
 
     const query = {
-      text: `INSERT INTO post_natal_cares (id, blood_pressure, temperature, vit_a, fe, maternal_history_id, jorong_id, midwife_id, contact_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      values: [id, bloodPressure, temperature, vitA, fe, maternalHistoryId, jorongId, midwifeId, contactType],
+      text: `INSERT INTO post_natal_cares (id, blood_pressure, temperature, vit_a, fe, maternal_history_id, jorong_id, midwife_id, post_natal_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      values: [id, bloodPressure, temperature, vitA, fe, maternalHistoryId, jorongId, midwifeId, postNatalType],
     };
 
     const result = await this._pool.query(query);

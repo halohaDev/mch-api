@@ -45,7 +45,7 @@ describe("PostNatalCareRepositoryPostgres", () => {
         temperature: 36,
         vitA: false,
         fe: false,
-        contactType: "c1",
+        postNatalType: "pnc_1",
       };
       
       // Action
@@ -60,7 +60,7 @@ describe("PostNatalCareRepositoryPostgres", () => {
       expect(postNatalCare.temperature).toEqual(36);
       expect(postNatalCare.vitA).toEqual(false);
       expect(postNatalCare.fe).toEqual(false);
-      expect(postNatalCare.contactType).toEqual("c1");
+      expect(postNatalCare.postNatalType).toEqual("pnc_1");
     });
   });
 });

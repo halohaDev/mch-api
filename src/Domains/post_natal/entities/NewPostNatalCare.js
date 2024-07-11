@@ -13,7 +13,7 @@ class NewPostNatalCare extends DomainBase {
       temperature,
       vitA,
       fe,
-      contactType,
+      postNatalType,
     } = this.output()
 
     this.maternalHistoryId = maternalHistoryId
@@ -24,7 +24,7 @@ class NewPostNatalCare extends DomainBase {
     this.temperature = temperature
     this.vitA = vitA || false
     this.fe = fe || false
-    this.contactType = contactType
+    this.postNatalType = postNatalType
   }
 
   _verifyPayload() {
@@ -32,7 +32,7 @@ class NewPostNatalCare extends DomainBase {
     this.isRequired("dateOfVisit", "string")
     this.isRequired("jorongId", "string")
     this.isRequired("midwifeId", "string")
-    this.isRequired("contactType", "string")
+    this.isRequired("postNatalType", "string")
     this.isOptional("bloodPressure", "number")
     this.isOptional("temperature", "number")
     this.isOptional("vitA", "boolean")
