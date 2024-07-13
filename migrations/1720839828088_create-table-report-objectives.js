@@ -42,9 +42,6 @@ exports.up = (pgm) => {
     },
   });
 
-  pgm.createIndex("report_types", "name");
-  pgm.createIndex("report_types", "report_year");
-
   pgm.sql(`
     CREATE TRIGGER update_report_objectives BEFORE UPDATE
     ON report_objectives FOR EACH ROW EXECUTE PROCEDURE

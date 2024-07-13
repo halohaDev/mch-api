@@ -42,6 +42,11 @@ exports.up = (pgm) => {
       notNull: true,
       defaultValue: "alive",
     },
+    complication_date: {
+      type: "DATE",
+      notNull: true,
+      defaultValue: pgm.func("current_date"),
+    },
     created_at: {
       type: "TIMESTAMP",
       notNull: true,
@@ -58,6 +63,7 @@ exports.up = (pgm) => {
   pgm.createIndex("maternal_complications", "complication_type");
   pgm.createIndex("maternal_complications", "come_condition");
   pgm.createIndex("maternal_complications", "back_condition");
+  pgm.createIndex("maternal_complications", "complication_date");
   pgm.createIndex("maternal_complications", "created_at");
   pgm.createIndex("maternal_complications", "updated_at");
 
