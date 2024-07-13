@@ -41,24 +41,19 @@ describe("AddAnteNatalUseCase", () => {
     });
 
     // mock function
-    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve([])
-    );
-    mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
-      Promise.resolve({ id: "maternal-history-123" })
-    );
+    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() => Promise.resolve([]));
+    mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() => Promise.resolve({ id: "maternal-history-123" }));
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
     mockDatabaseManager.beginTransaction = jest.fn();
     mockDatabaseManager.commitTransaction = jest.fn();
     mockDatabaseManager.releaseClient = jest.fn();
+    mockDatabaseManager.rollbackTransaction = jest.fn();
 
     // Action
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
     expect(mockMaternalHistoryRepository.addMaternalHistory).toBeCalled();
     expect(mockAnteNatalRepository.addAnteNatalCare).toBeCalled();
   });
@@ -107,9 +102,7 @@ describe("AddAnteNatalUseCase", () => {
         },
       ])
     );
-    mockMaternalHistoryRepository.updateMaternalHistoryById = jest.fn(() =>
-      Promise.resolve({ id: "maternal-history-123" })
-    );
+    mockMaternalHistoryRepository.updateMaternalHistoryById = jest.fn(() => Promise.resolve({ id: "maternal-history-123" }));
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
     mockDatabaseManager.beginTransaction = jest.fn();
     mockDatabaseManager.commitTransaction = jest.fn();
@@ -119,12 +112,8 @@ describe("AddAnteNatalUseCase", () => {
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
-    expect(
-      mockMaternalHistoryRepository.updateMaternalHistoryById
-    ).toBeCalledWith("maternal-history-123", { maternalStatus: "pregnant" });
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.updateMaternalHistoryById).toBeCalledWith("maternal-history-123", { maternalStatus: "pregnant" });
   });
 
   it("should orchestrize action correctly", async () => {
@@ -163,9 +152,7 @@ describe("AddAnteNatalUseCase", () => {
     });
 
     // mock function
-    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve([{}])
-    );
+    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() => Promise.resolve([{}]));
     mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
       Promise.resolve({
         id: "maternal-history-123",
@@ -181,9 +168,7 @@ describe("AddAnteNatalUseCase", () => {
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
     expect(mockMaternalHistoryRepository.addMaternalHistory).toBeCalled();
     expect(mockAnteNatalRepository.addAnteNatalCare).toBeCalledWith(
       new AddAnteNatalCare({

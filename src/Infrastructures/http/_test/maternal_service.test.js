@@ -227,7 +227,6 @@ describe("HTTP server", () => {
       });
 
       const responseJson = JSON.parse(response.payload);
-      console.log(responseJson);
       expect(response.statusCode).toEqual(201);
       expect(responseJson.data.id).toBeDefined();
 
@@ -264,7 +263,6 @@ describe("HTTP server", () => {
       });
 
       const responseJson = JSON.parse(response.payload);
-      console.log(responseJson);
       expect(response.statusCode).toEqual(201);
       expect(responseJson.data.id).toBeDefined();
 
