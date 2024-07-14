@@ -22,6 +22,7 @@ const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres"
 const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceRepositoryPostgres");
 const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
 const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
+const MaternalComplicationRepositoryPostgres = require("./repository/MaternalComplicationRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -43,6 +44,7 @@ const ReportRepository = require("../Domains/report/ReportRepository");
 const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRepository");
 const PostNatalCareRepository = require("../Domains/post_natal/PostNatalCareRepository");
 const ChildRepository = require("../Domains/child/ChildRepository");
+const MaternalComplicationRepository = require("../Domains/complication/MaternalComplicationRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -66,6 +68,7 @@ const DatabaseManager = require("../Applications/DatabaseManager");
 const PostgreManager = require("./database/postgres/PostgreManager");
 const MaternalServiceUseCase = require("../Applications/use_case/MaternalServiceUseCase");
 const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
+const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
 
 const container = createContainer();
 
@@ -274,6 +277,21 @@ container.register([
   {
     key: ChildRepository.name,
     Class: ChildRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+
+  {
+    key: MaternalComplicationRepository.name,
+    Class: MaternalComplicationRepositoryPostgres,
     parameter: {
       dependencies: [
         {
@@ -590,6 +608,23 @@ container.register([
         {
           name: "jorongRepository",
           internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddMaternalComplicationUseCase.name,
+    Class: AddMaternalComplicationUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalComplicationRepository",
+          internal: MaternalComplicationRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
         },
       ],
     },

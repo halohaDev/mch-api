@@ -271,4 +271,101 @@ describe("HTTP server", () => {
       expect(maternalHistory.maternal_status).toEqual("postpartum");
     });
   });
+
+  describe("POST /api/v1/maternal_services/complications", () => {
+    it("should response 201", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/complications",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          complicationType: "abortus",
+          description: "",
+          isHandled: false,
+          isReferred: false,
+          comeCondition: "alive",
+          backCondition: "dead",
+          complicationDate: "2021-08-21",
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+      expect(responseJson.data.id).toBeDefined();
+    });
+
+    it("should response 422 when payload not complete", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/complications",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          complicationType: "abortus",
+          description: "",
+          isHandled: false,
+          isReferred: false,
+          comeCondition: "alive",
+          backCondition: "dead",
+        },
+      });
+
+      expect(response.statusCode).toEqual(422);
+    });
+
+    it("should response 403 when user is mother", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-124", "mother");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/complications",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      expect(response.statusCode).toEqual(403);
+    });
+
+    it("should response 404 when maternal history not found", async () => {
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/complications",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-124",
+          complicationType: "abortus",
+          description: "",
+          isHandled: false,
+          isReferred: false,
+          comeCondition: "alive",
+          backCondition: "dead",
+          complicationDate: "2021-08-21",
+        },
+      });
+
+      expect(response.statusCode).toEqual(404);
+    });
+  });
 });

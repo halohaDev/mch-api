@@ -1,6 +1,7 @@
 const AddAnteNatalCareUseCase = require("../../../../Applications/use_case/ante_natal/AddAnteNatalCareUseCase");
 const AddPostNatalCareUseCase = require("../../../../Applications/use_case/post_natal/AddPostNatalCareUseCase");
 const MaternalServiceUseCase = require("../../../../Applications/use_case/MaternalServiceUseCase");
+const AddMaternalComplicationUseCase = require("../../../../Applications/use_case/AddMaternalComplicationUseCase");
 
 class MaternalServiceHandler {
   constructor(container) {
@@ -11,6 +12,7 @@ class MaternalServiceHandler {
     this.getLatestMaternalServiceByMaternalHistoryIdHandler = this.getLatestMaternalServiceByMaternalHistoryIdHandler.bind(this);
     this.postPostNatalCareHandler = this.postPostNatalCareHandler.bind(this);
     this.postDeliverChild = this.postDeliverChild.bind(this);
+    this.postMaternalComplicationHandler = this.postMaternalComplicationHandler.bind(this);
   }
 
   async postAnteNatalCareHandler(request, h) {
@@ -48,6 +50,21 @@ class MaternalServiceHandler {
       status: "success",
       data: {
         ...addedPostNatalCare,
+      },
+    });
+
+    response.code(201);
+    return response;
+  }
+
+  async postMaternalComplicationHandler(request, h) {
+    const addMaternalComplicationUseCase = this._container.getInstance(AddMaternalComplicationUseCase.name);
+    const data = await addMaternalComplicationUseCase.execute(request.payload);
+
+    const response = h.response({
+      status: "success",
+      data: {
+        ...data,
       },
     });
 

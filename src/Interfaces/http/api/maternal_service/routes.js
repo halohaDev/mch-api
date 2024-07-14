@@ -49,6 +49,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "POST",
+    path: "/api/v1/maternal_services/complications",
+    handler: handler.postMaternalComplicationHandler,
+    options: {
+      app: {
+        access: ["admin", "midwife", "coordinator"],
+      },
+    },
+  },
 ];
 
 module.exports = routes;
