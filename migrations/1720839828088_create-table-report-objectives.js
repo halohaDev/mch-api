@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
 
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.createTable("report_objectives", {
     id: {
@@ -46,6 +44,12 @@ exports.up = (pgm) => {
 
   pgm.createIndex("report_types", "name");
   pgm.createIndex("report_types", "report_year");
+
+  pgm.sql(`
+    CREATE TRIGGER update_report_objectives BEFORE UPDATE
+    ON report_objectives FOR EACH ROW EXECUTE PROCEDURE
+    update_timestamp();
+  `);
 };
 
 exports.down = (pgm) => {};
