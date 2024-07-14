@@ -17,7 +17,7 @@ class Validator {
     const value = this.#params[key];
 
     // if not found throw error
-    if (!value) {
+    if (value == null || value == undefined) {
       const message = `${key} is required`;
       this.#pushErrors(key, { message: message });
     }
