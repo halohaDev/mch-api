@@ -94,7 +94,7 @@ class MaternalServiceHandler {
     const maternalServiceUseCase = this._container.getInstance(MaternalServiceUseCase.name);
 
     const currentAuth = request.auth.credentials;
-    const latestMaternalService = await maternalServiceUseCase.getLastMaternalServiceByMaternalHistoryId(maternalHistoryId, currentAuth);
+    const latestMaternalService = await maternalServiceUseCase.getLastServiceByMaternalHistoryId(maternalHistoryId, currentAuth);
 
     const response = h.response({
       status: "success",

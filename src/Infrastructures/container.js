@@ -270,6 +270,9 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
       ],
     },
   },

@@ -2,10 +2,11 @@ const MaternalHistoryRepository = require("../../Domains/maternal/MaternalHistor
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamel) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._snakeToCamel = snakeToCamel;
   }
 
   async addMaternalHistory({
@@ -72,7 +73,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       throw new NotFoundError("maternal history tidak ditemukan");
     }
 
-    return rows[0];
+    return this._snakeToCamel(rows[0]);
   }
 
   async updateMaternalHistoryById(
@@ -108,21 +109,17 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       toBeUpdatedMaternalStatus,
       createdAt,
     } = {
-      toBeUpdatedPeriodDuration:
-        periodDuration || maternalHistory.period_duration,
+      toBeUpdatedPeriodDuration: periodDuration || maternalHistory.period_duration,
       toBeUpdatedPeriodAmount: periodAmount || maternalHistory.period_amount,
       toBeUpdatedPeriodConcern: periodConcern || maternalHistory.period_concern,
       toBeUpdatedPeriodCycle: periodCycle || maternalHistory.period_cycle,
       toBeUpdatedLastIllness: lastIllness || maternalHistory.last_illness,
-      toBeUpdatedCurrentIllness:
-        currentIllness || maternalHistory.current_illness,
+      toBeUpdatedCurrentIllness: currentIllness || maternalHistory.current_illness,
       toBeUpdatedGemeli: gemeli || maternalHistory.gemeli,
       toBeUpdatedEdd: edd || maternalHistory.edd,
       toBeUpdatedHpht: hpht || maternalHistory.hpht,
-      toBeUpdatedWeightBeforePregnancy:
-        weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
-      toBeUpdatedMaternalStatus:
-        maternalStatus || maternalHistory.maternal_status,
+      toBeUpdatedWeightBeforePregnancy: weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
+      toBeUpdatedMaternalStatus: maternalStatus || maternalHistory.maternal_status,
     };
 
     const query = {
