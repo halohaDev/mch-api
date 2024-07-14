@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 
 exports.up = (pgm) => {
-  pgm.createType("delivery_places", ["RS", "PUSKESMAS", "RUMAH", "BPS", "POLINDES", "PUSTU", "KLINIK", "POSKESRI"]);
-  pgm.createType("delivery_methods", ["NORMAL", "SC", "VAKUM", "FORCEPS"]);
-  pgm.createType("helpers", ["DOKTER", "BIDAN", "PERAWAT", "DUKUN"]);
+  pgm.createType("delivery_places", ["rs", "puskesmas", "rumah", "bps", "polindes", "pustu", "klinik", "poskesri"]);
+  pgm.createType("delivery_methods", ["normal", "sc", "vakum", "forceps"]);
+  pgm.createType("helpers", ["dokter", "bidan", "perawat", "dukun"]);
 
   pgm.createTable("children", {
     id: {

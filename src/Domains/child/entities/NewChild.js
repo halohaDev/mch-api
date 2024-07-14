@@ -44,9 +44,9 @@ class NewChild extends DomainBase {
     this.isRequired("gender", "string");
     this.isOptional("fatherName", "string");
     this.isRequired("pregnancyAge", "int");
-    this.isRequired("deliveryPlace", "string");
-    this.isRequired("deliveryMethod", "string");
-    this.isRequired("helper", "string");
+    this.isRequired("deliveryPlace", "containOf", ["rs", "puskesmas", "klinik", "rumah", "bps", "polindes", "pustu", "klinik", "poskesri"]);
+    this.isRequired("deliveryMethod", "containOf", ["normal", "sc", "vakum", "forceps"]);
+    this.isRequired("helper", "containOf", ["dokter", "bidan", "perawat", "dukun"]);
     this.isRequired("maternalId", "string");
     this.isOptional("maternalHistoryId", "string");
   }
