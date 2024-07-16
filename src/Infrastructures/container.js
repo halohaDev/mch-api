@@ -19,6 +19,10 @@ const MaternalRepositoryPostgres = require("./repository/MaternalRepositoryPostg
 const AnteNatalCareRepositoryPostgres = require("./repository/AnteNatalCareRepositoryPostgres");
 const MaternalHistoryRepositoryPostgres = require("./repository/MaternalHistoryRepositoryPostgres");
 const ReportRepositoryPostgres = require("./repository/ReportRepositoryPostgres");
+const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceRepositoryPostgres");
+const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
+const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
+const MaternalComplicationRepositoryPostgres = require("./repository/MaternalComplicationRepositoryPostgres");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -37,6 +41,10 @@ const MaternalRepository = require("../Domains/maternal/MaternalRepository");
 const AnteNatalCareRepository = require("../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../Domains/maternal/MaternalHistoryRepository");
 const ReportRepository = require("../Domains/report/ReportRepository");
+const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRepository");
+const PostNatalCareRepository = require("../Domains/post_natal/PostNatalCareRepository");
+const ChildRepository = require("../Domains/child/ChildRepository");
+const MaternalComplicationRepository = require("../Domains/complication/MaternalComplicationRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -56,10 +64,59 @@ const AddReportUseCase = require("../Applications/use_case/report/AddReportUseCa
 const CalculateAncMonthlyPuskesmasReportUseCase = require("../Applications/use_case/report/CalculateAncMonthlyPuskesmasReportUseCase");
 const UpdateReportStatusUseCase = require("../Applications/use_case/report/UpdateReportStatusUseCase");
 const UpdateUserUseCase = require("../Applications/use_case/UpdateUserUseCase");
+const DatabaseManager = require("../Applications/DatabaseManager");
+const PostgreManager = require("./database/postgres/PostgreManager");
+const MaternalServiceUseCase = require("../Applications/use_case/MaternalServiceUseCase");
+const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
+const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
+const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
 
 const container = createContainer();
 
+// repository
 container.register([
+  {
+    key: PostNatalCareRepository.name,
+    Class: PostNatalCareRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
+        },
+      ],
+    },
+  },
+  {
+    key: MaternalServiceRepository.name,
+    Class: MaternalServiceRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: snakeToCamelObject,
+        },
+      ],
+    },
+  },
+  {
+    key: DatabaseManager.name,
+    Class: PostgreManager,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+      ],
+    },
+  },
   {
     key: ReportRepository.name,
     Class: ReportRepositoryPostgres,
@@ -87,7 +144,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -165,7 +222,7 @@ container.register([
         },
         {
           concrete: snakeToCamelObject,
-        }
+        },
       ],
     },
   },
@@ -179,6 +236,9 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
         },
       ],
     },
@@ -211,6 +271,39 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
+      ],
+    },
+  },
+
+  {
+    key: ChildRepository.name,
+    Class: ChildRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+
+  {
+    key: MaternalComplicationRepository.name,
+    Class: MaternalComplicationRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
       ],
     },
   },
@@ -218,6 +311,53 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: MaternalHistoryUseCase.name,
+    Class: MaternalHistoryUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
+      ],
+    },
+  },
+  // Maternal Service Use Case
+  {
+    key: MaternalServiceUseCase.name,
+    Class: MaternalServiceUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "maternalServiceRepository",
+          internal: MaternalServiceRepository.name,
+        },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: UpdateUserUseCase.name,
     Class: UpdateUserUseCase,
@@ -421,7 +561,7 @@ container.register([
         {
           name: "placementRepository",
           internal: PlacementRepository.name,
-        }
+        },
       ],
     },
   },
@@ -443,6 +583,10 @@ container.register([
           name: "randomGenerator",
           concrete: nanoid,
         },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        },
       ],
     },
   },
@@ -455,6 +599,49 @@ container.register([
         {
           name: "anteNatalCareRepository",
           internal: AnteNatalCareRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "databaseManager",
+          internal: DatabaseManager.name,
+        },
+      ],
+    },
+  },
+  // AddPostNatalCareUseCase
+  {
+    key: AddPostNatalCareUseCase.name,
+    Class: AddPostNatalCareUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "postNatalCareRepository",
+          internal: PostNatalCareRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddMaternalComplicationUseCase.name,
+    Class: AddMaternalComplicationUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalComplicationRepository",
+          internal: MaternalComplicationRepository.name,
         },
         {
           name: "maternalHistoryRepository",

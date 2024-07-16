@@ -1,4 +1,5 @@
 const MaternalUseCase = require("../../../../Applications/use_case/MaternalUseCase");
+const MaternalHistoryUseCase = require("../../../../Applications/use_case/MaternalHistoryUseCase");
 
 class MaternalHandler {
   constructor(container) {
@@ -6,6 +7,8 @@ class MaternalHandler {
     this.postMaternalHandler = this.postMaternalHandler.bind(this);
     this.postMaternalUserHandler = this.postMaternalUserHandler.bind(this);
     this.getMaternalHandler = this.getMaternalHandler.bind(this);
+    this.getMaternalByIdHandler = this.getMaternalByIdHandler.bind(this);
+    this.getMaternalHistoryByMaternalIdHandler = this.getMaternalHistoryByMaternalIdHandler.bind(this);
   }
 
   async postMaternalHandler(request, h) {
@@ -25,9 +28,7 @@ class MaternalHandler {
 
   async postMaternalUserHandler(request, h) {
     const maternalUseCase = this._container.getInstance(MaternalUseCase.name);
-    const createdMaternal = await maternalUseCase.addUserMaternal(
-      request.payload
-    );
+    const createdMaternal = await maternalUseCase.addUserMaternal(request.payload);
 
     const response = h.response({
       status: "success",
@@ -49,6 +50,31 @@ class MaternalHandler {
       status: "success",
       data: maternals.data,
       meta: maternals.meta,
+    };
+  }
+
+  async getMaternalByIdHandler(request, h) {
+    const maternalUseCase = this._container.getInstance(MaternalUseCase.name);
+
+    const result = await maternalUseCase.getMaternalUserById(request.params.id);
+
+    return {
+      status: "success",
+      data: {
+        ...result,
+      },
+    };
+  }
+
+  async getMaternalHistoryByMaternalIdHandler(request, h) {
+    const maternalHistoryUseCase = this._container.getInstance(MaternalHistoryUseCase.name);
+
+    const currentAuth = request.auth.credentials;
+    const result = await maternalHistoryUseCase.showMaternalHistoryByMaternalId(request.params.id, currentAuth);
+
+    return {
+      status: "success",
+      data: result,
     };
   }
 }

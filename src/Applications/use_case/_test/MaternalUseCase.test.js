@@ -255,4 +255,37 @@ describe("MaternalUseCase", () => {
       );
     });
   });
+
+  describe("getMaternalUserById function", () => {
+    it("should orchestrating the get maternal user by id action correctly", async () => {
+      // Arrange
+      const maternalId = "maternal-123";
+
+      /** creating dependency of use case */
+      const mockMaternalRepository = new MaternalRepository();
+      const mockUserRepository = new UserRepository();
+
+      /** mocking needed function */
+      mockMaternalRepository.findMaternalById = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve({ userId: "user-123" }));
+
+      mockUserRepository.getUserById = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve());
+
+      /** creating use case instance */
+      const maternalUseCase = new MaternalUseCase({
+        maternalRepository: mockMaternalRepository,
+        userRepository: mockUserRepository,
+      });
+
+      // Action
+      await maternalUseCase.getMaternalUserById(maternalId);
+
+      // Assert
+      expect(mockMaternalRepository.findMaternalById).toBeCalledWith(maternalId);
+      expect(mockUserRepository.getUserById).toBeCalledWith("user-123");
+    });
+  });
 });

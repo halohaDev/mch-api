@@ -2,10 +2,11 @@ const MaternalHistoryRepository = require("../../Domains/maternal/MaternalHistor
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 
 class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamel) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._snakeToCamel = snakeToCamel;
   }
 
   async addMaternalHistory({
@@ -24,7 +25,10 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
   }) {
     const idMaternalHistory = `maternal-history-${this._idGenerator()}`;
     const query = {
-      text: "INSERT INTO maternal_histories(id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13)",
+      text: `INSERT INTO maternal_histories(
+          id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status
+        ) VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      `,
       values: [
         idMaternalHistory,
         maternalId,
@@ -48,13 +52,13 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
 
   async getMaternalHistoryByMaternalId(maternalId) {
     const query = {
-      text: "SELECT * FROM maternal_histories WHERE maternal_id = $1",
+      text: "SELECT * FROM maternal_histories WHERE maternal_id = $1 ORDER BY created_at DESC",
       values: [maternalId],
     };
 
     const { rows } = await this._pool.query(query);
 
-    return rows;
+    return this._snakeToCamel(rows);
   }
 
   async getMaternalHistoryById(id) {
@@ -69,7 +73,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       throw new NotFoundError("maternal history tidak ditemukan");
     }
 
-    return rows[0];
+    return this._snakeToCamel(rows[0]);
   }
 
   async updateMaternalHistoryById(
@@ -105,21 +109,17 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       toBeUpdatedMaternalStatus,
       createdAt,
     } = {
-      toBeUpdatedPeriodDuration:
-        periodDuration || maternalHistory.period_duration,
+      toBeUpdatedPeriodDuration: periodDuration || maternalHistory.period_duration,
       toBeUpdatedPeriodAmount: periodAmount || maternalHistory.period_amount,
       toBeUpdatedPeriodConcern: periodConcern || maternalHistory.period_concern,
       toBeUpdatedPeriodCycle: periodCycle || maternalHistory.period_cycle,
       toBeUpdatedLastIllness: lastIllness || maternalHistory.last_illness,
-      toBeUpdatedCurrentIllness:
-        currentIllness || maternalHistory.current_illness,
+      toBeUpdatedCurrentIllness: currentIllness || maternalHistory.current_illness,
       toBeUpdatedGemeli: gemeli || maternalHistory.gemeli,
       toBeUpdatedEdd: edd || maternalHistory.edd,
       toBeUpdatedHpht: hpht || maternalHistory.hpht,
-      toBeUpdatedWeightBeforePregnancy:
-        weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
-      toBeUpdatedMaternalStatus:
-        maternalStatus || maternalHistory.maternal_status,
+      toBeUpdatedWeightBeforePregnancy: weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
+      toBeUpdatedMaternalStatus: maternalStatus || maternalHistory.maternal_status,
     };
 
     const query = {
@@ -141,6 +141,30 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     };
 
     const { rows } = await this._pool.query(query);
+
+    return rows[0];
+  }
+
+  async getMaternalHistories() {
+    const query = {
+      text: "SELECT * FROM maternal_histories",
+    };
+
+    const { rows } = await this._pool.query(query);
+    return rows;
+  }
+
+  async getLatestMaternalHistoryByMaternalId(id) {
+    const query = {
+      text: `SELECT * FROM maternal_histories WHERE maternal_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      values: [id],
+    };
+
+    const { rows } = await this._pool.query(query);
+
+    if (!rows.length) {
+      throw new NotFoundError("maternal history tidak ditemukan");
+    }
 
     return rows[0];
   }

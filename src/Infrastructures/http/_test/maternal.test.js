@@ -72,9 +72,7 @@ describe("HTTP server - maternal", () => {
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data.id).toBeDefined();
 
-      const maternal = await MaternalTableTestHelper.findMaternalById(
-        responseJson.data.id
-      );
+      const maternal = await MaternalTableTestHelper.findMaternalById(responseJson.data.id);
       expect(maternal).toBeDefined();
     });
 
@@ -142,9 +140,7 @@ describe("HTTP server - maternal", () => {
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data.id).toBeDefined();
 
-      const maternal = await MaternalTableTestHelper.findMaternalById(
-        responseJson.data.id
-      );
+      const maternal = await MaternalTableTestHelper.findMaternalById(responseJson.data.id);
       expect(maternal).toBeDefined();
 
       const user = await UsersTableTestHelper.findUserById(maternal.user_id);
@@ -190,9 +186,7 @@ describe("HTTP server - maternal", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(201);
 
-      const maternal = await MaternalTableTestHelper.findMaternalById(
-        responseJson.data.id
-      );
+      const maternal = await MaternalTableTestHelper.findMaternalById(responseJson.data.id);
 
       const user = await UsersTableTestHelper.findUserById(maternal.user_id);
       expect(user).toBeDefined();
@@ -301,8 +295,137 @@ describe("HTTP server - maternal", () => {
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data).toHaveLength(1);
       expect(responseJson.data[0].id).toEqual(maternalId);
-      expect(responseJson.data[0].user_id).toEqual(userId);
+      expect(responseJson.data[0].userId).toEqual(userId);
       expect(responseJson.data[0].name).toEqual("Test");
+    });
+  });
+
+  describe("when GET /api/v1/maternals/{id}", () => {
+    it("should response 200 and show maternal by id", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        name: "Test",
+        nik: "1234",
+      });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: `/api/v1/maternals/${maternalId}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data.id).toEqual(maternalId);
+      expect(responseJson.data.userId).toEqual(userId);
+      expect(responseJson.data.user.name).toEqual("Test");
+    });
+
+    it("should response 404 when maternal not found", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/maternals/maternal-123",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual("fail");
+    });
+  });
+
+  describe("when GET /api/v1/maternals/{id}/history", () => {
+    it("should response 200 and show maternal history by maternal id", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        name: "Test",
+        nik: "1234",
+      });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId,
+        maternalStatus: "pregnant",
+      });
+
+      await MaternalHistoriesTableTestHelper.addMaternalHistory({
+        id: "maternal-history-124",
+        maternalId,
+        maternalStatus: "postpartum",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: `/api/v1/maternals/${maternalId}/history`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toHaveLength(2);
+      expect(responseJson.data[0].maternalId).toEqual(maternalId);
+    });
+
+    it("should response empty array when maternal history not found", async () => {
+      // Arrange
+      const userId = "user-123";
+      const maternalId = "maternal-123";
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        name: "Test",
+        nik: "1234",
+      });
+      await MaternalTableTestHelper.addMaternal({ id: maternalId, userId });
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: `/api/v1/maternals/${maternalId}/histories`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toHaveLength(0);
     });
   });
 });

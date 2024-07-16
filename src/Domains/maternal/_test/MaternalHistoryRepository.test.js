@@ -21,5 +21,14 @@ describe("MaternalHistoryRepository interface", () => {
     ).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
+    await expect(maternalHistoryRepository.getMaternalHistories()).rejects.toThrowError(
+      "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
+    );
+    await expect(maternalHistoryRepository.getMaternalHistoryById("")).rejects.toThrowError(
+      "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
+    );
+    await expect(
+      maternalHistoryRepository.getLatestMaternalHistoryByMaternalId("")
+    ).rejects.toThrowError("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   });
 });

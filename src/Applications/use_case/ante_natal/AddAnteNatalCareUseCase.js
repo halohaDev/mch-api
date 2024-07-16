@@ -2,36 +2,48 @@ const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatalC
 const AddMaternalHistory = require("../../../Domains/maternal/entities/NewMaternalHistory");
 
 class AddAnteNatalCareUseCase {
-  constructor({ anteNatalCareRepository, maternalHistoryRepository }) {
+  constructor({ anteNatalCareRepository, maternalHistoryRepository, databaseManager }) {
     this._anteNatalCareRepository = anteNatalCareRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
+    this._databaseManager = databaseManager;
   }
 
   async execute(payload) {
-    const { maternalId } = payload;
+    const { maternalId, maternalHistoryId } = payload;
 
-    const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
-    const updatedMaternalHistoryId = await this.#updateOrCreateMaternalHistory(
-      payload,
-      maternalHistory
-    );
+    try {
+      this._databaseManager.beginTransaction();
 
-    // TODO: Get user_id from authenticated user
-    const userId = "user-123";
+      if (!!maternalHistoryId) {
+        await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
+      } else {
+        const maternalHistory = await this.#getActiveMaternalHistory(maternalId);
+        const newMaternalHistoryId = await this.#updateOrCreateMaternalHistory(
+          payload,
+          maternalHistory
+        );
+      }
+  
+      const updatedPayload = {
+        ...payload,
+        maternalHistoryId: maternalHistoryId || newMaternalHistoryId,
+      };
+  
+      const addAnteNatal = new AddAnteNatal(updatedPayload);
+  
+      const result = await this._anteNatalCareRepository.addAnteNatalCare(
+        addAnteNatal
+      );
 
-    const updatedPayload = {
-      ...payload,
-      userId,
-      maternalHistoryId: updatedMaternalHistoryId,
-    };
-
-    const addAnteNatal = new AddAnteNatal(updatedPayload);
-
-    const result = await this._anteNatalCareRepository.addAnteNatalCare(
-      addAnteNatal
-    );
-
-    return result;
+      this._databaseManager.commitTransaction();
+  
+      return result;
+    } catch (error) {
+      this._databaseManager.rollbackTransaction();
+      throw error;
+    } finally {
+      this._databaseManager.releaseClient();
+    }
   }
 
   async #getActiveMaternalHistory(maternalId) {

@@ -2,6 +2,7 @@ const AddAnteNatalUseCase = require("../../ante_natal/AddAnteNatalCareUseCase");
 const AnteNatalCareRepository = require("../../../../Domains/ante_natal/AnteNatalCareRepository");
 const MaternalHistoryRepository = require("../../../../Domains/maternal/MaternalHistoryRepository");
 const AddAnteNatalCare = require("../../../../Domains/ante_natal/entities/AddAnteNatalCare");
+const DatabaseManager = require("../../../../Applications/DatabaseManager");
 
 describe("AddAnteNatalUseCase", () => {
   it("should create new maternal history when no active maternal history", async () => {
@@ -30,29 +31,29 @@ describe("AddAnteNatalUseCase", () => {
     // mock dependency
     const mockAnteNatalRepository = new AnteNatalCareRepository();
     const mockMaternalHistoryRepository = new MaternalHistoryRepository();
+    const mockDatabaseManager = new DatabaseManager();
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
       anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
+      databaseManager: mockDatabaseManager,
     });
 
     // mock function
-    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve([])
-    );
-    mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
-      Promise.resolve({ id: "maternal-history-123" })
-    );
+    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() => Promise.resolve([]));
+    mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() => Promise.resolve({ id: "maternal-history-123" }));
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
+    mockDatabaseManager.beginTransaction = jest.fn();
+    mockDatabaseManager.commitTransaction = jest.fn();
+    mockDatabaseManager.releaseClient = jest.fn();
+    mockDatabaseManager.rollbackTransaction = jest.fn();
 
     // Action
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
     expect(mockMaternalHistoryRepository.addMaternalHistory).toBeCalled();
     expect(mockAnteNatalRepository.addAnteNatalCare).toBeCalled();
   });
@@ -83,11 +84,13 @@ describe("AddAnteNatalUseCase", () => {
     // mock dependency
     const mockAnteNatalRepository = new AnteNatalCareRepository();
     const mockMaternalHistoryRepository = new MaternalHistoryRepository();
+    const mockDatabaseManager = new DatabaseManager();
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
       anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
+      databaseManager: mockDatabaseManager,
     });
 
     // mock function
@@ -99,21 +102,18 @@ describe("AddAnteNatalUseCase", () => {
         },
       ])
     );
-    mockMaternalHistoryRepository.updateMaternalHistoryById = jest.fn(() =>
-      Promise.resolve({ id: "maternal-history-123" })
-    );
+    mockMaternalHistoryRepository.updateMaternalHistoryById = jest.fn(() => Promise.resolve({ id: "maternal-history-123" }));
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
+    mockDatabaseManager.beginTransaction = jest.fn();
+    mockDatabaseManager.commitTransaction = jest.fn();
+    mockDatabaseManager.releaseClient = jest.fn();
 
     // Action
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
-    expect(
-      mockMaternalHistoryRepository.updateMaternalHistoryById
-    ).toBeCalledWith("maternal-history-123", { maternalStatus: "pregnant" });
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.updateMaternalHistoryById).toBeCalledWith("maternal-history-123", { maternalStatus: "pregnant" });
   });
 
   it("should orchestrize action correctly", async () => {
@@ -142,17 +142,17 @@ describe("AddAnteNatalUseCase", () => {
     // mock dependency
     const mockAnteNatalRepository = new AnteNatalCareRepository();
     const mockMaternalHistoryRepository = new MaternalHistoryRepository();
+    const mockDatabaseManager = new DatabaseManager();
 
     // use case instance
     const addAnteNatalUseCase = new AddAnteNatalUseCase({
       anteNatalCareRepository: mockAnteNatalRepository,
       maternalHistoryRepository: mockMaternalHistoryRepository,
+      databaseManager: mockDatabaseManager,
     });
 
     // mock function
-    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() =>
-      Promise.resolve([{}])
-    );
+    mockMaternalHistoryRepository.getMaternalHistoryByMaternalId = jest.fn(() => Promise.resolve([{}]));
     mockMaternalHistoryRepository.addMaternalHistory = jest.fn(() =>
       Promise.resolve({
         id: "maternal-history-123",
@@ -160,14 +160,15 @@ describe("AddAnteNatalUseCase", () => {
       })
     );
     mockAnteNatalRepository.addAnteNatalCare = jest.fn(() => Promise.resolve());
+    mockDatabaseManager.beginTransaction = jest.fn();
+    mockDatabaseManager.commitTransaction = jest.fn();
+    mockDatabaseManager.releaseClient = jest.fn();
 
     // Action
     await addAnteNatalUseCase.execute(useCasePayload);
 
     // Assert
-    expect(
-      mockMaternalHistoryRepository.getMaternalHistoryByMaternalId
-    ).toBeCalledWith(useCasePayload.maternalId);
+    expect(mockMaternalHistoryRepository.getMaternalHistoryByMaternalId).toBeCalledWith(useCasePayload.maternalId);
     expect(mockMaternalHistoryRepository.addMaternalHistory).toBeCalled();
     expect(mockAnteNatalRepository.addAnteNatalCare).toBeCalledWith(
       new AddAnteNatalCare({

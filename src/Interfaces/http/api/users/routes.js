@@ -15,7 +15,7 @@ const routes = (handler) => [
     handler: handler.getUsersHandler,
     options: {
       app: {
-        access: ["admin", "chairperson"],
+        access: ["admin", "chairperson", "midwife"],
       },
     },
   },

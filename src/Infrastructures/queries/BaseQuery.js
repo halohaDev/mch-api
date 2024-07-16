@@ -32,7 +32,7 @@ class BaseQuery {
     this.paginationMeta.currentPage = page;
     this.paginationMeta.perPage = perPage;
 
-    this.fetchTotalData();
+    await this.fetchTotalData();
 
     const sql = `LIMIT ${limit} OFFSET ${offset}`;
     this._finalObject.paginate = sql;
@@ -151,7 +151,7 @@ class BaseQuery {
   }
 
   async fetchTotalData() {
-    const sql = `SELECT COUNT(*) FROM ${this.tableName} ${this.joinsSQL} ${this._finalObject.where}`;
+    const sql = `SELECT COUNT(*) FROM ${this.tableName} ${this._finalObject.joins} ${this._finalObject.where}`;
 
     const query = {
       text: sql,
