@@ -69,6 +69,7 @@ const PostgreManager = require("./database/postgres/PostgreManager");
 const MaternalServiceUseCase = require("../Applications/use_case/MaternalServiceUseCase");
 const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
 const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
+const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
 
 const container = createContainer();
 
@@ -310,6 +311,23 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: MaternalHistoryUseCase.name,
+    Class: MaternalHistoryUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
+      ],
+    },
+  },
   // Maternal Service Use Case
   {
     key: MaternalServiceUseCase.name,

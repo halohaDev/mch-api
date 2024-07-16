@@ -52,13 +52,13 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
 
   async getMaternalHistoryByMaternalId(maternalId) {
     const query = {
-      text: "SELECT * FROM maternal_histories WHERE maternal_id = $1",
+      text: "SELECT * FROM maternal_histories WHERE maternal_id = $1 ORDER BY created_at DESC",
       values: [maternalId],
     };
 
     const { rows } = await this._pool.query(query);
 
-    return rows;
+    return this._snakeToCamel(rows);
   }
 
   async getMaternalHistoryById(id) {
