@@ -299,6 +299,10 @@ describe("HTTP server", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(201);
       expect(responseJson.data.id).toBeDefined();
+
+      const maternalHistory = await MaternalHistoriesTableTestHelper.findMaternalHistoryById("maternal-history-123");
+      expect(maternalHistory).toBeDefined();
+      expect(maternalHistory.maternal_status).toEqual("abortion");
     });
 
     it("should response 422 when payload not complete", async () => {
