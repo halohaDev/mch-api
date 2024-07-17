@@ -7,6 +7,20 @@ class PostgreManager extends DatabaseManager {
     this._client = null;
   }
 
+  async transaction(callback) {
+    try {
+      await this.beginTransaction();
+      const returnResult = await callback();
+      await this.commitTransaction();
+      return returnResult;
+    } catch (error) {
+      await this.rollbackTransaction();
+      throw error;
+    } finally {
+      this.releaseClient();
+    }
+  }
+
   // create function that enclosed list of function to be on transactional query
   async beginTransaction() {
     this._client = await this._pool.connect();
