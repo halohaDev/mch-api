@@ -5,6 +5,7 @@ const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
+const { snakeToCamelObject } = require("../../../Commons/helper");
 
 describe("MaternalHistoryRepositoryPostgres", () => {
   afterAll(async () => {
@@ -42,18 +43,13 @@ describe("MaternalHistoryRepositoryPostgres", () => {
         maternalStatus: "pregnant",
       };
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
-      const maternalHistoryId =
-        await maternalHistoryRepositoryPostgres.addMaternalHistory(payload);
+      const maternalHistoryId = await maternalHistoryRepositoryPostgres.addMaternalHistory(payload);
 
       // Assert
-      const maternalHistory =
-        await MaternalHistoryTableTestHelper.findMaternalHistoryById(
-          maternalHistoryId
-        );
+      const maternalHistory = await MaternalHistoryTableTestHelper.findMaternalHistoryById(maternalHistoryId);
       expect(maternalHistory).toBeDefined();
       expect(maternalHistory.id).toEqual("maternal-history-123");
       expect(maternalHistory.maternal_id).toEqual("maternal-123");
@@ -74,8 +70,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
   describe("getMaternalHistoryById function", () => {
     it("should return maternal history correctly", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
       const maternalHistoryId = "maternal-history-123";
       await MaternalHistoryTableTestHelper.addMaternalHistory({
         id: maternalHistoryId,
@@ -83,36 +78,27 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       });
 
       // Action
-      const maternalHistory =
-        await maternalHistoryRepositoryPostgres.getMaternalHistoryById(
-          maternalHistoryId
-        );
+      const maternalHistory = await maternalHistoryRepositoryPostgres.getMaternalHistoryById(maternalHistoryId);
 
       // Assert
       expect(maternalHistory).toBeDefined();
       expect(maternalHistory.id).toEqual("maternal-history-123");
-      expect(maternalHistory.maternal_id).toEqual("maternal-123");
+      expect(maternalHistory.maternalId).toEqual("maternal-123");
     });
 
     it("should throw NotFoundError when maternal history not found", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       // Action & Assert
-      await expect(
-        maternalHistoryRepositoryPostgres.getMaternalHistoryById(
-          "maternal-history-123"
-        )
-      ).rejects.toThrowError(NotFoundError);
+      await expect(maternalHistoryRepositoryPostgres.getMaternalHistoryById("maternal-history-123")).rejects.toThrowError(NotFoundError);
     });
   });
 
   describe("getMaternalHistoryByMaternalId function", () => {
     it("should return maternal history correctly", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       await MaternalHistoryTableTestHelper.addMaternalHistory({
         id: "maternal-history-123",
@@ -120,10 +106,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       });
 
       // Action
-      const maternalHistory =
-        await maternalHistoryRepositoryPostgres.getMaternalHistoryByMaternalId(
-          "maternal-123"
-        );
+      const maternalHistory = await maternalHistoryRepositoryPostgres.getMaternalHistoryByMaternalId("maternal-123");
 
       // Assert
       expect(maternalHistory).toHaveLength(1);
@@ -131,14 +114,10 @@ describe("MaternalHistoryRepositoryPostgres", () => {
 
     it("should return empty array when maternal history not found", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       // Action & Assert
-      const maternalHistory =
-        await maternalHistoryRepositoryPostgres.getMaternalHistoryByMaternalId(
-          "maternal-123"
-        );
+      const maternalHistory = await maternalHistoryRepositoryPostgres.getMaternalHistoryByMaternalId("maternal-123");
 
       // Assert
       expect(maternalHistory).toHaveLength(0);
@@ -148,8 +127,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
   describe("updateMaternalHistoryById function", () => {
     it("should update maternal history correctly", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       await MaternalHistoryTableTestHelper.addMaternalHistory({
         id: "maternal-history-123",
@@ -162,25 +140,16 @@ describe("MaternalHistoryRepositoryPostgres", () => {
         maternalStatus: "abortion",
       };
 
-      const previousMaternalHistory =
-        await MaternalHistoryTableTestHelper.findMaternalHistoryById(
-          "maternal-history-123"
-        );
+      const previousMaternalHistory = await MaternalHistoryTableTestHelper.findMaternalHistoryById("maternal-history-123");
 
       const prevCreatedAt = previousMaternalHistory.created_at;
       const prevUpdatedAt = previousMaternalHistory.updated_at;
 
       // Action
-      await maternalHistoryRepositoryPostgres.updateMaternalHistoryById(
-        "maternal-history-123",
-        payload
-      );
+      await maternalHistoryRepositoryPostgres.updateMaternalHistoryById("maternal-history-123", payload);
 
       // Assert
-      const maternalHistory =
-        await MaternalHistoryTableTestHelper.findMaternalHistoryById(
-          "maternal-history-123"
-        );
+      const maternalHistory = await MaternalHistoryTableTestHelper.findMaternalHistoryById("maternal-history-123");
       expect(maternalHistory).toBeDefined();
       expect(maternalHistory.maternal_status).toEqual("abortion");
       expect(maternalHistory.gemeli).toEqual(false);
@@ -192,8 +161,7 @@ describe("MaternalHistoryRepositoryPostgres", () => {
 
     it("should throw NotFoundError when maternal history not found", async () => {
       const fakeIdGenerator = () => "123";
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       const payload = {
         lila: 10,
@@ -208,12 +176,9 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       };
 
       // Action & Assert
-      await expect(
-        maternalHistoryRepositoryPostgres.updateMaternalHistoryById(
-          "maternal-history-123",
-          payload
-        )
-      ).rejects.toThrowError(NotFoundError);
+      await expect(maternalHistoryRepositoryPostgres.updateMaternalHistoryById("maternal-history-123", payload)).rejects.toThrowError(
+        NotFoundError
+      );
     });
   });
 
@@ -221,9 +186,8 @@ describe("MaternalHistoryRepositoryPostgres", () => {
     it("should return latest maternal history correctly", async () => {
       const fakeIdGenerator = () => "123";
 
-      const maternalHistoryRepositoryPostgres =
-        new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator);
-      
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
+
       await MaternalHistoryTableTestHelper.addMaternalHistory({
         id: "maternal-history-123",
         maternalId: "maternal-123",
@@ -235,14 +199,33 @@ describe("MaternalHistoryRepositoryPostgres", () => {
       });
 
       // Action
-      const maternalHistory =
-        await maternalHistoryRepositoryPostgres.getLatestMaternalHistoryByMaternalid(
-          "maternal-123"
-        );
+      const maternalHistory = await maternalHistoryRepositoryPostgres.getLatestMaternalHistoryByMaternalId("maternal-123");
 
       // Assert
       expect(maternalHistory).toBeDefined();
       expect(maternalHistory.id).toEqual("maternal-history-124");
+    });
+  });
+
+  describe("updateRiskStatus function", () => {
+    it("should update risk status correctly", async () => {
+      // Arrange
+      await MaternalHistoryTableTestHelper.addMaternalHistory({
+        id: "maternal-history-123",
+        maternalId: "maternal-123",
+      });
+
+      const fakeIdGenerator = () => "123";
+
+      const maternalHistoryRepositoryPostgres = new MaternalHistoryRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
+
+      // Action
+      await maternalHistoryRepositoryPostgres.updateRiskStatus("maternal-history-123", "high_risk");
+
+      // Assert
+      const maternalHistory = await MaternalHistoryTableTestHelper.findMaternalHistoryById("maternal-history-123");
+
+      expect(maternalHistory.risk_status).toEqual("high_risk");
     });
   });
 });

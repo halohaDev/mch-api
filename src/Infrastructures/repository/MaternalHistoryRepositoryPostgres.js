@@ -90,6 +90,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       hpht,
       weightBeforePregnancy,
       maternalStatus,
+      riskStatus,
     }
   ) {
     // find maternal history by id
@@ -107,23 +108,25 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       toBeUpdatedHpht,
       toBeUpdatedWeightBeforePregnancy,
       toBeUpdatedMaternalStatus,
+      toBeUpdatedRiskStatus,
       createdAt,
     } = {
-      toBeUpdatedPeriodDuration: periodDuration || maternalHistory.period_duration,
-      toBeUpdatedPeriodAmount: periodAmount || maternalHistory.period_amount,
-      toBeUpdatedPeriodConcern: periodConcern || maternalHistory.period_concern,
-      toBeUpdatedPeriodCycle: periodCycle || maternalHistory.period_cycle,
-      toBeUpdatedLastIllness: lastIllness || maternalHistory.last_illness,
-      toBeUpdatedCurrentIllness: currentIllness || maternalHistory.current_illness,
+      toBeUpdatedPeriodDuration: periodDuration || maternalHistory.periodDuration,
+      toBeUpdatedPeriodAmount: periodAmount || maternalHistory.periodAmount,
+      toBeUpdatedPeriodConcern: periodConcern || maternalHistory.periodConcern,
+      toBeUpdatedPeriodCycle: periodCycle || maternalHistory.periodCycle,
+      toBeUpdatedLastIllness: lastIllness || maternalHistory.lastIllness,
+      toBeUpdatedCurrentIllness: currentIllness || maternalHistory.currentIllness,
       toBeUpdatedGemeli: gemeli || maternalHistory.gemeli,
       toBeUpdatedEdd: edd || maternalHistory.edd,
       toBeUpdatedHpht: hpht || maternalHistory.hpht,
-      toBeUpdatedWeightBeforePregnancy: weightBeforePregnancy || maternalHistory.weight_before_pregnancy,
-      toBeUpdatedMaternalStatus: maternalStatus || maternalHistory.maternal_status,
+      toBeUpdatedWeightBeforePregnancy: weightBeforePregnancy || maternalHistory.weightBeforePregnancy,
+      toBeUpdatedMaternalStatus: maternalStatus || maternalHistory.maternalStatus,
+      toBeUpdatedRiskStatus: riskStatus || maternalHistory.riskStatus,
     };
 
     const query = {
-      text: "UPDATE maternal_histories SET period_duration = $1, period_amount = $2, period_concern = $3, period_cycle = $4, last_illness = $5, current_illness = $6, gemeli = $7, edd = $8, hpht = $9, weight_before_pregnancy = $10, maternal_status = $11 WHERE id = $12 RETURNING id",
+      text: "UPDATE maternal_histories SET period_duration = $1, period_amount = $2, period_concern = $3, period_cycle = $4, last_illness = $5, current_illness = $6, gemeli = $7, edd = $8, hpht = $9, weight_before_pregnancy = $10, maternal_status = $11, risk_status = $13 WHERE id = $12 RETURNING id",
       values: [
         toBeUpdatedPeriodDuration,
         toBeUpdatedPeriodAmount,
@@ -137,6 +140,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
         toBeUpdatedWeightBeforePregnancy,
         toBeUpdatedMaternalStatus,
         id,
+        toBeUpdatedRiskStatus,
       ],
     };
 
@@ -165,6 +169,17 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     if (!rows.length) {
       throw new NotFoundError("maternal history tidak ditemukan");
     }
+
+    return rows[0];
+  }
+
+  async updateRiskStatus(id, riskStatus) {
+    const query = {
+      text: "UPDATE maternal_histories SET risk_status = $1 WHERE id = $2 RETURNING id",
+      values: [riskStatus, id],
+    };
+
+    const { rows } = await this._pool.query(query);
 
     return rows[0];
   }
