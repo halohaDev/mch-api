@@ -1,37 +1,41 @@
-const moment = require("moment");
 const DateHelper = require("../../Applications/utils/DateHelper");
 
 class Moment extends DateHelper {
+  constructor(moment) {
+    super();
+    this._moment = moment;
+  }
+
   async getCurrentDate() {
-    return moment();
+    return this._moment().toISOString();
   }
 
   async getDiffFromNow(date) {
-    return moment(date).fromNow();
+    return this._moment(date).fromNow();
   }
 
   async getDiffInDays(date) {
-    return moment().diff(date, "days");
+    return this._moment().diff(date, "days");
   }
 
   async getDiffInYears(date) {
-    return moment().diff(date, "years");
+    return this._moment().diff(date, "years");
   }
 
   async addDays(date, days) {
-    return moment(date).add(days, "days");
+    return this._moment(date).add(days, "days").toISOString();
   }
 
   async addMinutes(date, minutes) {
-    return moment(date).add(minutes, "minutes");
+    return this._moment(date).add(minutes, "minutes").toISOString();
   }
 
   async addYears(date, years) {
-    return moment(date).add(years, "years");
+    return this._moment(date).add(years, "years").toISOString();
   }
 
   async addMonths(date, months) {
-    return moment(date).add(months, "months");
+    return this._moment(date).add(months, "months").toISOString();
   }
 }
 

@@ -23,6 +23,7 @@ const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceR
 const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
 const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
 const MaternalComplicationRepositoryPostgres = require("./repository/MaternalComplicationRepositoryPostgres");
+const Moment = require("./utils/Moment");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -70,6 +71,7 @@ const MaternalServiceUseCase = require("../Applications/use_case/MaternalService
 const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
 const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
 const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
+const DateHelper = require("../Applications/utils/DateHelper");
 
 const container = createContainer();
 
@@ -257,6 +259,9 @@ container.register([
         {
           concrete: moment,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
       ],
     },
   },
@@ -306,6 +311,18 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+      ],
+    },
+  },
+
+  {
+    key: DateHelper.name,
+    Class: Moment,
+    parameter: {
+      dependencies: [
+        {
+          concrete: moment,
         },
       ],
     },
@@ -616,12 +633,16 @@ container.register([
           internal: MaternalRepository.name,
         },
         {
-          name: "moment",
-          concrete: moment,
+          name: "childRepository",
+          internal: ChildRepository.name,
         },
         {
           name: "userRepository",
           internal: UserRepository.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
         },
       ],
     },

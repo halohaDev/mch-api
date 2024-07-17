@@ -65,6 +65,15 @@ const MaternalHistoriesTableTestHelper = {
     const { rows } = await pool.query(query);
     return rows[0];
   },
+
+  async updateRiskStatus(id, riskStatus) {
+    const query = {
+      text: "UPDATE maternal_histories SET risk_status = $1 WHERE id = $2",
+      values: [riskStatus, id],
+    };
+
+    await pool.query(query);
+  },
 };
 
 module.exports = MaternalHistoriesTableTestHelper;

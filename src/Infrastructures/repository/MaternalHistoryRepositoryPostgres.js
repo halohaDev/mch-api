@@ -27,7 +27,7 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
     const query = {
       text: `INSERT INTO maternal_histories(
           id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status
-        ) VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        ) VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning id
       `,
       values: [
         idMaternalHistory,
@@ -46,8 +46,8 @@ class MaternalHistoryRepositoryPostgres extends MaternalHistoryRepository {
       ],
     };
 
-    await this._pool.query(query);
-    return idMaternalHistory;
+    const result = await this._pool.query(query);
+    return this._snakeToCamel(result.rows[0]);
   }
 
   async getMaternalHistoryByMaternalId(maternalId) {

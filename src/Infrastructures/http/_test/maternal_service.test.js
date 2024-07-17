@@ -372,4 +372,150 @@ describe("HTTP server", () => {
       expect(response.statusCode).toEqual(404);
     });
   });
+
+  describe("POST /api/v1/maternal_services/ante_natal_care", () => {
+    it("should response 201 and create maternal histories when c1", async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: "user-125", username: "user125", role: "mother" });
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-125", userId: "user-125" });
+
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/ante_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalId: "maternal-125",
+          jorongId: "jorong-123",
+          height: 160,
+          weight: 50,
+          hemoglobin: 12,
+          bloodPressure: 160,
+          fundalHeight: 20,
+          fetalHeartRate: 120,
+          usgCheckDate: "2021-08-21",
+          temprature: 36,
+          action: "test",
+          upperArmCircumference: 20,
+          contactType: "c1",
+          periodDuration: 5,
+          periodAmount: 2,
+          periodConcern: "test",
+          periodCycle: 28,
+          lastIllness: "test",
+          gemeli: false,
+          hpht: "2021-08-01",
+          weightBeforePregnancy: 50,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+      expect(responseJson.data.id).toBeDefined();
+
+      const maternalHistory = await MaternalHistoriesTableTestHelper.findMaternalHistoryById(responseJson.data.maternalHistoryId);
+      expect(maternalHistory).toBeDefined();
+    });
+
+    it("should response 201 and update risk when category passed", async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: "user-125", username: "user125", role: "mother" });
+      await MaternalTableTestHelper.addMaternal({ id: "maternal-125", userId: "user-125" });
+
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/ante_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalId: "maternal-125",
+          jorongId: "jorong-123",
+          height: 160,
+          weight: 50,
+          hemoglobin: 12,
+          bloodPressure: 150,
+          fundalHeight: 20,
+          fetalHeartRate: 120,
+          usgCheckDate: "2021-08-21",
+          temprature: 36,
+          action: "test",
+          upperArmCircumference: 20,
+          contactType: "c1",
+          periodDuration: 5,
+          periodAmount: 2,
+          periodConcern: "test",
+          periodCycle: 28,
+          lastIllness: "test",
+          gemeli: false,
+          hpht: "2021-08-01",
+          weightBeforePregnancy: 50,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+
+      const maternalHistory = await MaternalHistoriesTableTestHelper.findMaternalHistoryById(responseJson.data.maternalHistoryId);
+      expect(maternalHistory).toBeDefined();
+      expect(maternalHistory.risk_status).toEqual("high_risk");
+    });
+
+    it("should response 201 and not update risk when updated category has lower risk", async () => {
+      await MaternalHistoriesTableTestHelper.updateRiskStatus("maternal-history-123", "high_risk");
+      const oldMh = await MaternalHistoriesTableTestHelper.findMaternalHistoryById("maternal-history-123");
+      expect(oldMh.risk_status).toEqual("high_risk");
+
+      const server = await createServer(container);
+
+      token = await authenticateUser("user-123", "midwife");
+
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/maternal_services/ante_natal_care",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          maternalHistoryId: "maternal-history-123",
+          jorongId: "jorong-123",
+          height: 160,
+          weight: 50,
+          hemoglobin: 12,
+          bloodPressure: 120,
+          fundalHeight: 20,
+          fetalHeartRate: 120,
+          usgCheckDate: "2021-08-21",
+          temprature: 36,
+          action: "test",
+          upperArmCircumference: 20,
+          contactType: "c1",
+          periodDuration: 5,
+          periodAmount: 2,
+          periodConcern: "test",
+          periodCycle: 28,
+          lastIllness: "test",
+          gemeli: false,
+          hpht: "2021-08-01",
+          weightBeforePregnancy: 50,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+
+      const maternalHistory = await MaternalHistoriesTableTestHelper.findMaternalHistoryById(responseJson.data.maternalHistoryId);
+      expect(maternalHistory).toBeDefined();
+      expect(maternalHistory.risk_status).toEqual("high_risk");
+    });
+  });
 });

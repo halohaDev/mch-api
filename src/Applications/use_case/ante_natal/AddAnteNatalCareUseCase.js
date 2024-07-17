@@ -2,11 +2,20 @@ const AddAnteNatal = require("../../../Domains/ante_natal/entities/AddAnteNatalC
 const AddMaternalHistory = require("../../../Domains/maternal/entities/NewMaternalHistory");
 
 class AddAnteNatalCareUseCase {
-  constructor({ anteNatalCareRepository, maternalHistoryRepository, databaseManager, userRepository, dateHelper, childRepository }) {
+  constructor({
+    anteNatalCareRepository,
+    maternalHistoryRepository,
+    databaseManager,
+    userRepository,
+    dateHelper,
+    childRepository,
+    maternalRepository,
+  }) {
     this._anteNatalCareRepository = anteNatalCareRepository;
     this._maternalHistoryRepository = maternalHistoryRepository;
     this._databaseManager = databaseManager;
     this._userRepository = userRepository;
+    this._maternalRepository = maternalRepository;
     this._childRepository = childRepository;
     this._dateHelper = dateHelper;
   }
@@ -21,18 +30,18 @@ class AddAnteNatalCareUseCase {
       if (!!maternalHistoryId) {
         maternalHistory = await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
       } else {
-        maternalHistory = await this.#getActiveMaternalHistory(maternalId);
-        const newMaternalHistoryId = await this.#updateOrCreateMaternalHistory(payload, maternalHistory);
+        const oldMaternalHistory = await this.#getActiveMaternalHistory(maternalId);
+        const newMaternalHistoryId = await this.#updateOrCreateMaternalHistory(payload, oldMaternalHistory);
+        maternalHistory ||= await this._maternalHistoryRepository.getMaternalHistoryById(newMaternalHistoryId);
       }
 
-      const riskStatus = await this.#calculateRiskStatus(payload, maternalHistory);
-
-      await this._maternalHistoryRepository.updateRiskStatus(maternalHistoryId, riskStatus);
+      const previousRiskStatus = maternalHistory.riskStatus;
+      const riskStatus = await this.#calculateRiskStatus(payload, maternalHistory.maternalId, previousRiskStatus);
+      await this._maternalHistoryRepository.updateRiskStatus(maternalHistory.id, riskStatus);
 
       const updatedPayload = {
         ...payload,
-        maternalHistoryId: maternalHistoryId || newMaternalHistoryId,
-        riskStatus: riskStatus || "normal",
+        maternalHistoryId: maternalHistory.id,
       };
 
       const addAnteNatal = new AddAnteNatal(updatedPayload);
@@ -76,7 +85,7 @@ class AddAnteNatalCareUseCase {
     if (payload.contactType === "c1") {
       payload.maternalStatus = "pregnant";
 
-      const edd = this.#calculateEdd(payload.hpht);
+      const edd = await this.#calculateEdd(payload.hpht);
       payload.edd = edd;
     }
 
@@ -106,12 +115,12 @@ class AddAnteNatalCareUseCase {
     return this._dateHelper.addDays(hpht, formula);
   }
 
-  async #calculateRiskStatus(payload, maternalHistory) {
+  async #calculateRiskStatus(payload, maternalId, previousRiskStatus) {
     const { weight, upperArmCircumference, bloodPressure, hemoglobin, height } = payload;
-    const { maternalId, id: maternalHistoryId } = maternalHistory;
 
     const childs = await this._childRepository.getChildByMaternalId(maternalId);
-    const { dateOfBirth } = await this._userRepository.getUserById(maternalId);
+    const { userId } = await this._maternalRepository.findMaternalById(maternalId);
+    const { dateOfBirth } = await this._userRepository.getUserById(userId);
 
     const age = this._dateHelper.getDiffInYears(dateOfBirth);
     let paritasDiff = 25;
@@ -126,7 +135,6 @@ class AddAnteNatalCareUseCase {
       scHistory = childs.find((child) => child.birthMethod === "sc");
     }
 
-    let riskStatus = "normal";
     const riskFactor =
       weight < 38 ||
       upperArmCircumference < 23.5 ||
@@ -138,14 +146,9 @@ class AddAnteNatalCareUseCase {
       paritasDiff < 2;
 
     const highRisk = bloodPressure > 140 || hemoglobin < 8 || !!scHistory;
-
-    if (riskFactor) {
-      riskStatus = "risk";
-    } else if (highRisk) {
-      riskStatus = "high_risk";
-    }
-
-    return riskStatus;
+    if (highRisk || previousRiskStatus == "high_risk") return "high_risk";
+    if (riskFactor || previousRiskStatus == "risk") return "risk";
+    return "normal";
   }
 }
 
