@@ -5,6 +5,7 @@ const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
 const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper");
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const ChildrenTableTestHelper = require("../../../../tests/ChildrenTableTestHelper");
+const { snakeToCamelObject } = require("../../../Commons/helper");
 
 describe("ChildRepositoryPostgres", () => {
   afterAll(async () => {
@@ -23,6 +24,7 @@ describe("ChildRepositoryPostgres", () => {
     await UsersTableTestHelper.addUser({ id: "user-123" });
     await JorongTableTestHelper.addJorong({ id: "jorong-123" });
     await MaternalTableTestHelper.addMaternal({ id: "maternal-123" });
+    await MaternalTableTestHelper.addMaternal({ id: "maternal-124" });
     await MaternalHistoryTableTestHelper.addMaternalHistory({ id: "maternal-history-123" });
   });
 
@@ -46,10 +48,10 @@ describe("ChildRepositoryPostgres", () => {
       };
 
       const fakeIdGenerator = () => "123";
-      const childRepositoryPostgres = new ChildRepositoryPostgres(pool, fakeIdGenerator);
+      const childRepositoryPostgres = new ChildRepositoryPostgres(pool, fakeIdGenerator, snakeToCamelObject);
 
       // Action
-      const childId = await childRepositoryPostgres.addChild(payload);
+      const { id: childId } = await childRepositoryPostgres.addChild(payload);
 
       // Assert
       const child = await ChildrenTableTestHelper.findChildById(childId);
@@ -60,6 +62,25 @@ describe("ChildRepositoryPostgres", () => {
       expect(child.birth_datetime).toBeDefined();
       expect(child.birth_weight).toEqual(3);
       expect(child.birth_height).toEqual(50);
+    });
+  });
+
+  describe("getChildByMaternalId function", () => {
+    it("should return childs by maternal id correctly", async () => {
+      // Arrange
+      await ChildrenTableTestHelper.addChild({ id: "child-123", maternalId: "maternal-123" });
+      await ChildrenTableTestHelper.addChild({ id: "child-124", maternalId: "maternal-123" });
+      await ChildrenTableTestHelper.addChild({ id: "child-125", maternalId: "maternal-124" });
+
+      const childRepositoryPostgres = new ChildRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const childs = await childRepositoryPostgres.getChildByMaternalId("maternal-123");
+
+      // Assert
+      expect(childs).toHaveLength(2);
+      expect(childs[0].id).toEqual("child-123");
+      expect(childs[1].id).toEqual("child-124");
     });
   });
 });
