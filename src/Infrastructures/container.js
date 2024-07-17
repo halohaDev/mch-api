@@ -289,6 +289,9 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
       ],
     },
   },
@@ -607,6 +610,18 @@ container.register([
         {
           name: "databaseManager",
           internal: DatabaseManager.name,
+        },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
+        {
+          name: "moment",
+          concrete: moment,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
         },
       ],
     },
