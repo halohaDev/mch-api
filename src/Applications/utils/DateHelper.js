@@ -22,6 +22,10 @@ class DateHelper {
   async addMinutes(date, minutes) {
     throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
   }
+
+  async new(date) {
+    throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = DateHelper;

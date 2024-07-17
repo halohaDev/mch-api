@@ -15,15 +15,23 @@ class ReportRepository {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateAnteNatalCarePuskesmasMonthlyReport() {
+  async calculateMonthlyJorongRecap(jorongId) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateAnteNatalCareJorongMonthlyReport() {
+  async getAnteNatalAggregateReport(jorongId, start, end) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateLbJorongMonthlyReport() {
+  async getPostNatalAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getComplicationAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getRiskFactorAggregateReport(jorongId, start, end) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }

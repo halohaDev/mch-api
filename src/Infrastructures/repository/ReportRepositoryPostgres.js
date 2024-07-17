@@ -3,11 +3,12 @@ const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 const ReportQuery = require("../queries/ReportQuery");
 
 class ReportRepositoryPostgres extends ReportRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamelCase) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
     this._reportQuery = new ReportQuery({ pool });
+    this._snakeToCamelCase = snakeToCamelCase;
   }
 
   async addReport(payload) {
@@ -95,13 +96,8 @@ class ReportRepositoryPostgres extends ReportRepository {
     `;
 
     let indexWhere = 0;
-    const jorongCondition = jorongId
-      ? `WHERE ante_natal_cares.jorong_id = $${++indexWhere}`
-      : "";
-    const dateCondition =
-      startDate && endDate
-        ? `AND ante_natal_cares.created_at BETWEEN $${++indexWhere} AND $${++indexWhere}`
-        : "";
+    const jorongCondition = jorongId ? `WHERE ante_natal_cares.jorong_id = $${++indexWhere}` : "";
+    const dateCondition = startDate && endDate ? `AND ante_natal_cares.created_at BETWEEN $${++indexWhere} AND $${++indexWhere}` : "";
 
     const query = {
       text: `
@@ -205,6 +201,22 @@ class ReportRepositoryPostgres extends ReportRepository {
     const query = {
       text: squishedQuery,
       values: [month, year],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
+  async getAnteNatalAggregateReport(jorongId, start, end) {
+    const query = {
+      text: `
+        SELECT contact_type as key, COUNT(*) 
+        FROM ante_natal_cares anc 
+        LEFT JOIN maternal_histories mh ON mh.id = anc.maternal_history_id
+        LEFT JOIN maternals m ON m.id = mh.maternal_id
+        WHERE anc.jorong_id = $1 AND anc.date_of_visit BETWEEN $2 AND $3 GROUP BY anc.contact_type, m.id`,
+      values: [jorongId, start, end],
     };
 
     const result = await this._pool.query(query);

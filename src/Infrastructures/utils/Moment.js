@@ -37,6 +37,10 @@ class Moment extends DateHelper {
   async addMonths(date, months) {
     return this._moment(date).add(months, "months").toISOString();
   }
+
+  async new(date) {
+    return this._moment(date);
+  }
 }
 
 module.exports = Moment;
