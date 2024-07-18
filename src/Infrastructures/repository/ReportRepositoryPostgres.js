@@ -298,7 +298,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows[0]);
+    return this._snakeToCamelCase(result.rows);
   }
 
   async getRiskFactorAggregateReport({ jorongId, startDate, endDate }) {
@@ -319,7 +319,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows[0]);
+    return this._snakeToCamelCase(result.rows);
   }
 }
 
