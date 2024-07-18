@@ -233,22 +233,23 @@ class ReportRepositoryPostgres extends ReportRepository {
     return this._snakeToCamelCase(result.rows);
   }
 
-  async getPostNatalAggregateReport(jorongId, start, end) {
+  async getPostNatalAggregateReport({ jorongId, startDate, endDate }) {
     const query = {
       text: `
         SELECT 
           COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_1' THEN m.id END)::integer AS pnc_1,
           COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_2' THEN m.id END)::integer AS pnc_2,
           COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_3' THEN m.id END)::integer AS pnc_3,
-          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_4' THEN m.id END)::integer AS pnc_4
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_4' THEN m.id END)::integer AS pnc_4,
+          COUNT(DISTINCT (m.id, pnc.post_natal_type))::integer AS total_pnc
         FROM post_natal_cares pnc 
         LEFT JOIN maternal_histories mh ON mh.id = pnc.maternal_history_id
         LEFT JOIN maternals m ON m.id = mh.maternal_id
         WHERE m.jorong_id = $1 AND pnc.date_of_visit BETWEEN $2 AND $3
           AND m.id IS NOT NULL
           AND mh.id IS NOT NULL
-        GROUP BY pnc.contact_type, m.id`,
-      values: [jorongId, start, end],
+      `,
+      values: [jorongId, startDate, endDate],
     };
 
     const result = await this._pool.query(query);
@@ -256,21 +257,21 @@ class ReportRepositoryPostgres extends ReportRepository {
     return this._snakeToCamelCase(result.rows);
   }
 
-  async getMaternalComplication(jorongId, start, end) {
+  async getMaternalComplicationAggregateReport({ jorongId, startDate, endDate }) {
     const query = {
       text: `
         SELECT 
-          COUNT(DISTINCT CASE WHEN m.maternal_status = 'pregnant' THEN m.id END)::integer AS anc_complication,
-          COUNT(DISTINCT CASE WHEN m.maternal_status = 'postpartum' THEN m.id END)::integer AS pnc_complication,
-          COUNT(DISTINCT CASE WHEN m.maternal_status = 'pregnant' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS anc_death,
-          COUNT(DISTINCT CASE WHEN m.maternal_status = 'postpartum' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS pnc_death
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'pregnant' THEN m.id END)::integer AS anc_complication,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'postpartum' THEN m.id END)::integer AS pnc_complication,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'pregnant' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS anc_death,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'postpartum' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS pnc_death
         FROM maternal_complications mc
         LEFT JOIN maternal_histories mh ON mh.id = mc.maternal_history_id
-        LEFT JOIN maternals m ON m.id = mc.maternal_id and m.jorong_id = $1
-        WHERE mh.complication_date BETWEEN $2 AND $3
+        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        WHERE mc.complication_date BETWEEN $2 AND $3
           AND m.id IS NOT NULL
-        GROUP BY mc.complication_type, m.id`,
-      values: [jorongId, start, end],
+      `,
+      values: [jorongId, startDate, endDate],
     };
 
     const result = await this._pool.query(query);

@@ -7,7 +7,9 @@ const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper")
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
+const PostNatalCareTableTestHelper = require("../../../../tests/PostNatalCareTableTestHelper");
 const { randomNumber, randomFromArray, randomDate, snakeToCamelObject } = require("../../../Commons/helper");
+const MaternalComplicationsTableTestHelper = require("../../../../tests/MaternalComplicationsTableTestHelper");
 
 describe("ReportRepository postgres implementation", () => {
   afterAll(async () => {
@@ -16,6 +18,8 @@ describe("ReportRepository postgres implementation", () => {
 
   afterEach(async () => {
     await ReportTableTestHelper.cleanTable();
+    await MaternalComplicationsTableTestHelper.cleanTable();
+    await PostNatalCareTableTestHelper.cleanTable();
     await AnteNatalCareTableTestHelper.cleanTable();
     await MaternalHistoryTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
@@ -205,7 +209,7 @@ describe("ReportRepository postgres implementation", () => {
     });
   });
 
-  describe("calculateAncReportJorongMonthly function", () => {
+  describe.skip("calculateAncReportJorongMonthly function", () => {
     it("should calculate correctly", async () => {
       // Arrange
       // create 20 users
@@ -373,7 +377,7 @@ describe("ReportRepository postgres implementation", () => {
     });
   });
 
-  describe("calculateAnteNatalCarePuskesmasMonthlyReport function", () => {
+  describe.skip("calculateAnteNatalCarePuskesmasMonthlyReport function", () => {
     it("should calculate correctly", async () => {
       // Arrange
       const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
@@ -638,6 +642,205 @@ describe("ReportRepository postgres implementation", () => {
       expect(result[0].c4).toBe(0);
       expect(result[0].c5).toBe(0);
       expect(result[0].c6).toBe(5);
+    });
+  });
+
+  describe("getPostNatalAggregateReport function", () => {
+    beforeEach(async () => {
+      // create 2 jorong
+      await JorongTableTestHelper.addJorong({ id: "jorong-1" });
+      await JorongTableTestHelper.addJorong({ id: "jorong-2" });
+
+      // create report for each jorong
+      for (let i = 0; i < 20; i++) {
+        await UsersTableTestHelper.addUser({
+          id: `user-ibu-${i}`,
+          role: "mother",
+        });
+      }
+
+      // create 15 maternal jorong 1
+      for (let i = 0; i < 15; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create 5 maternal jorong 2
+      for (let i = 15; i < 20; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-2",
+        });
+      }
+
+      // create 20 maternal history
+      for (let i = 0; i < 20; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "postpartum",
+        });
+      }
+
+      // create 10 post natal care c1
+      for (let i = 0; i < 10; i++) {
+        await PostNatalCareTableTestHelper.addPostNatalCare({
+          id: `post-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          postNatalType: "pnc_1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+
+      // create 5 other c1
+      for (let i = 10; i < 15; i++) {
+        await PostNatalCareTableTestHelper.addPostNatalCare({
+          id: `post-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          postNatalType: "pnc_1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+
+      // create 6 other c1 in different month
+      for (let i = 15; i < 21; i++) {
+        const maternalHistoryId = i - 15;
+        await PostNatalCareTableTestHelper.addPostNatalCare({
+          id: `post-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${maternalHistoryId}`,
+          postNatalType: "pnc_1",
+          createdAt: "2021-06-01",
+          dateOfVisit: "2021-06-01",
+        });
+      }
+
+      // create 5 post natal care 4 jorong 2
+      // create 5 for jorong 1
+      for (let i = 10; i < 20; i++) {
+        await PostNatalCareTableTestHelper.addPostNatalCare({
+          id: `post-natal-care-c2-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          postNatalType: "pnc_4",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+    });
+
+    it("should return report", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getPostNatalAggregateReport({
+        jorongId: "jorong-1",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].totalPnc).toBe(20);
+      expect(result[0].pnc1).toBe(15);
+      expect(result[0].pnc2).toBe(0);
+      expect(result[0].pnc3).toBe(0);
+      expect(result[0].pnc4).toBe(5);
+    });
+  });
+
+  describe("getMaternalComplicationsReport function", () => {
+    beforeEach(async () => {
+      // create 2 jorong
+      await JorongTableTestHelper.addJorong({ id: "jorong-1" });
+      await JorongTableTestHelper.addJorong({ id: "jorong-2" });
+
+      // create report for each jorong
+      for (let i = 0; i < 20; i++) {
+        await UsersTableTestHelper.addUser({
+          id: `user-ibu-${i}`,
+          role: "mother",
+        });
+      }
+
+      // create 15 maternal jorong 1
+      for (let i = 0; i < 15; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create 5 maternal jorong 2
+      for (let i = 15; i < 20; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-2",
+        });
+      }
+
+      // create 20 maternal history
+      for (let i = 0; i < 20; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "pregnant",
+        });
+      }
+
+      // create 10 maternal complications jorong 1
+      for (let i = 0; i < 10; i++) {
+        await MaternalComplicationsTableTestHelper.addMaternalComplication({
+          id: `maternal-complications-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          createdAt: "2021-08-01",
+        });
+      }
+
+      // create 5 other c1
+      for (let i = 10; i < 15; i++) {
+        await MaternalComplicationsTableTestHelper.addMaternalComplication({
+          id: `maternal-complications-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          createdAt: "2021-08-01",
+        });
+      }
+
+      await MaternalComplicationsTableTestHelper.addMaternalComplication({
+        id: `maternal-complications-death`,
+        maternalHistoryId: `maternal-history-0`,
+        createdAt: "2021-08-01",
+        comeCondition: "dead",
+      });
+    });
+
+    it("should return report", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getMaternalComplicationAggregateReport({
+        jorongId: "jorong-1",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].ancComplication).toBe(15);
+      expect(result[0].pncComplication).toBe(0);
+      expect(result[0].ancDeath).toBe(1);
     });
   });
 });

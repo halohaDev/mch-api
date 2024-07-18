@@ -27,7 +27,7 @@ class ReportRepository {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async getComplicationAggregateReport(jorongId, start, end) {
+  async getMaternalComplicationAggregateReport(jorongId, start, end) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 

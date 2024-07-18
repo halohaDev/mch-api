@@ -29,7 +29,7 @@ describe("ReportRepository interface", () => {
 
     await expect(reportRepository.getPostNatalAggregateReport("", "", "")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
 
-    await expect(reportRepository.getComplicationAggregateReport("", "", "")).rejects.toThrowError(
+    await expect(reportRepository.getMaternalComplicationAggregateReport("", "", "")).rejects.toThrowError(
       "REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
 
