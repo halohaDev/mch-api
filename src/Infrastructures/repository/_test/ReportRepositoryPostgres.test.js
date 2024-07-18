@@ -7,11 +7,7 @@ const JorongTableTestHelper = require("../../../../tests/JorongTableTestHelper")
 const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelper");
 const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
-const {
-  randomNumber,
-  randomFromArray,
-  randomDate,
-} = require("../../../Commons/helper");
+const { randomNumber, randomFromArray, randomDate, snakeToCamelObject } = require("../../../Commons/helper");
 
 describe("ReportRepository postgres implementation", () => {
   afterAll(async () => {
@@ -46,10 +42,7 @@ describe("ReportRepository postgres implementation", () => {
     it("should persist report and return id", async () => {
       // Arrange
       const mockIdGenerator = () => "123";
-      const reportRepositoryPostgres = new ReportRepositoryPostgres(
-        pool,
-        mockIdGenerator
-      );
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, mockIdGenerator);
 
       // Action
       await reportRepositoryPostgres.addReport({
@@ -93,9 +86,7 @@ describe("ReportRepository postgres implementation", () => {
       const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(
-        reportRepositoryPostgres.findReportById("report-123")
-      ).rejects.toThrowError(NotFoundError);
+      await expect(reportRepositoryPostgres.findReportById("report-123")).rejects.toThrowError(NotFoundError);
     });
 
     it("should return report when report is found", async () => {
@@ -118,9 +109,7 @@ describe("ReportRepository postgres implementation", () => {
       const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
 
       // Action
-      const report = await reportRepositoryPostgres.findReportById(
-        "report-123"
-      );
+      const report = await reportRepositoryPostgres.findReportById("report-123");
 
       // Assert
       expect(report).toStrictEqual({
@@ -266,12 +255,7 @@ describe("ReportRepository postgres implementation", () => {
         const height = randomNumber(150, 180);
         const upperArmCircumference = randomNumber(20, 30);
         const syphilis = randomFromArray(["positive", "negative"]);
-        const hiv = randomFromArray([
-          "positive",
-          "negative",
-          "positive_non_test",
-          "rejected",
-        ]);
+        const hiv = randomFromArray(["positive", "negative", "positive_non_test", "rejected"]);
         const hb = randomNumber(7, 15);
         const bloodPressure = randomNumber(80, 120);
         const bloodType = randomFromArray(["A", "B", "AB", "O"]);
@@ -357,59 +341,34 @@ describe("ReportRepository postgres implementation", () => {
       const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {});
 
       // Action
-      const result =
-        await reportRepositoryPostgres.calculateAnteNatalCareJorongMonthlyReport(
-          {
-            jorongId: "jorong-123",
-            startDate: "2021-08-01",
-            endDate: "2021-08-31",
-          }
-        );
+      const result = await reportRepositoryPostgres.calculateAnteNatalCareJorongMonthlyReport({
+        jorongId: "jorong-123",
+        startDate: "2021-08-01",
+        endDate: "2021-08-31",
+      });
 
       const firstResult = result[0];
 
       // Assert
       expect(firstResult.hemoglobin_check).toEqual(randomHb.length);
-      expect(firstResult.anemia_less_than_8).toEqual(
-        randomHb.filter((hb) => hb < 8).length
-      );
-      expect(firstResult.anemia_between_8_and_11).toEqual(
-        randomHb.filter((hb) => hb >= 8 && hb <= 11.9).length
-      );
-      expect(firstResult.lila_check).toEqual(
-        randomUpperArmCircumferences.length
-      );
-      expect(firstResult.kek).toEqual(
-        randomUpperArmCircumferences.filter((uac) => uac < 23).length
-      );
+      expect(firstResult.anemia_less_than_8).toEqual(randomHb.filter((hb) => hb < 8).length);
+      expect(firstResult.anemia_between_8_and_11).toEqual(randomHb.filter((hb) => hb >= 8 && hb <= 11.9).length);
+      expect(firstResult.lila_check).toEqual(randomUpperArmCircumferences.length);
+      expect(firstResult.kek).toEqual(randomUpperArmCircumferences.filter((uac) => uac < 23).length);
       expect(firstResult.protein_in_urine_check).toEqual(0);
       expect(firstResult.protein_in_urine_positive).toEqual(0);
       expect(firstResult.blood_sugar_check).toEqual(randomBloodSugar.length);
-      expect(firstResult.blood_sugar_more_than_140).toEqual(
-        randomBloodSugar.filter((bs) => bs > 140).length
-      );
-      expect(firstResult.come_with_hiv_positive).toEqual(
-        randomHiv.filter((hiv) => hiv === "positive_non_test").length
-      );
-      expect(firstResult.hiv_check).toEqual(
-        randomHiv.filter((hiv) => hiv === "positive" || hiv === "negative")
-          .length
-      );
-      expect(firstResult.hiv_positive).toEqual(
-        randomHiv.filter((hiv) => hiv === "positive").length
-      );
+      expect(firstResult.blood_sugar_more_than_140).toEqual(randomBloodSugar.filter((bs) => bs > 140).length);
+      expect(firstResult.come_with_hiv_positive).toEqual(randomHiv.filter((hiv) => hiv === "positive_non_test").length);
+      expect(firstResult.hiv_check).toEqual(randomHiv.filter((hiv) => hiv === "positive" || hiv === "negative").length);
+      expect(firstResult.hiv_positive).toEqual(randomHiv.filter((hiv) => hiv === "positive").length);
       expect(firstResult.offered_hiv_test).toEqual(
-        randomHiv.filter(
-          (hiv) =>
-            hiv === "rejected" || hiv === "positive" || hiv === "negative"
-        ).length
+        randomHiv.filter((hiv) => hiv === "rejected" || hiv === "positive" || hiv === "negative").length
       );
       expect(firstResult.hepatitis_check).toEqual(0);
       expect(firstResult.hepatitis_positive).toEqual(0);
       expect(firstResult.syphilis_check).toEqual(randomSyphilis.length);
-      expect(firstResult.syphilis_positive).toEqual(
-        randomSyphilis.filter((syphilis) => syphilis === "positive").length
-      );
+      expect(firstResult.syphilis_positive).toEqual(randomSyphilis.filter((syphilis) => syphilis === "positive").length);
       expect(firstResult.got_art).toEqual(0);
     });
   });
@@ -515,13 +474,10 @@ describe("ReportRepository postgres implementation", () => {
       }
 
       // Action
-      const result =
-        await reportRepositoryPostgres.calculateAnteNatalCarePuskesmasMonthlyReport(
-          {
-            month: 8,
-            year: 2021,
-          }
-        );
+      const result = await reportRepositoryPostgres.calculateAnteNatalCarePuskesmasMonthlyReport({
+        month: 8,
+        year: 2021,
+      });
 
       // Assert
       expect(result).toHaveLength(1);
@@ -545,6 +501,143 @@ describe("ReportRepository postgres implementation", () => {
         kek: kek,
         got_art: got_art,
       });
+    });
+  });
+
+  describe("getAnteNatalAggregateReport function", () => {
+    beforeEach(async () => {
+      // create 2 jorong
+      await JorongTableTestHelper.addJorong({ id: "jorong-1" });
+      await JorongTableTestHelper.addJorong({ id: "jorong-2" });
+
+      // create report for each jorong
+      for (let i = 0; i < 20; i++) {
+        await UsersTableTestHelper.addUser({
+          id: `user-ibu-${i}`,
+          role: "mother",
+        });
+      }
+
+      // create 15 maternal jorong 1
+      for (let i = 0; i < 15; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create 5 maternal jorong 2
+      for (let i = 15; i < 20; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-2",
+        });
+      }
+
+      // create 20 maternal history
+      for (let i = 0; i < 20; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "pregnant",
+        });
+      }
+
+      // create 10 ante natal care c1
+      for (let i = 0; i < 10; i++) {
+        await AnteNatalCareTableTestHelper.addAnteNatalCare({
+          id: `ante-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          contactType: "c1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+
+      // create 5 other c1
+      for (let i = 10; i < 15; i++) {
+        await AnteNatalCareTableTestHelper.addAnteNatalCare({
+          id: `ante-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          contactType: "c1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+
+      // create 6 other c1 in different month
+      for (let i = 15; i < 21; i++) {
+        const maternalHistoryId = i - 15;
+        await AnteNatalCareTableTestHelper.addAnteNatalCare({
+          id: `ante-natal-care-c1-${i}`,
+          maternalHistoryId: `maternal-history-${maternalHistoryId}`,
+          contactType: "c1",
+          createdAt: "2021-06-01",
+          dateOfVisit: "2021-06-01",
+        });
+      }
+
+      // create 5 ante natal care c6 jorong 2
+      // create 5 for jorong 1
+      for (let i = 10; i < 20; i++) {
+        await AnteNatalCareTableTestHelper.addAnteNatalCare({
+          id: `ante-natal-care-c2-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          contactType: "c6",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+    });
+
+    it("should return report", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getAnteNatalAggregateReport({
+        jorongId: "jorong-1",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].totalAnc).toBe(20);
+      expect(result[0].c1).toBe(15);
+      expect(result[0].c2).toBe(0);
+      expect(result[0].c3).toBe(0);
+      expect(result[0].c4).toBe(0);
+      expect(result[0].c5).toBe(0);
+      expect(result[0].c6).toBe(5);
+    });
+
+    it("should return number correctly", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getAnteNatalAggregateReport({
+        jorongId: "jorong-2",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].totalAnc).toBe(5);
+      expect(result[0].c1).toBe(0);
+      expect(result[0].c2).toBe(0);
+      expect(result[0].c3).toBe(0);
+      expect(result[0].c4).toBe(0);
+      expect(result[0].c5).toBe(0);
+      expect(result[0].c6).toBe(5);
     });
   });
 });

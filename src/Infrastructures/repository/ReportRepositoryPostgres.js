@@ -208,20 +208,96 @@ class ReportRepositoryPostgres extends ReportRepository {
     return result.rows;
   }
 
-  async getAnteNatalAggregateReport(jorongId, start, end) {
+  async getAnteNatalAggregateReport({ jorongId, startDate, endDate }) {
     const query = {
       text: `
-        SELECT contact_type as key, COUNT(*) 
-        FROM ante_natal_cares anc 
-        LEFT JOIN maternal_histories mh ON mh.id = anc.maternal_history_id
+        SELECT 
+          COUNT(DISTINCT CASE WHEN contact_type = 'c1' THEN m.id END)::integer AS c1,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c2' THEN m.id END)::integer AS c2,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c3' THEN m.id END)::integer AS c3,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c4' THEN m.id END)::integer AS c4,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c5' THEN m.id END)::integer AS c5,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c6' THEN m.id END)::integer AS c6,
+          COUNT(DISTINCT (m.id, anc.contact_type))::integer AS total_anc
+        FROM ante_natal_cares anc
+        JOIN maternal_histories mh ON mh.id = anc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id
+        WHERE anc.date_of_visit between $1 and $2
+          AND m.jorong_id = $3
+        `,
+      values: [startDate, endDate, jorongId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async getPostNatalAggregateReport(jorongId, start, end) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_1' THEN m.id END)::integer AS pnc_1,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_2' THEN m.id END)::integer AS pnc_2,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_3' THEN m.id END)::integer AS pnc_3,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_4' THEN m.id END)::integer AS pnc_4
+        FROM post_natal_cares pnc 
+        LEFT JOIN maternal_histories mh ON mh.id = pnc.maternal_history_id
         LEFT JOIN maternals m ON m.id = mh.maternal_id
-        WHERE anc.jorong_id = $1 AND anc.date_of_visit BETWEEN $2 AND $3 GROUP BY anc.contact_type, m.id`,
+        WHERE m.jorong_id = $1 AND pnc.date_of_visit BETWEEN $2 AND $3
+          AND m.id IS NOT NULL
+          AND mh.id IS NOT NULL
+        GROUP BY pnc.contact_type, m.id`,
       values: [jorongId, start, end],
     };
 
     const result = await this._pool.query(query);
 
-    return result.rows;
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async getMaternalComplication(jorongId, start, end) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN m.maternal_status = 'pregnant' THEN m.id END)::integer AS anc_complication,
+          COUNT(DISTINCT CASE WHEN m.maternal_status = 'postpartum' THEN m.id END)::integer AS pnc_complication,
+          COUNT(DISTINCT CASE WHEN m.maternal_status = 'pregnant' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS anc_death,
+          COUNT(DISTINCT CASE WHEN m.maternal_status = 'postpartum' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS pnc_death
+        FROM maternal_complications mc
+        LEFT JOIN maternal_histories mh ON mh.id = mc.maternal_history_id
+        LEFT JOIN maternals m ON m.id = mc.maternal_id and m.jorong_id = $1
+        WHERE mh.complication_date BETWEEN $2 AND $3
+          AND m.id IS NOT NULL
+        GROUP BY mc.complication_type, m.id`,
+      values: [jorongId, start, end],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async getDeliveryCalculation(jorongId, start, end) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN delivery_method = 'dukun' THEN m.id END)::integer AS dukun_delivery,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'high_risk' THEN m.id END)::integer AS high_risk_delivery,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'risk' THEN m.id END)::integer AS risk_delivery,
+          COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN c.id END)::integer AS delivery
+        FROM children c
+        LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
+        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        WHERE c.birth_datetime BETWEEN $2 AND $3
+          AND m.id IS NOT NULL
+      `,
+      values: [jorongId, start, end],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
   }
 }
 
