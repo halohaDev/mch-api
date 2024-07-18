@@ -22,9 +22,10 @@ const MaternalHistoriesTableTestHelper = {
     hpht = "2021-08-22",
     weightBeforePregnancy = "50",
     maternalStatus = "pregnant",
+    riskStatus = "normal",
   }) {
     const query = {
-      text: "INSERT INTO maternal_histories(id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13)",
+      text: "INSERT INTO maternal_histories(id, maternal_id, period_duration, period_amount, period_concern, period_cycle, last_illness, current_illness, gemeli, edd, hpht, weight_before_pregnancy, maternal_status, risk_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13, $14)",
       values: [
         id,
         maternalId,
@@ -39,6 +40,7 @@ const MaternalHistoriesTableTestHelper = {
         hpht,
         weightBeforePregnancy,
         maternalStatus,
+        riskStatus,
       ],
     };
 

@@ -34,6 +34,10 @@ class ReportRepository {
   async getRiskFactorAggregateReport(jorongId, start, end) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async getDeliveryAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = ReportRepository;

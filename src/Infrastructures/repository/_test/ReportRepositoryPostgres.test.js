@@ -843,4 +843,107 @@ describe("ReportRepository postgres implementation", () => {
       expect(result[0].ancDeath).toBe(1);
     });
   });
+
+  describe("getRiskFactorAggregateReport function", () => {
+    beforeEach(async () => {
+      // create 2 jorong
+      await JorongTableTestHelper.addJorong({ id: "jorong-1" });
+      await JorongTableTestHelper.addJorong({ id: "jorong-2" });
+
+      // create report for each jorong
+      for (let i = 0; i < 20; i++) {
+        await UsersTableTestHelper.addUser({
+          id: `user-ibu-${i}`,
+          role: "mother",
+        });
+      }
+
+      // create 15 maternal jorong 1
+      for (let i = 0; i < 15; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create 5 maternal jorong 2
+      for (let i = 15; i < 20; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-2",
+        });
+      }
+
+      // create 10 maternal history
+      for (let i = 0; i < 5; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "pregnant",
+          riskStatus: "risk",
+        });
+      }
+
+      for (let i = 5; i < 7; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "pregnant",
+          riskStatus: "high_risk",
+        });
+      }
+
+      for (let i = 7; i < 20; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "pregnant",
+          riskStatus: "normal",
+        });
+      }
+
+      // create 10 anc
+      for (let i = 0; i < 10; i++) {
+        await AnteNatalCareTableTestHelper.addAnteNatalCare({
+          id: `ante-natal-care-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          contactType: "c1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+
+      // create 10 pnc
+      for (let i = 10; i < 20; i++) {
+        await PostNatalCareTableTestHelper.addPostNatalCare({
+          id: `post-natal-care-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          postNatalType: "pnc_1",
+          createdAt: "2021-08-01",
+          dateOfVisit: "2021-08-01",
+        });
+      }
+    });
+
+    it("should return report", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getRiskFactorAggregateReport({
+        jorongId: "jorong-1",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].highRisk).toBe(2);
+      expect(result[0].risk).toBe(5);
+    });
+  });
 });

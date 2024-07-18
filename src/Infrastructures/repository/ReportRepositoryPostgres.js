@@ -279,7 +279,7 @@ class ReportRepositoryPostgres extends ReportRepository {
     return this._snakeToCamelCase(result.rows);
   }
 
-  async getDeliveryCalculation(jorongId, start, end) {
+  async getDeliveryAggregateReport({ jorongId, startDate, endDate }) {
     const query = {
       text: `
         SELECT 
@@ -291,9 +291,30 @@ class ReportRepositoryPostgres extends ReportRepository {
         LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
         LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
         WHERE c.birth_datetime BETWEEN $2 AND $3
+          AND c.maternal_history_id IS NOT NULL
+      `,
+      values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async getRiskFactorAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'high_risk' THEN m.id END)::integer AS high_risk,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'risk' THEN m.id END)::integer AS risk
+        FROM maternal_histories mh
+        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        LEFT JOIN ante_natal_cares anc ON anc.maternal_history_id = mh.id
+        LEFT JOIN post_natal_cares pnc ON pnc.maternal_history_id = mh.id
+        WHERE (pnc.date_of_visit BETWEEN $2 AND $3 OR anc.date_of_visit BETWEEN $2 AND $3)
           AND m.id IS NOT NULL
       `,
-      values: [jorongId, start, end],
+      values: [jorongId, startDate, endDate],
     };
 
     const result = await this._pool.query(query);
