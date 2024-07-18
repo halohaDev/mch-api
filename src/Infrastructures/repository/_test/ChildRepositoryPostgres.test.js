@@ -40,9 +40,9 @@ describe("ChildRepositoryPostgres", () => {
         gender: "L",
         fatherName: "test",
         pregnancyAge: "9",
-        deliveryPlace: "PUSKESMAS",
-        deliveryMethod: "NORMAL",
-        helper: "DUKUN",
+        deliveryPlace: "puskesmas",
+        deliveryMethod: "normal",
+        helper: "dukun",
         maternalId: "maternal-123",
         maternalHistoryId: "maternal-history-123",
       };

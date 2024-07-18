@@ -18,9 +18,9 @@ const ChildrenTableTestHelper = {
     gender = "L",
     fatherName = "test",
     pregnancyAge = "9",
-    deliveryPlace = "PUSKESMAS",
-    deliveryMethod = "NORMAL",
-    helper = "DUKUN",
+    deliveryPlace = "puskesmas",
+    deliveryMethod = "normal",
+    helper = "bidan",
     maternalId = "maternal-123",
     maternalHistoryId = null,
   }) {
@@ -44,7 +44,8 @@ const ChildrenTableTestHelper = {
       ],
     };
 
-    await pool.query(query);
+    const result = await pool.query(query);
+    return result;
   },
 
   async findChildById(id) {

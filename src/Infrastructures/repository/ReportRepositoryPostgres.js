@@ -283,7 +283,7 @@ class ReportRepositoryPostgres extends ReportRepository {
     const query = {
       text: `
         SELECT 
-          COUNT(DISTINCT CASE WHEN delivery_method = 'dukun' THEN m.id END)::integer AS dukun_delivery,
+          COUNT(DISTINCT CASE WHEN c.helper = 'dukun' THEN m.id END)::integer AS dukun_delivery,
           COUNT(DISTINCT CASE WHEN mh.risk_status = 'high_risk' THEN m.id END)::integer AS high_risk_delivery,
           COUNT(DISTINCT CASE WHEN mh.risk_status = 'risk' THEN m.id END)::integer AS risk_delivery,
           COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN c.id END)::integer AS delivery
@@ -298,7 +298,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async getRiskFactorAggregateReport({ jorongId, startDate, endDate }) {
@@ -319,7 +319,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 }
 

@@ -10,6 +10,7 @@ const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTa
 const PostNatalCareTableTestHelper = require("../../../../tests/PostNatalCareTableTestHelper");
 const { randomNumber, randomFromArray, randomDate, snakeToCamelObject } = require("../../../Commons/helper");
 const MaternalComplicationsTableTestHelper = require("../../../../tests/MaternalComplicationsTableTestHelper");
+const ChildrenTableTestHelper = require("../../../../tests/ChildrenTableTestHelper");
 
 describe("ReportRepository postgres implementation", () => {
   afterAll(async () => {
@@ -941,9 +942,113 @@ describe("ReportRepository postgres implementation", () => {
       });
 
       // Assert
-      expect(result).toHaveLength(1);
-      expect(result[0].highRisk).toBe(2);
-      expect(result[0].risk).toBe(5);
+      expect(result).toBeDefined();
+      expect(result.highRisk).toBe(2);
+      expect(result.risk).toBe(5);
+    });
+  });
+
+  describe("getDeliveryAggregateReport function", () => {
+    beforeEach(async () => {
+      // create 2 jorong
+      await JorongTableTestHelper.addJorong({ id: "jorong-1" });
+      await JorongTableTestHelper.addJorong({ id: "jorong-2" });
+
+      // create report for each jorong
+      for (let i = 0; i < 30; i++) {
+        await UsersTableTestHelper.addUser({
+          id: `user-ibu-${i}`,
+          role: "mother",
+        });
+      }
+
+      // create 15 maternal jorong 1
+      for (let i = 0; i < 15; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create to 30 maternal
+      for (let i = 20; i < 30; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-1",
+        });
+      }
+
+      // create 5 maternal jorong 2
+      for (let i = 15; i < 20; i++) {
+        await MaternalTableTestHelper.addMaternal({
+          id: `maternal-${i}`,
+          userId: `user-ibu-${i}`,
+          jorongId: "jorong-2",
+        });
+      }
+
+      // create 20 maternal history
+      for (let i = 0; i < 20; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "postpartum",
+        });
+      }
+
+      // create 10 delivery jorong 1
+      for (let i = 0; i < 5; i++) {
+        await ChildrenTableTestHelper.addChild({
+          id: `child-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          birthDatetime: "2021-08-01",
+        });
+      }
+
+      // create 2 high risk delivery
+      for (let i = 21; i < 23; i++) {
+        await MaternalHistoryTableTestHelper.addMaternalHistory({
+          id: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          maternalStatus: "postpartum",
+          riskStatus: "high_risk",
+        });
+      }
+
+      // create 10 delivery jorong 1
+      for (let i = 21; i < 23; i++) {
+        await ChildrenTableTestHelper.addChild({
+          id: `child-${i}`,
+          maternalHistoryId: `maternal-history-${i}`,
+          maternalId: `maternal-${i}`,
+          birthDatetime: "2021-08-05",
+        });
+      }
+    });
+
+    it("should return report", async () => {
+      // Arrange
+      const reportRepositoryPostgres = new ReportRepositoryPostgres(pool, {}, snakeToCamelObject);
+
+      // Action
+      const startDateUtc = new Date("2021-08-01 00:00:00 +07:00").toISOString();
+      const endDateUtc = new Date("2021-08-31 23:59:59 +07:00").toISOString();
+      const result = await reportRepositoryPostgres.getDeliveryAggregateReport({
+        jorongId: "jorong-1",
+        startDate: startDateUtc,
+        endDate: endDateUtc,
+      });
+
+      // Assert
+      expect(result).toBeDefined();
+
+      expect(result.dukunDelivery).toBe(0);
+      expect(result.highRiskDelivery).toBe(2);
+      expect(result.riskDelivery).toBe(0);
+      expect(result.delivery).toBe(7);
     });
   });
 });
