@@ -24,18 +24,37 @@ class calculateMonthlyJorongReport {
 
     await this._jorongRepository.getJorongById(jorongId);
 
-    const anteNatalCares = await this._reportRepository.getAnteNatalAggregateReport(jorongId, start, end);
-    const postNatalCares = await this._reportRepository.getPostNatalAggregateReport(jorongId, start, end);
-    const complications = await this._reportRepository.getComplicationAggregateReport(jorongId, start, end);
-    const riskFactors = await this._reportRepository.getRiskFactorAggregateReport(jorongId, start, end);
+    const anteNatalCares = await this._reportRepository.getAnteNatalAggregateReport({ jorongId, startDate: start, endDate: end });
+    const postNatalCares = await this._reportRepository.getPostNatalAggregateReport({ jorongId, startDate: start, endDate: end });
+    const complications = await this._reportRepository.getMaternalComplicationAggregateReport({ jorongId, startDate: start, endDate: end });
+    const riskFactors = await this._reportRepository.getRiskFactorAggregateReport({ jorongId, startDate: start, endDate: end });
+    const deliveries = await this._reportRepository.getDeliveryAggregateReport({ jorongId, startDate: start, endDate: end });
 
-    return anteNatalCares + postNatalCares + complications + riskFactors;
+    return {
+      ...anteNatalCares,
+      ...postNatalCares,
+      ...complications,
+      ...riskFactors,
+      ...deliveries,
+    };
   }
 
   async #getStartEndDates(month, year) {
-    const start = await this._dateHelper.new(`${year}-${month}-01 00:00:00`);
-    const end = await this._dateHelper.new(start).endOf("month").endOf("day");
+    if (month == undefined || year == undefined || month == null || year == null) {
+      const currentMonth = await this._dateHelper.new();
+      const previousMonth = await this._dateHelper.addMonths(currentMonth, -1);
+      const start = await this._dateHelper.getFirstDayOfMonth(previousMonth);
+      const end = await this._dateHelper.getLastDayOfMonth(previousMonth);
+
+      return { start, end };
+    }
+
+    const queryDate = await this._dateHelper.new(`${year}-${month}-01`);
+    const start = await this._dateHelper.getFirstDayOfMonth(queryDate);
+    const end = await this._dateHelper.getLastDayOfMonth(start);
 
     return { start, end };
   }
 }
+
+module.exports = calculateMonthlyJorongReport;

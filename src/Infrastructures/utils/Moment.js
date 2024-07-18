@@ -41,6 +41,14 @@ class Moment extends DateHelper {
   async new(date) {
     return this._moment(date);
   }
+
+  async getLastDayOfMonth(date) {
+    return this._moment(date).endOf("month").endOf("day").toISOString();
+  }
+
+  async getFirstDayOfMonth(date) {
+    return this._moment(date).startOf("month").startOf("day").toISOString();
+  }
 }
 
 module.exports = Moment;

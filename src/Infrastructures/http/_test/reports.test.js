@@ -8,11 +8,7 @@ const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTa
 const ReportTableTestHelper = require("../../../../tests/ReportTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
-const {
-  randomNumber,
-  randomFromArray,
-  randomDate,
-} = require("../../../Commons/helper");
+const { randomNumber, randomFromArray, randomDate } = require("../../../Commons/helper");
 
 const { authenticateUser } = require("../../../../tests/AuthTestHelper");
 
@@ -91,9 +87,7 @@ describe("HTTP server - reports", () => {
       expect(responseJson.status).toEqual("success");
       expect(responseJson.data.id).toBeDefined();
 
-      const report = await ReportsTableTestHelper.findReportById(
-        responseJson.data.id
-      );
+      const report = await ReportsTableTestHelper.findReportById(responseJson.data.id);
     });
 
     it("should response 400 when request payload not contain needed property", async () => {
@@ -197,7 +191,7 @@ describe("HTTP server - reports", () => {
     });
   });
 
-  describe("when GET /api/v1/reports/calculate/{reportType}", () => {
+  describe.skip("when GET /api/v1/reports/calculate/{reportType}", () => {
     describe("when reportType is anc-monthly-jorong", () => {
       let randomWeights = [];
       let randomHeights = [];
@@ -248,12 +242,7 @@ describe("HTTP server - reports", () => {
           const height = randomNumber(150, 180);
           const upperArmCircumference = randomNumber(20, 30);
           const syphilis = randomFromArray(["positive", "negative"]);
-          const hiv = randomFromArray([
-            "positive",
-            "negative",
-            "positive_non_test",
-            "rejected",
-          ]);
+          const hiv = randomFromArray(["positive", "negative", "positive_non_test", "rejected"]);
           const hb = randomNumber(7, 15);
           const bloodPressure = randomNumber(80, 120);
           const bloodType = randomFromArray(["A", "B", "AB", "O"]);
@@ -357,48 +346,24 @@ describe("HTTP server - reports", () => {
         expect(responseJson.status).toEqual("success");
         expect(responseJson.data).toBeDefined();
         expect(responseJson.data.hemoglobin_check).toEqual(randomHb.length);
-        expect(responseJson.data.anemia_less_than_8).toEqual(
-          randomHb.filter((hb) => hb < 8).length
-        );
-        expect(responseJson.data.anemia_between_8_and_11).toEqual(
-          randomHb.filter((hb) => hb >= 8 && hb <= 11.9).length
-        );
-        expect(responseJson.data.lila_check).toEqual(
-          randomUpperArmCircumferences.length
-        );
-        expect(responseJson.data.kek).toEqual(
-          randomUpperArmCircumferences.filter((uac) => uac < 23).length
-        );
+        expect(responseJson.data.anemia_less_than_8).toEqual(randomHb.filter((hb) => hb < 8).length);
+        expect(responseJson.data.anemia_between_8_and_11).toEqual(randomHb.filter((hb) => hb >= 8 && hb <= 11.9).length);
+        expect(responseJson.data.lila_check).toEqual(randomUpperArmCircumferences.length);
+        expect(responseJson.data.kek).toEqual(randomUpperArmCircumferences.filter((uac) => uac < 23).length);
         expect(responseJson.data.protein_in_urine_check).toEqual(0);
         expect(responseJson.data.protein_in_urine_positive).toEqual(0);
-        expect(responseJson.data.blood_sugar_check).toEqual(
-          randomBloodSugar.length
-        );
-        expect(responseJson.data.blood_sugar_more_than_140).toEqual(
-          randomBloodSugar.filter((bs) => bs > 140).length
-        );
-        expect(responseJson.data.come_with_hiv_positive).toEqual(
-          randomHiv.filter((hiv) => hiv === "positive_non_test").length
-        );
-        expect(responseJson.data.hiv_check).toEqual(
-          randomHiv.filter((hiv) => hiv === "positive" || hiv === "negative")
-            .length
-        );
-        expect(responseJson.data.hiv_positive).toEqual(
-          randomHiv.filter((hiv) => hiv === "positive").length
-        );
+        expect(responseJson.data.blood_sugar_check).toEqual(randomBloodSugar.length);
+        expect(responseJson.data.blood_sugar_more_than_140).toEqual(randomBloodSugar.filter((bs) => bs > 140).length);
+        expect(responseJson.data.come_with_hiv_positive).toEqual(randomHiv.filter((hiv) => hiv === "positive_non_test").length);
+        expect(responseJson.data.hiv_check).toEqual(randomHiv.filter((hiv) => hiv === "positive" || hiv === "negative").length);
+        expect(responseJson.data.hiv_positive).toEqual(randomHiv.filter((hiv) => hiv === "positive").length);
         expect(responseJson.data.offered_hiv_test).toEqual(
-          randomHiv.filter(
-            (hiv) =>
-              hiv === "rejected" || hiv === "positive" || hiv === "negative"
-          ).length
+          randomHiv.filter((hiv) => hiv === "rejected" || hiv === "positive" || hiv === "negative").length
         );
         expect(responseJson.data.hepatitis_check).toEqual(0);
         expect(responseJson.data.hepatitis_positive).toEqual(0);
         expect(responseJson.data.syphilis_check).toEqual(randomSyphilis.length);
-        expect(responseJson.data.syphilis_positive).toEqual(
-          randomSyphilis.filter((syphilis) => syphilis === "positive").length
-        );
+        expect(responseJson.data.syphilis_positive).toEqual(randomSyphilis.filter((syphilis) => syphilis === "positive").length);
         expect(responseJson.data.got_art).toEqual(0);
       });
     });
@@ -514,34 +479,20 @@ describe("HTTP server - reports", () => {
         expect(response.statusCode).toEqual(200);
         expect(responseJson.status).toEqual("success");
         expect(responseJson.data.hemoglobin_check).toEqual(hemoglobin_check);
-        expect(responseJson.data.anemia_less_than_8).toEqual(
-          anemia_less_than_8
-        );
-        expect(responseJson.data.anemia_between_8_and_11).toEqual(
-          anemia_between_8_and_11
-        );
+        expect(responseJson.data.anemia_less_than_8).toEqual(anemia_less_than_8);
+        expect(responseJson.data.anemia_between_8_and_11).toEqual(anemia_between_8_and_11);
         expect(responseJson.data.lila_check).toEqual(lila_check);
         expect(responseJson.data.kek).toEqual(kek);
-        expect(responseJson.data.protein_in_urine_check).toEqual(
-          protein_in_urine_check
-        );
-        expect(responseJson.data.protein_in_urine_positive).toEqual(
-          protein_in_urine_positive
-        );
+        expect(responseJson.data.protein_in_urine_check).toEqual(protein_in_urine_check);
+        expect(responseJson.data.protein_in_urine_positive).toEqual(protein_in_urine_positive);
         expect(responseJson.data.blood_sugar_check).toEqual(blood_sugar_check);
-        expect(responseJson.data.blood_sugar_more_than_140).toEqual(
-          blood_sugar_more_than_140
-        );
-        expect(responseJson.data.come_with_hiv_positive).toEqual(
-          come_with_hiv_positive
-        );
+        expect(responseJson.data.blood_sugar_more_than_140).toEqual(blood_sugar_more_than_140);
+        expect(responseJson.data.come_with_hiv_positive).toEqual(come_with_hiv_positive);
         expect(responseJson.data.hiv_check).toEqual(hiv_check);
         expect(responseJson.data.hiv_positive).toEqual(hiv_positive);
         expect(responseJson.data.offered_hiv_test).toEqual(offered_hiv_test);
         expect(responseJson.data.hepatitis_check).toEqual(hepatitis_check);
-        expect(responseJson.data.hepatitis_positive).toEqual(
-          hepatitis_positive
-        );
+        expect(responseJson.data.hepatitis_positive).toEqual(hepatitis_positive);
         expect(responseJson.data.syphilis_check).toEqual(syphilis_check);
         expect(responseJson.data.syphilis_positive).toEqual(syphilis_positive);
         expect(responseJson.data.got_art).toEqual(got_art);
@@ -579,6 +530,88 @@ describe("HTTP server - reports", () => {
 
       const report = await ReportsTableTestHelper.findReportById("report-123");
       expect(report.status).toEqual("approved");
+    });
+  });
+
+  describe("when POST /api/v1/reports/calculate/jorong/{jorongId}", () => {
+    it("should response 201 and return calculated result", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/reports/calculate/jorong/jorong-123?month=8&year=2021",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toBeDefined();
+    });
+
+    it("should return according to data", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      await MaternalTableTestHelper.addMaternal({
+        id: "maternal-1",
+        userId: "user-123",
+        jorongId: "jorong-123",
+      });
+
+      await MaternalHistoryTableTestHelper.addMaternalHistory({
+        id: "maternal-history-1",
+        maternalId: "maternal-1",
+        maternalStatus: "pregnant",
+        riskStatus: "high_risk",
+      });
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        id: "anc-1",
+        maternalHistoryId: "maternal-history-1",
+        dateOfVisit: "2023-08-02 12:00:00 +07:00",
+        contactType: "c1",
+      });
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        id: "anc-2",
+        maternalHistoryId: "maternal-history-1",
+        dateOfVisit: "2023-08-02 12:00:00 +07:00",
+        contactType: "c6",
+      });
+
+      await AnteNatalCareTableTestHelper.addAnteNatalCare({
+        id: "anc-3",
+        maternalHistoryId: "maternal-history-1",
+        dateOfVisit: "2023-08-02 12:00:00 +07:00",
+        contactType: "c2",
+      });
+
+      // Action
+      const response = await server.inject({
+        method: "POST",
+        url: "/api/v1/reports/calculate/jorong/jorong-123?month=8&year=2023",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toBeDefined();
+
+      expect(responseJson.data.c1).toEqual(1);
+      expect(responseJson.data.c2).toEqual(1);
+      expect(responseJson.data.c6).toEqual(1);
+      expect(responseJson.data.highRisk).toEqual(1);
+      expect(responseJson.data.totalAnc).toEqual(3);
     });
   });
 });

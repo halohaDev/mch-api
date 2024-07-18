@@ -230,7 +230,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async getPostNatalAggregateReport({ jorongId, startDate, endDate }) {
@@ -254,7 +254,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async getMaternalComplicationAggregateReport({ jorongId, startDate, endDate }) {
@@ -276,7 +276,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async getDeliveryAggregateReport({ jorongId, startDate, endDate }) {
@@ -298,7 +298,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async getRiskFactorAggregateReport({ jorongId, startDate, endDate }) {
@@ -319,7 +319,7 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     const result = await this._pool.query(query);
 
-    return this._snakeToCamelCase(result.rows);
+    return this._snakeToCamelCase(result.rows[0]);
   }
 }
 

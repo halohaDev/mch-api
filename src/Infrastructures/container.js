@@ -72,6 +72,7 @@ const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/Add
 const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
 const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
 const DateHelper = require("../Applications/utils/DateHelper");
+const CalculateMonthlyJorongReport = require("../Applications/use_case/report/CalculateMonthlyJorongReport");
 
 const container = createContainer();
 
@@ -129,6 +130,9 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
         },
       ],
     },
@@ -682,6 +686,43 @@ container.register([
         {
           name: "maternalHistoryRepository",
           internal: MaternalHistoryRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateMonthlyJorongReport.name,
+    Class: CalculateMonthlyJorongReport,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+        {
+          name: "anteNatalCareRepository",
+          internal: AnteNatalCareRepository.name,
+        },
+        {
+          name: "postNatalCareRepository",
+          internal: PostNatalCareRepository.name,
+        },
+        {
+          name: "maternalComplicationRepository",
+          internal: MaternalComplicationRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
         },
       ],
     },

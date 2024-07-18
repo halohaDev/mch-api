@@ -3,6 +3,7 @@ const CalculateAncMonthlyPuskesmasReportUseCase = require("../../../../Applicati
 const ShowReportUseCase = require("../../../../Applications/use_case/report/ShowReportUseCase");
 const AddReportUseCase = require("../../../../Applications/use_case/report/AddReportUseCase");
 const UpdateReportStatusUseCase = require("../../../../Applications/use_case/report/UpdateReportStatusUseCase");
+const CalculateMonthlyJorongReport = require("../../../../Applications/use_case/report/CalculateMonthlyJorongReport");
 
 class ReportHandler {
   constructor(container) {
@@ -12,6 +13,7 @@ class ReportHandler {
     this.getReportHandler = this.getReportHandler.bind(this);
     this.addReportHandler = this.addReportHandler.bind(this);
     this.updateReportHandler = this.updateReportHandler.bind(this);
+    this.calculateReportJorongMonthly = this.calculateReportJorongMonthly.bind(this);
   }
 
   async calculateReportHandler(request, h) {
@@ -24,9 +26,7 @@ class ReportHandler {
     const { reportType } = request.params;
     const calculatorUseCaseName = calculatorTypes[reportType];
 
-    const calculatorUseCase = this._container.getInstance(
-      calculatorUseCaseName
-    );
+    const calculatorUseCase = this._container.getInstance(calculatorUseCaseName);
 
     const report = await calculatorUseCase.execute(request.query);
 
@@ -40,9 +40,7 @@ class ReportHandler {
   }
 
   async getReportHandler(request, h) {
-    const report = await this._container
-      .getInstance(ShowReportUseCase.name)
-      .execute(request.query);
+    const report = await this._container.getInstance(ShowReportUseCase.name).execute(request.query);
 
     const response = h.response({
       status: "success",
@@ -54,9 +52,7 @@ class ReportHandler {
   }
 
   async addReportHandler(request, h) {
-    const report = await this._container
-      .getInstance(AddReportUseCase.name)
-      .execute(request.payload);
+    const report = await this._container.getInstance(AddReportUseCase.name).execute(request.payload);
 
     const response = h.response({
       status: "success",
@@ -68,9 +64,22 @@ class ReportHandler {
   }
 
   async updateReportHandler(request, h) {
-    const report = await this._container
-      .getInstance(UpdateReportStatusUseCase.name)
-      .execute(request.params.id, request.payload);
+    const report = await this._container.getInstance(UpdateReportStatusUseCase.name).execute(request.params.id, request.payload);
+
+    const response = h.response({
+      status: "success",
+      data: report,
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  async calculateReportJorongMonthly(request, h) {
+    const { jorongId } = request.params;
+    const { month, year } = request.query;
+
+    const report = await this._container.getInstance(CalculateMonthlyJorongReport.name).execute({ jorongId, month, year });
 
     const response = h.response({
       status: "success",

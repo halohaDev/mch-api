@@ -23,6 +23,14 @@ class DateHelper {
     throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
   }
 
+  async getLastDayOfMonth(date) {
+    throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getFirstDayOfMonth(date) {
+    throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
+  }
+
   async new(date) {
     throw new Error("DATE_HELPER.METHOD_NOT_IMPLEMENTED");
   }

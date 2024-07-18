@@ -39,6 +39,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "POST",
+    path: "/api/v1/reports/calculate/jorong/{jorongId}",
+    handler: handler.calculateReportJorongMonthly,
+    options: {
+      app: {
+        access: ["admin", "midwife", "coordinator", "chairperson"],
+      },
+    },
+  },
 ];
 
 module.exports = routes;
