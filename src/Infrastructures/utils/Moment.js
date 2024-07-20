@@ -44,7 +44,7 @@ class Moment extends DateHelper {
   }
 
   async getLastDayOfMonth(date) {
-    return this._moment(date).endOf("month").endOf("day").toISOString();
+    return this._moment(date).tz("Asia/Jakarta").endOf("month").endOf("day").toISOString();
   }
 
   async getFirstDayOfMonth(date) {

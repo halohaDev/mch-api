@@ -73,6 +73,7 @@ const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMate
 const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
 const DateHelper = require("../Applications/utils/DateHelper");
 const CalculateMonthlyJorongReport = require("../Applications/use_case/report/CalculateMonthlyJorongReport");
+const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/CalculateAllRecapJorongUseCase");
 
 const container = createContainer();
 
@@ -719,6 +720,31 @@ container.register([
         {
           name: "reportRepository",
           internal: ReportRepository.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateAllRecapJorongUseCase.name,
+    Class: CalculateAllRecapJorongUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "placementRepository",
+          internal: PlacementRepository.name,
+        },
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "calculateMonthlyJorongReport",
+          internal: CalculateMonthlyJorongReport.name,
         },
         {
           name: "dateHelper",

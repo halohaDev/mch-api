@@ -58,7 +58,7 @@ class PlacementRepositoryPostgres extends PlacementRepository {
   }
 
   async getAllPlacements({ queryParams }) {
-    const result = this._placementQuery.wheres(queryParams).paginate();
+    const result = await this._placementQuery.wheres(queryParams).paginate();
     result.data = this._snakeToCamelObject(result.data);
 
     return result;

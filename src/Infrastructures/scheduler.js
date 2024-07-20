@@ -1,19 +1,26 @@
 const cron = require("node-cron");
 
-const tasks = [
-  {
-    name: "",
-    cron: "* * * * *",
-    fn: () => {
-      console.log("test");
-    },
-  },
-];
+// fanout
+const FanOutCalculateReportJorong = require("../Interfaces/scheduler/FanOutCalculateReportJorong");
 
-const scheduled = async () => {
-  tasks.forEach((task) => {
-    cron.schedule(task.cron, task.fn, { name: task.name });
-  });
+const scheduler = async (container, sentry) => {
+  try {
+    const tasks = [
+      {
+        cron: "0 0 1 * *",
+        fn: async () => {
+          await new FanOutCalculateReportJorong(container).perform();
+        },
+      },
+    ];
+
+    tasks.forEach((task) => {
+      cron.schedule(task.cron, task.fn);
+    });
+  } catch (error) {
+    console.log(error);
+    sentry?.captureException(response);
+  }
 };
 
-module.exports = { scheduled };
+module.exports = scheduler;

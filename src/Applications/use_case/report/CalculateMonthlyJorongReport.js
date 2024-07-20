@@ -21,7 +21,6 @@ class calculateMonthlyJorongReport {
     const { month, year, jorongId } = useCasePayload;
 
     const { start, end } = await this.#getStartEndDates(month, year);
-
     await this._jorongRepository.getJorongById(jorongId);
 
     const anteNatalCares = await this._reportRepository.getAnteNatalAggregateReport({ jorongId, startDate: start, endDate: end });
@@ -50,7 +49,7 @@ class calculateMonthlyJorongReport {
     }
 
     const queryDate = await this._dateHelper.new(`${year}-${month}-01`);
-    const start = await this._dateHelper.getFirstDayOfMonth(queryDate);
+    const start = queryDate.toISOString();
     const end = await this._dateHelper.getLastDayOfMonth(start);
 
     return { start, end };

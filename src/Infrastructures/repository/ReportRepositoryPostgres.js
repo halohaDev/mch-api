@@ -16,7 +16,26 @@ class ReportRepositoryPostgres extends ReportRepository {
     const id = `report-${this._idGenerator()}`;
     const jsonData = JSON.stringify(data);
     const query = {
-      text: "INSERT INTO reports(id, jorong_id, requested_by, approved_by, aggregated_data, report_type, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11) RETURNING id",
+      text: `
+        INSERT INTO reports(
+          id, 
+          jorong_id, 
+          requested_by, 
+          approved_by, 
+          aggregated_data, 
+          report_type, 
+          approved_at, 
+          status, 
+          note, 
+          month, 
+          year
+        ) VALUES (
+         $1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11
+        ) ON CONFLICT (
+          jorong_id, report_type, month, year 
+        ) DO UPDATE SET
+          aggregated_data = EXCLUDED.aggregated_data   
+        RETURNING id`,
       values: [
         id,
         payload.jorongId,
@@ -244,11 +263,9 @@ class ReportRepositoryPostgres extends ReportRepository {
           COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_4' THEN m.id END)::integer AS pnc_4,
           COUNT(DISTINCT (m.id, pnc.post_natal_type))::integer AS total_pnc
         FROM post_natal_cares pnc 
-        LEFT JOIN maternal_histories mh ON mh.id = pnc.maternal_history_id
-        LEFT JOIN maternals m ON m.id = mh.maternal_id
+        JOIN maternal_histories mh ON mh.id = pnc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id
         WHERE m.jorong_id = $1 AND pnc.date_of_visit BETWEEN $2 AND $3
-          AND m.id IS NOT NULL
-          AND mh.id IS NOT NULL
       `,
       values: [jorongId, startDate, endDate],
     };
@@ -267,10 +284,9 @@ class ReportRepositoryPostgres extends ReportRepository {
           COUNT(DISTINCT CASE WHEN mh.maternal_status = 'pregnant' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS anc_death,
           COUNT(DISTINCT CASE WHEN mh.maternal_status = 'postpartum' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS pnc_death
         FROM maternal_complications mc
-        LEFT JOIN maternal_histories mh ON mh.id = mc.maternal_history_id
-        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        JOIN maternal_histories mh ON mh.id = mc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
         WHERE mc.complication_date BETWEEN $2 AND $3
-          AND m.id IS NOT NULL
       `,
       values: [jorongId, startDate, endDate],
     };
@@ -290,9 +306,9 @@ class ReportRepositoryPostgres extends ReportRepository {
           COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN c.id END)::integer AS delivery
         FROM children c
         LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
-        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        JOIN maternals m ON m.id = c.maternal_id
         WHERE c.birth_datetime BETWEEN $2 AND $3
-          AND c.maternal_history_id IS NOT NULL
+          AND m.jorong_id = $1
       `,
       values: [jorongId, startDate, endDate],
     };
