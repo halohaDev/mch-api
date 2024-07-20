@@ -3,6 +3,7 @@ const DateHelper = require("../../Applications/utils/DateHelper");
 class Moment extends DateHelper {
   constructor(moment) {
     super();
+    moment.tz.setDefault("UTC");
     this._moment = moment;
   }
 
@@ -39,7 +40,7 @@ class Moment extends DateHelper {
   }
 
   async new(date) {
-    return this._moment(date);
+    return date ? this._moment(date) : this._moment();
   }
 
   async getLastDayOfMonth(date) {

@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { nanoid } = require("nanoid");
 const jwt = require("@hapi/jwt");
 const pool = require("./database/postgres/pool");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 // service
 const UserRepositoryPostgres = require("./repository/UserRepositoryPostgres");
