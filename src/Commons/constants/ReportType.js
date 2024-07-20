@@ -9,6 +9,7 @@ const ReportType = {
   LB_IBU_PUSKESMAS_MONTHLY: "lb_ibu_puskesmas_monthly",
   LB_IBU_JORONG_YEARLY: "lb_ibu_jorong_yearly",
   LB_IBU_PUSKESMAS_YEARLY: "lb_ibu_puskesmas_yearly",
+  JORONG_MONTHLY: "jorong_monthly",
 };
 
 module.exports = ReportType;
