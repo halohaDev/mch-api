@@ -3,8 +3,6 @@ const BaseQuery = require("./BaseQuery");
 class ReportQuery extends BaseQuery {
   constructor({ pool }) {
     super({ pool });
-
-    this.tableName = "agg_report_data";
   }
 
   getByJorongId(jorongId) {

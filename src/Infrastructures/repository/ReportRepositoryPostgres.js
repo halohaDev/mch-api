@@ -16,11 +16,11 @@ class ReportRepositoryPostgres extends ReportRepository {
     const id = `report-${this._idGenerator()}`;
     const jsonData = JSON.stringify(data);
     const query = {
-      text: "INSERT INTO agg_report_data(id, jorong_id, midwife_id, approved_by, data, report_type, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11) RETURNING id",
+      text: "INSERT INTO reports(id, jorong_id, requested_by, approved_by, aggregated_data, report_type, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11) RETURNING id",
       values: [
         id,
         payload.jorongId,
-        payload.midwifeId,
+        payload.requestedBy,
         payload.approvedBy,
         jsonData,
         payload.reportType,
@@ -39,13 +39,14 @@ class ReportRepositoryPostgres extends ReportRepository {
 
   async showReport(queryParams) {
     const result = await this._reportQuery.wheres(queryParams).paginate();
+    result.data = this._snakeToCamelCase(result.data);
 
     return result;
   }
 
   async findReportById(id) {
     const query = {
-      text: "SELECT * FROM agg_report_data WHERE id = $1",
+      text: "SELECT * FROM reports WHERE id = $1",
       values: [id],
     };
 
@@ -55,14 +56,14 @@ class ReportRepositoryPostgres extends ReportRepository {
       throw new NotFoundError("REPORT_REPOSITORY.NOT_FOUND");
     }
 
-    return result.rows[0];
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async updateReportStatusAndNote(payload) {
     await this.findReportById(payload.id);
 
     const query = {
-      text: "UPDATE agg_report_data SET note = $1, status = $2 WHERE id = $3 RETURNING id",
+      text: "UPDATE reports SET note = $1, status = $2 WHERE id = $3 RETURNING id",
       values: [payload.note, payload.status, payload.id],
     };
 
@@ -320,6 +321,17 @@ class ReportRepositoryPostgres extends ReportRepository {
     const result = await this._pool.query(query);
 
     return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getOnProcessRecapJorong(month, year) {
+    const query = {
+      text: `SELECT id, jorong_id FROM reports WHERE month = $1 AND year = $2 AND status != $3 AND report_type = $4`,
+      values: [month, year, "draft", "jorong_monthly"],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
   }
 }
 

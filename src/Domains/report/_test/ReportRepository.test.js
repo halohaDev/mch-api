@@ -9,21 +9,7 @@ describe("ReportRepository interface", () => {
     await expect(reportRepository.showReport("")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
     await expect(reportRepository.updateReportStatusAndNote("")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
 
-    await expect(reportRepository.calculateAnteNatalCareJorongMonthlyReport({})).rejects.toThrowError(
-      "REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED"
-    );
-
-    await expect(reportRepository.calculateAnteNatalCarePuskesmasMonthlyReport({})).rejects.toThrowError(
-      "REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED"
-    );
-
-    await expect(reportRepository.calculateLbJorongMonthlyReport({})).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
-
-    await expect(reportRepository.calculateLbPuskesmasMonthlyReport({})).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
-
     await expect(reportRepository.calculateMonthlyJorongRecap("")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
-
-    await expect(reportRepository.calculateMonthlyPuskesmasRecap("")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
 
     await expect(reportRepository.getAnteNatalAggregateReport("", "", "")).rejects.toThrowError("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
 
