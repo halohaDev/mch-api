@@ -42,7 +42,7 @@ class CalculateAllRecapJorongUseCase {
         data: result.result,
         month: parseInt(month),
         year: parseInt(year),
-        status: "draft",
+        status: "review",
         requestedBy,
       });
     }
