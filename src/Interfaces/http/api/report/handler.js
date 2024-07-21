@@ -44,7 +44,8 @@ class ReportHandler {
 
     const response = h.response({
       status: "success",
-      data: report,
+      data: report.data,
+      meta: report.meta,
     });
 
     response.code(200);
