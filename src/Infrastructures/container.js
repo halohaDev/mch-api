@@ -74,6 +74,7 @@ const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistory
 const DateHelper = require("../Applications/utils/DateHelper");
 const CalculateMonthlyJorongReport = require("../Applications/use_case/report/CalculateMonthlyJorongReport");
 const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/CalculateAllRecapJorongUseCase");
+const ShowReportByIdUseCase = require("../Applications/use_case/report/ShowReportByIdUseCase");
 
 const container = createContainer();
 
@@ -336,6 +337,27 @@ container.register([
 
 // use case
 container.register([
+  {
+    key: ShowReportByIdUseCase.name,
+    Class: ShowReportByIdUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: MaternalHistoryUseCase.name,
     Class: MaternalHistoryUseCase,

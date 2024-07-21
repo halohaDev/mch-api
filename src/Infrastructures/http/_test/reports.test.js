@@ -41,10 +41,10 @@ describe("HTTP server - reports", () => {
       // Arrange
       const requestPayload = {
         jorongId: "jorong-123",
-        midwifeId: "midwife-123",
+        requestedBy: "midwife-123",
         month: 1,
         year: 2021,
-        data: {
+        aggregatedData: {
           hemoglobinCheck: 1,
           anemiaBetween8And11: 2,
           anemiaLessThan8: 3,
@@ -66,7 +66,7 @@ describe("HTTP server - reports", () => {
           hepatitisCheck: 18,
           hepatitisPositive: 19,
         },
-        reportType: "anc_jorong_monthly",
+        reportType: "jorong_monthly",
       };
 
       const server = await createServer(container);
@@ -90,7 +90,7 @@ describe("HTTP server - reports", () => {
       const report = await ReportsTableTestHelper.findReportById(responseJson.data.id);
     });
 
-    it("should response 400 when request payload not contain needed property", async () => {
+    it("should response 422 when request payload not contain needed property", async () => {
       // Arrange
       const requestPayload = {};
 
@@ -147,7 +147,7 @@ describe("HTTP server - reports", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.data).toHaveLength(3);
+      expect(responseJson.data).toHaveLength(3);
     });
 
     it("should response 200 and return filtered reports by jorongId", async () => {
@@ -167,7 +167,7 @@ describe("HTTP server - reports", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.data).toHaveLength(1);
+      expect(responseJson.data).toHaveLength(1);
     });
 
     it("should response 200 and return filtered reports by month & year", async () => {
@@ -187,7 +187,7 @@ describe("HTTP server - reports", () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.data).toHaveLength(1);
+      expect(responseJson.data).toHaveLength(1);
     });
   });
 
@@ -612,6 +612,81 @@ describe("HTTP server - reports", () => {
       expect(responseJson.data.c6).toEqual(1);
       expect(responseJson.data.highRisk).toEqual(1);
       expect(responseJson.data.totalAnc).toEqual(3);
+    });
+  });
+
+  describe("when GET /api/v1/reports/{id}", () => {
+    it("should response 200 and return report", async () => {
+      // Arrange
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/reports/report-123",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toBeDefined();
+    });
+
+    it("should response 404 when report not found", async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/reports/report-123",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual("fail");
+    });
+
+    it("should response 200 with object", async () => {
+      // Arrange
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+        requesterId: "user-123",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "GET",
+        url: "/api/v1/reports/report-123",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.requestedBy).toBeDefined();
+      expect(responseJson.data.jorong).toBeDefined();
+      expect(responseJson.data.approvedBy).toBeNull();
     });
   });
 });
