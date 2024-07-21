@@ -28,6 +28,10 @@ class ReportQuery extends BaseQuery {
   getByReportType(type) {
     return ["report_type = ?", type];
   }
+
+  orderByCreatedAt(direction) {
+    return ["created_at", direction];
+  }
 }
 
 module.exports = ReportQuery;
