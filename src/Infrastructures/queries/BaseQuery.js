@@ -151,9 +151,13 @@ class BaseQuery {
 
     // /api/v1/endpoint?orderBy=column1:asc,column2:desc
     const orderParams = Object.keys(params).find((param) => param === "orderBy");
+    if (!orderParams) {
+      return this;
+    }
+
     const arrayParams = params[orderParams].split(",");
 
-    if (!orderParams) {
+    if (arrayParams.length === 0) {
       return this;
     }
 
