@@ -57,7 +57,7 @@ class ReportRepositoryPostgres extends ReportRepository {
   }
 
   async showReport(queryParams) {
-    const result = await this._reportQuery.wheres(queryParams).paginate();
+    const result = await this._reportQuery.wheres(queryParams).orders(queryParams).paginate();
     result.data = this._snakeToCamelCase(result.data);
 
     return result;
