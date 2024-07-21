@@ -56,7 +56,6 @@ class BaseQuery {
       text: this.finalSQL,
       values: values,
     };
-    console.log(query);
     const results = await this._pool.query(query);
 
     this._page = 1;
