@@ -79,7 +79,9 @@ class ReportHandler {
   }
 
   async updateReportHandler(request, h) {
-    const report = await this._container.getInstance(UpdateReportStatusUseCase.name).execute(request.params.id, request.payload);
+    const { role } = request.auth.credentials;
+
+    const report = await this._container.getInstance(UpdateReportStatusUseCase.name).execute(request.params.id, request.payload, role);
 
     const response = h.response({
       status: "success",

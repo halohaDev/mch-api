@@ -56,6 +56,7 @@ class BaseQuery {
       text: this.finalSQL,
       values: values,
     };
+
     const results = await this._pool.query(query);
 
     this._page = 1;
@@ -89,10 +90,18 @@ class BaseQuery {
       }
 
       const [query, value] = result;
-      const paramizeQuery = query.replace(/\?/g, `$${++this._finalObject.currentIndex}`);
 
-      whereSQL.push(paramizeQuery);
-      values.push(value);
+      if (!query) {
+        return;
+      }
+
+      if (query.indexOf("?") !== -1) {
+        const paramizeQuery = query.replace(/\?/g, `$${++this._finalObject.currentIndex}`);
+        whereSQL.push(paramizeQuery);
+        values.push(value);
+      } else {
+        whereSQL.push(query);
+      }
     });
 
     if (whereSQL.length === 0) {
@@ -196,7 +205,12 @@ class BaseQuery {
   }
 
   async fetchTotalData() {
-    const sql = `SELECT COUNT(*) FROM ${this.tableName} ${this._finalObject.joins} ${this._finalObject.where}`;
+    let parts = [`SELECT COUNT(*)`, `FROM ${this.tableName}`];
+
+    if (this._finalObject.joins) parts.push(this._finalObject.joins);
+    if (this._finalObject.where) parts.push(this._finalObject.where);
+
+    const sql = parts.join(" ").replace(/\s+/g, " ").trim();
 
     const query = {
       text: sql,
@@ -214,8 +228,16 @@ class BaseQuery {
   }
 
   finalizeSQL() {
-    const sql = `SELECT ${this._finalObject.select} FROM ${this.tableName} ${this._finalObject.joins} ${this._finalObject.where} ${this._finalObject.order} ${this._finalObject.paginate}`;
-    this.finalSQL = sql.replace(/\s+/g, " ").trim();
+    let parts = [`SELECT ${this._finalObject.select}`, `FROM ${this.tableName}`];
+
+    if (this._finalObject.joins) parts.push(this._finalObject.joins);
+    if (this._finalObject.where) parts.push(this._finalObject.where);
+    if (this._finalObject.order) parts.push(this._finalObject.order);
+    if (this._finalObject.paginate) parts.push(this._finalObject.paginate);
+
+    const sql = parts.join(" ").replace(/\s+/g, " ").trim();
+
+    this.finalSQL = sql;
   }
 
   getByPerPage(perPage) {

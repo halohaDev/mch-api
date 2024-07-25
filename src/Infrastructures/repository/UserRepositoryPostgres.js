@@ -22,23 +22,36 @@ class UserRepositoryPostgres extends UserRepository {
       values.push(userId);
     }
 
-    const query = { text: textQuery, values }
+    const query = { text: textQuery, values };
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
-      throw new InvariantError(
-        "tidak dapat membuat user baru karena email sudah digunakan"
-      );
+      throw new InvariantError("tidak dapat membuat user baru karena email sudah digunakan");
     }
   }
 
   async addUser(registerUser) {
-    const { email, password, name, nik, role, address, birthPlace, dateOfBirth, jobTitle, religion, isActiveBpjs, bpjsKesehatanNumber } = registerUser;
+    const { email, password, name, nik, role, address, birthPlace, dateOfBirth, jobTitle, religion, isActiveBpjs, bpjsKesehatanNumber } =
+      registerUser;
     const id = `user-${this._idGenerator()}`;
 
     const query = {
       text: "INSERT INTO users(id, email, password, name, nik, role, address, birthplace, date_of_birth, job_title, religion, is_active_bpjs, bpjs_kesehatan_number) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, email, name, role",
-      values: [id, email, password, name, nik, role, address, birthPlace, dateOfBirth, jobTitle, religion, isActiveBpjs, bpjsKesehatanNumber],
+      values: [
+        id,
+        email,
+        password,
+        name,
+        nik,
+        role,
+        address,
+        birthPlace,
+        dateOfBirth,
+        jobTitle,
+        religion,
+        isActiveBpjs,
+        bpjsKesehatanNumber,
+      ],
     };
 
     const result = await this._pool.query(query);
@@ -85,7 +98,7 @@ class UserRepositoryPostgres extends UserRepository {
       values.push(userId);
     }
 
-    const query = { text: textQuery, values }
+    const query = { text: textQuery, values };
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
@@ -98,13 +111,13 @@ class UserRepositoryPostgres extends UserRepository {
   async verifyAvailablePhoneNumber(phoneNumber, userId) {
     let textQuery = "SELECT phone_number FROM users WHERE phone_number = $1";
     let values = [phoneNumber];
-    
+
     if (userId) {
       textQuery += " AND id != $2";
       values.push(userId);
     }
 
-    const query = { text: textQuery, values }
+    const query = { text: textQuery, values };
     const result = await this._pool.query(query);
 
     if (result.rowCount) {
@@ -149,6 +162,17 @@ class UserRepositoryPostgres extends UserRepository {
     }
 
     return new CreatedUser({ ...result.rows[0] });
+  }
+
+  async getUsersByIds(userIds) {
+    const userIdsString = userIds.join("','");
+    const query = {
+      text: `SELECT id, name FROM users WHERE id IN ('${userIdsString}')`,
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
   }
 }
 

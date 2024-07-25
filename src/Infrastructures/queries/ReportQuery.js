@@ -26,6 +26,10 @@ class ReportQuery extends BaseQuery {
   }
 
   getByReportType(type) {
+    if (type === "pws") {
+      return ["report_type = ? OR report_type = ?", "pws_ibu", "pws_anak"];
+    }
+
     return ["report_type = ?", type];
   }
 

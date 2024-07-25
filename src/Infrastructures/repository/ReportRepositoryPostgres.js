@@ -296,6 +296,20 @@ class ReportRepositoryPostgres extends ReportRepository {
     return this._snakeToCamelCase(result.rows[0]);
   }
 
+  async getDeliveryComplicationAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(*)
+        FROM children c
+        LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
+        LEFT JOIN maternal_complications mc ON mc.maternal_history_id = mh.id
+        WHERE c.birth_datetime BETWEEN $2 AND $3 AND 
+          (c.delivery_method IN ('sc', 'vakum') OR c.helper = 'dukun' OR mc.complication_type IN ())
+      `,
+    };
+  }
+
   async getDeliveryAggregateReport({ jorongId, startDate, endDate }) {
     const query = {
       text: `

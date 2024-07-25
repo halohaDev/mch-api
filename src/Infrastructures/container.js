@@ -467,6 +467,14 @@ container.register([
           name: "reportRepository",
           internal: ReportRepository.name,
         },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
       ],
     },
   },
