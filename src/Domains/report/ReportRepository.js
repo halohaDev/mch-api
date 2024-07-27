@@ -42,6 +42,10 @@ class ReportRepository {
   async getOnProcessRecapJorong(month, year) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async getReportObjectiveByYear(year) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = ReportRepository;

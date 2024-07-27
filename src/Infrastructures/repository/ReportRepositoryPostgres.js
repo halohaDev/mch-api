@@ -363,6 +363,16 @@ class ReportRepositoryPostgres extends ReportRepository {
 
     return this._snakeToCamelCase(result.rows);
   }
+
+  async getReportObjectiveByYear(year) {
+    const query = {
+      text: `SELECT * FROM report_objectives WHERE report_year = $1`,
+      values: [year],
+    };
+
+    const result = await this._pool.query(query);
+    return this._snakeToCamelCase(result.rows);
+  }
 }
 
 module.exports = ReportRepositoryPostgres;

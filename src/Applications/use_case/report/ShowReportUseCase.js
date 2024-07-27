@@ -15,17 +15,40 @@ class ShowReportUseCase {
 
     const jorongs = await this._jorongRepository.getJorongsByIds(jorongIds);
     const users = await this._userRepository.getUsersByIds(userIds);
+    const reportObjectives = (await this._reportRepository.getReportObjectiveByYear(queryParams.year)) || [];
 
     result.data = result.data.map((report) => {
       const jorong = jorongs.find((jorong) => jorong.id === report.jorongId);
       const requestedby = users.find((user) => user.id === report.requestedBy);
       const approvedBy = users.find((user) => user.id === report.approvedBy);
+      const reportObjective = reportObjectives.find((reportObjective) => reportObjective.jorongId === report.jorongId) || {};
+
+      const {
+        anteNatalTarget,
+        postNatalTarget,
+        deliveryTarget,
+        anteNatalHighRiskTarget,
+        babyTarget,
+        balitaTarget,
+        neoRestiTarget,
+        deliveredBabyAliveTarget,
+        praSekolahTarget,
+      } = reportObjective;
 
       return {
         ...report,
         jorong,
         requestedBy: requestedby,
         approvedBy: approvedBy,
+        anteNatalTarget,
+        postNatalTarget,
+        deliveryTarget,
+        anteNatalHighRiskTarget,
+        babyTarget,
+        balitaTarget,
+        neoRestiTarget,
+        deliveredBabyAliveTarget,
+        praSekolahTarget,
       };
     });
 
