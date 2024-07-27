@@ -82,8 +82,30 @@ class ReportRepositoryPostgres extends ReportRepository {
     await this.findReportById(payload.id);
 
     const query = {
-      text: "UPDATE reports SET note = $1, status = $2 WHERE id = $3 RETURNING id",
-      values: [payload.note, payload.status, payload.id],
+      text: "UPDATE reports SET note = $1, status = $2, status = $4 WHERE id = $3 RETURNING id",
+      values: [payload.note, payload.status, payload.id, payload.approvedBy],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async approveReport(payload) {
+    await this.findReportById(payload.id);
+
+    const query = {
+      text: "UPDATE reports SET status = $1, approved_by = $2, approved_at = $3, note = $4 WHERE id = $5 RETURNING id",
+      values: ["approved", payload.approvedBy, payload.approvedAt, payload.note, payload.id],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async reviseReport(payload) {
+    await this.findReportById(payload.id);
+
+    const query = {
+      text: "UPDATE reports SET status = $1, note = $2 WHERE id = $3 RETURNING id",
+      values: ["revision", payload.note, payload.id],
     };
 
     await this._pool.query(query);

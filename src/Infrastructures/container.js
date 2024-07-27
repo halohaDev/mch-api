@@ -75,6 +75,7 @@ const DateHelper = require("../Applications/utils/DateHelper");
 const CalculateMonthlyJorongReport = require("../Applications/use_case/report/CalculateMonthlyJorongReport");
 const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/CalculateAllRecapJorongUseCase");
 const ShowReportByIdUseCase = require("../Applications/use_case/report/ShowReportByIdUseCase");
+const CalculatePwsReportUseCase = require("../Applications/use_case/report/CalculatePwsReportUseCase");
 
 const container = createContainer();
 
@@ -428,6 +429,10 @@ container.register([
           name: "reportRepository",
           internal: ReportRepository.name,
         },
+        {
+          name: "calculatePwsReportUseCase",
+          internal: CalculatePwsReportUseCase.name,
+        },
       ],
     },
   },
@@ -779,6 +784,19 @@ container.register([
         {
           name: "dateHelper",
           internal: DateHelper.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculatePwsReportUseCase.name,
+    Class: CalculatePwsReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
         },
       ],
     },

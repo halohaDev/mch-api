@@ -6,6 +6,7 @@ const MaternalTableTestHelper = require("../../../../tests/MaternalTableTestHelp
 const MaternalHistoryTableTestHelper = require("../../../../tests/MaternalHistoriesTableTestHelper");
 const AnteNatalCareTableTestHelper = require("../../../../tests/AnteNatalCaresTableTestHelper");
 const ReportTableTestHelper = require("../../../../tests/ReportTableTestHelper");
+const ReportObjectivesTableTestHelper = require("../../../../tests/ReportObjectivesTableTestHelper");
 const container = require("../../container");
 const createServer = require("../createServer");
 const { randomNumber, randomFromArray, randomDate } = require("../../../Commons/helper");
@@ -24,6 +25,7 @@ describe("HTTP server - reports", () => {
     await MaternalHistoryTableTestHelper.cleanTable();
     await MaternalTableTestHelper.cleanTable();
     await ReportsTableTestHelper.cleanTable();
+    await ReportObjectivesTableTestHelper.cleanTable();
     await JorongTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
   });
@@ -530,6 +532,169 @@ describe("HTTP server - reports", () => {
 
       const report = await ReportsTableTestHelper.findReportById("report-123");
       expect(report.status).toEqual("approved");
+    });
+
+    it("should update approvedAt, approvedBy when status is approved", async () => {
+      // Arrange
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "PATCH",
+        url: "/api/v1/reports/report-123/status",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          status: "approved",
+          note: "note",
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+
+      const report = await ReportsTableTestHelper.findReportById("report-123");
+      expect(report.approvedAt).toBeDefined();
+      expect(report.approvedBy).toEqual("user-123");
+      expect(report.status).toEqual("approved");
+    });
+
+    it("should create pws report when status is approved", async () => {
+      // Arrange
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+        reportType: "jorong_monthly",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "PATCH",
+        url: "/api/v1/reports/report-123/status",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          status: "approved",
+          note: "note",
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+
+      const report = await ReportsTableTestHelper.findReportByMonthYearAndReportType({
+        month: 8,
+        year: 2021,
+        reportType: "pws_ibu",
+      });
+
+      expect(report).toBeDefined();
+      expect(report.aggregatedData).toBeDefined();
+      expect(report.status).toEqual("draft");
+    });
+
+    it("should calculate monthly_jorong of other jorong on pws", async () => {
+      // add other jorong and its month report jorong approved
+      await JorongTableTestHelper.addJorong({ id: "jorong-678" });
+
+      await ReportsTableTestHelper.addReport({
+        id: "report-1234",
+        jorongId: "jorong-123",
+        month: 7,
+        data: {
+          kumulatifC1: 1,
+          kumulatifPnc1: 2,
+          kumulatifDelivery: 3,
+        },
+        reportType: "jorong_monthly",
+        status: "approved",
+      });
+
+      await ReportsTableTestHelper.addReport({
+        id: "report-123",
+        jorongId: "jorong-123",
+        data: {
+          kumulatifC1: 1,
+          kumulatifPnc1: 2,
+          kumulatifDelivery: 3,
+        },
+        reportType: "jorong_monthly",
+        status: "review",
+      });
+
+      await ReportsTableTestHelper.addReport({
+        id: "report-456",
+        jorongId: "jorong-345",
+        data: {
+          kumulatifC1: 3,
+          kumulatifPnc1: 3,
+          kumulatifDelivery: 5,
+        },
+        reportType: "jorong_monthly",
+        status: "approved",
+      });
+
+      await ReportObjectivesTableTestHelper.addReportObjectives({
+        jorongId: "jorong-123",
+      });
+
+      await ReportObjectivesTableTestHelper.addReportObjectives({
+        jorongId: "jorong-345",
+      });
+
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: "PATCH",
+        url: "/api/v1/reports/report-123/status",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        payload: {
+          status: "approved",
+          note: "note",
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual("success");
+
+      const report = await ReportsTableTestHelper.findReportByMonthYearAndReportType({
+        month: 8,
+        year: 2021,
+        reportType: "pws_ibu",
+      });
+
+      // absoluteC1 3 + 1 = 4 4/20 = 0.2
+      expect(report).toBeDefined();
+
+      const { aggregatedData } = report;
+      const { totalAbsoluteC1, totalAbsolutePnc1, totalAbsoluteDelivery } = aggregatedData;
+
+      // totalAbsoluteC1 = 4 -> 4/20 = 0.2
+      expect(totalAbsoluteC1).toEqual(0.2);
+
+      // totalAbsolutePnc1 = 6 -> 5/20 = 0.25
+      expect(totalAbsolutePnc1).toEqual(0.25);
+
+      // totalAbsoluteDelivery = 8 -> 8/20 = 0.4
+      expect(totalAbsoluteDelivery).toEqual(0.4);
     });
   });
 

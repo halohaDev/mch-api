@@ -41,6 +41,18 @@ const ReportTableTestHelper = {
   async cleanTable() {
     await pool.query("TRUNCATE TABLE reports");
   },
+
+  // find report by month year and report type
+  async findReportByMonthYearAndReportType({ month, year, reportType }) {
+    const query = {
+      text: "SELECT * FROM reports WHERE month = $1 AND year = $2 AND report_type = $3",
+      values: [month, year, reportType],
+    };
+
+    const result = await pool.query(query);
+
+    return snakeToCamelObject(result.rows[0]);
+  },
 };
 
 module.exports = ReportTableTestHelper;
