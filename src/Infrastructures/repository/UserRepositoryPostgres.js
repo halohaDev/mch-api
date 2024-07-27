@@ -167,7 +167,7 @@ class UserRepositoryPostgres extends UserRepository {
   async getUsersByIds(userIds) {
     const userIdsString = userIds.join("','");
     const query = {
-      text: `SELECT id, name FROM users WHERE id IN ('${userIdsString}')`,
+      text: `SELECT id, name, nip FROM users WHERE id IN ('${userIdsString}')`,
     };
 
     const result = await this._pool.query(query);
