@@ -9,19 +9,23 @@ class ShowReportUseCase {
     const result = await this._reportRepository.showReport(queryParams);
 
     const jorongIds = result?.data?.map((report) => report.jorongId);
-    const userIds = result?.data?.map((report) => report.requestedBy);
+    const requesterIds = result?.data?.map((report) => report.requestedBy);
+    const approverIds = result?.data?.map((report) => report.approvedBy);
+    const userIds = [...new Set([...requesterIds, ...approverIds])];
 
     const jorongs = await this._jorongRepository.getJorongsByIds(jorongIds);
     const users = await this._userRepository.getUsersByIds(userIds);
 
     result.data = result.data.map((report) => {
       const jorong = jorongs.find((jorong) => jorong.id === report.jorongId);
-      const user = users.find((user) => user.id === report.requestedBy);
+      const requestedby = users.find((user) => user.id === report.requestedBy);
+      const approvedBy = users.find((user) => user.id === report.approvedBy);
 
       return {
         ...report,
         jorong,
-        requestedBy: user,
+        requestedBy: requestedby,
+        approvedBy: approvedBy,
       };
     });
 
