@@ -1,12 +1,14 @@
 const PlacementRepository = require("../../Domains/placements/PlacementRepository");
 const showedPlacement = require("../../Domains/placements/entities/ShowedPlacement");
 const NotFoundError = require("../../Commons/exceptions/NotFoundError");
+const PlacementQuery = require("../queries/PlacementQuery");
 
 class PlacementRepositoryPostgres extends PlacementRepository {
   constructor(pool, snakeToCamelObject) {
     super();
     this._pool = pool;
     this._snakeToCamelObject = snakeToCamelObject;
+    this._placementQuery = new PlacementQuery({ pool });
   }
 
   async addPlacement({ midwifeId, jorongId, placementDate }) {
@@ -53,6 +55,13 @@ class PlacementRepositoryPostgres extends PlacementRepository {
 
     const modifiedRows = this._snakeToCamelObject(rows);
     return modifiedRows.map((row) => new showedPlacement(row));
+  }
+
+  async getAllPlacements({ queryParams }) {
+    const result = await this._placementQuery.wheres(queryParams).paginate();
+    result.data = this._snakeToCamelObject(result.data);
+
+    return result;
   }
 }
 

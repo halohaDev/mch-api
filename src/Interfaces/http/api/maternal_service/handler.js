@@ -28,7 +28,7 @@ class MaternalServiceHandler {
     const response = h.response({
       status: "success",
       data: {
-        addedAnteNatalCare,
+        ...addedAnteNatalCare,
       },
     });
 

@@ -1,10 +1,11 @@
 const ChildRepository = require("../../Domains/child/ChildRepository");
 
 class ChildRepositoryPostgres extends ChildRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamelCase) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._snakeToCamelCase = snakeToCamelCase;
   }
 
   async addChild(newChild) {
@@ -48,6 +49,16 @@ class ChildRepositoryPostgres extends ChildRepository {
 
     const result = await this._pool.query(query);
     return result.rows[0];
+  }
+
+  async getChildByMaternalId(maternalId) {
+    const query = {
+      text: `SELECT * FROM children WHERE maternal_id = $1`,
+      values: [maternalId],
+    };
+
+    const result = await this._pool.query(query);
+    return this._snakeToCamelCase(result.rows);
   }
 }
 

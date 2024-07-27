@@ -32,7 +32,7 @@ describe("Report Query Implementation", () => {
       data: {
         cobaMasukanData: "data",
       },
-      reportType: ReportType.ANC_JORONG_MONTHLY,
+      reportType: ReportType.JORONG_MONTHLY,
       approvedAt: "2021-08-21",
       status: "approved",
       note: "note",
@@ -48,7 +48,7 @@ describe("Report Query Implementation", () => {
       data: {
         cobaMasukanData: "data",
       },
-      reportType: ReportType.ANC_JORONG_MONTHLY,
+      reportType: ReportType.JORONG_MONTHLY,
       approvedAt: "2021-08-21",
       status: "approved",
       note: "note",
@@ -63,9 +63,7 @@ describe("Report Query Implementation", () => {
       const reportQuery = new ReportQuery({ pool });
 
       // Action
-      const reports = await reportQuery
-        .wheres({ midwifeId: "midwife-123" })
-        .paginate();
+      const reports = await reportQuery.wheres({ requestedBy: "midwife-123" }).paginate();
 
       // Assert
       expect(reports.data).toHaveLength(2);
@@ -83,9 +81,7 @@ describe("Report Query Implementation", () => {
       });
 
       // Action
-      const reports = await reportQuery
-        .wheres({ jorongId: "jorong-456" })
-        .paginate();
+      const reports = await reportQuery.wheres({ jorongId: "jorong-456" }).paginate();
 
       // Assert
       expect(reports.data).toHaveLength(1);
@@ -97,13 +93,12 @@ describe("Report Query Implementation", () => {
 
       await ReportTableTestHelper.addReport({
         id: "report-789",
-        reportType: ReportType.ANC_JORONG_YEARLY,
+        reportType: ReportType.PWS_ANAK,
+        month: 10,
       });
 
       // Action
-      const reports = await reportQuery
-        .wheres({ reportType: ReportType.ANC_JORONG_YEARLY })
-        .paginate();
+      const reports = await reportQuery.wheres({ reportType: ReportType.PWS_ANAK }).paginate();
 
       // Assert
       expect(reports.data).toHaveLength(1);
@@ -156,6 +151,33 @@ describe("Report Query Implementation", () => {
 
       // Assert
       expect(reports.data).toHaveLength(1);
+    });
+
+    it("should return report sorted by created_at", async () => {
+      // Arrange
+      const reportQuery = new ReportQuery({ pool });
+
+      await ReportTableTestHelper.addReport({
+        id: "report-789",
+        createdAt: "2023-10-22",
+        month: 10,
+      });
+
+      await ReportTableTestHelper.addReport({
+        id: "report-101",
+        createdAt: "2024-07-23",
+        month: 7,
+      });
+
+      const params = {
+        orderBy: "createdAt:desc",
+      };
+
+      // Action
+      const reports = await reportQuery.orders(params).paginate();
+
+      // Assert
+      expect(reports.data[0].id).toEqual("report-101");
     });
   });
 });

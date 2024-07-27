@@ -3,11 +3,12 @@ const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 const ReportQuery = require("../queries/ReportQuery");
 
 class ReportRepositoryPostgres extends ReportRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, snakeToCamelCase) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
     this._reportQuery = new ReportQuery({ pool });
+    this._snakeToCamelCase = snakeToCamelCase;
   }
 
   async addReport(payload) {
@@ -15,11 +16,30 @@ class ReportRepositoryPostgres extends ReportRepository {
     const id = `report-${this._idGenerator()}`;
     const jsonData = JSON.stringify(data);
     const query = {
-      text: "INSERT INTO agg_report_data(id, jorong_id, midwife_id, approved_by, data, report_type, approved_at, status, note, month, year) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11) RETURNING id",
+      text: `
+        INSERT INTO reports(
+          id, 
+          jorong_id, 
+          requested_by, 
+          approved_by, 
+          aggregated_data, 
+          report_type, 
+          approved_at, 
+          status, 
+          note, 
+          month, 
+          year
+        ) VALUES (
+         $1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11
+        ) ON CONFLICT (
+          jorong_id, report_type, month, year 
+        ) DO UPDATE SET
+          aggregated_data = EXCLUDED.aggregated_data   
+        RETURNING id`,
       values: [
         id,
         payload.jorongId,
-        payload.midwifeId,
+        payload.requestedBy,
         payload.approvedBy,
         jsonData,
         payload.reportType,
@@ -37,14 +57,15 @@ class ReportRepositoryPostgres extends ReportRepository {
   }
 
   async showReport(queryParams) {
-    const result = await this._reportQuery.wheres(queryParams).paginate();
+    const result = await this._reportQuery.wheres(queryParams).orders(queryParams).paginate();
+    result.data = this._snakeToCamelCase(result.data);
 
     return result;
   }
 
   async findReportById(id) {
     const query = {
-      text: "SELECT * FROM agg_report_data WHERE id = $1",
+      text: "SELECT * FROM reports WHERE id = $1",
       values: [id],
     };
 
@@ -54,15 +75,37 @@ class ReportRepositoryPostgres extends ReportRepository {
       throw new NotFoundError("REPORT_REPOSITORY.NOT_FOUND");
     }
 
-    return result.rows[0];
+    return this._snakeToCamelCase(result.rows[0]);
   }
 
   async updateReportStatusAndNote(payload) {
     await this.findReportById(payload.id);
 
     const query = {
-      text: "UPDATE agg_report_data SET note = $1, status = $2 WHERE id = $3 RETURNING id",
-      values: [payload.note, payload.status, payload.id],
+      text: "UPDATE reports SET note = $1, status = $2, status = $4 WHERE id = $3 RETURNING id",
+      values: [payload.note, payload.status, payload.id, payload.approvedBy],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async approveReport(payload) {
+    await this.findReportById(payload.id);
+
+    const query = {
+      text: "UPDATE reports SET status = $1, approved_by = $2, approved_at = $3, note = $4 WHERE id = $5 RETURNING id",
+      values: ["approved", payload.approvedBy, payload.approvedAt, payload.note, payload.id],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async reviseReport(payload) {
+    await this.findReportById(payload.id);
+
+    const query = {
+      text: "UPDATE reports SET status = $1, note = $2 WHERE id = $3 RETURNING id",
+      values: ["revision", payload.note, payload.id],
     };
 
     await this._pool.query(query);
@@ -95,13 +138,8 @@ class ReportRepositoryPostgres extends ReportRepository {
     `;
 
     let indexWhere = 0;
-    const jorongCondition = jorongId
-      ? `WHERE ante_natal_cares.jorong_id = $${++indexWhere}`
-      : "";
-    const dateCondition =
-      startDate && endDate
-        ? `AND ante_natal_cares.created_at BETWEEN $${++indexWhere} AND $${++indexWhere}`
-        : "";
+    const jorongCondition = jorongId ? `WHERE ante_natal_cares.jorong_id = $${++indexWhere}` : "";
+    const dateCondition = startDate && endDate ? `AND ante_natal_cares.created_at BETWEEN $${++indexWhere} AND $${++indexWhere}` : "";
 
     const query = {
       text: `
@@ -210,6 +248,152 @@ class ReportRepositoryPostgres extends ReportRepository {
     const result = await this._pool.query(query);
 
     return result.rows;
+  }
+
+  async getAnteNatalAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN contact_type = 'c1' THEN m.id END)::integer AS c1,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c2' THEN m.id END)::integer AS c2,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c3' THEN m.id END)::integer AS c3,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c4' THEN m.id END)::integer AS c4,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c5' THEN m.id END)::integer AS c5,
+          COUNT(DISTINCT CASE WHEN contact_type = 'c6' THEN m.id END)::integer AS c6,
+          COUNT(DISTINCT (m.id, anc.contact_type))::integer AS total_anc
+        FROM ante_natal_cares anc
+        JOIN maternal_histories mh ON mh.id = anc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id
+        WHERE anc.date_of_visit between $1 and $2
+          AND m.jorong_id = $3
+        `,
+      values: [startDate, endDate, jorongId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getPostNatalAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_1' THEN m.id END)::integer AS pnc_1,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_2' THEN m.id END)::integer AS pnc_2,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_3' THEN m.id END)::integer AS pnc_3,
+          COUNT(DISTINCT CASE WHEN post_natal_type = 'pnc_4' THEN m.id END)::integer AS pnc_4,
+          COUNT(DISTINCT (m.id, pnc.post_natal_type))::integer AS total_pnc
+        FROM post_natal_cares pnc 
+        JOIN maternal_histories mh ON mh.id = pnc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id
+        WHERE m.jorong_id = $1 AND pnc.date_of_visit BETWEEN $2 AND $3
+      `,
+      values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getMaternalComplicationAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'pregnant' THEN m.id END)::integer AS anc_complication,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'postpartum' THEN m.id END)::integer AS pnc_complication,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'pregnant' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS anc_death,
+          COUNT(DISTINCT CASE WHEN mh.maternal_status = 'postpartum' AND (mc.come_condition = 'dead' OR mc.back_condition = 'dead') THEN m.id END)::integer AS pnc_death
+        FROM maternal_complications mc
+        JOIN maternal_histories mh ON mh.id = mc.maternal_history_id
+        JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        WHERE mc.complication_date BETWEEN $2 AND $3
+      `,
+      values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getDeliveryComplicationAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(*)
+        FROM children c
+        LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
+        LEFT JOIN maternal_complications mc ON mc.maternal_history_id = mh.id
+        WHERE c.birth_datetime BETWEEN $2 AND $3 AND 
+          (c.delivery_method IN ('sc', 'vakum') OR c.helper = 'dukun' OR mc.complication_type IN ())
+      `,
+    };
+  }
+
+  async getDeliveryAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN c.helper = 'dukun' THEN m.id END)::integer AS dukun_delivery,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'high_risk' THEN m.id END)::integer AS high_risk_delivery,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'risk' THEN m.id END)::integer AS risk_delivery,
+          COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN c.id END)::integer AS delivery
+        FROM children c
+        LEFT JOIN maternal_histories mh ON mh.id = c.maternal_history_id
+        JOIN maternals m ON m.id = c.maternal_id
+        WHERE c.birth_datetime BETWEEN $2 AND $3
+          AND m.jorong_id = $1
+      `,
+      values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getRiskFactorAggregateReport({ jorongId, startDate, endDate }) {
+    const query = {
+      text: `
+        SELECT 
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'high_risk' THEN m.id END)::integer AS high_risk,
+          COUNT(DISTINCT CASE WHEN mh.risk_status = 'risk' THEN m.id END)::integer AS risk
+        FROM maternal_histories mh
+        LEFT JOIN maternals m ON m.id = mh.maternal_id and m.jorong_id = $1
+        LEFT JOIN ante_natal_cares anc ON anc.maternal_history_id = mh.id
+        LEFT JOIN post_natal_cares pnc ON pnc.maternal_history_id = mh.id
+        WHERE (pnc.date_of_visit BETWEEN $2 AND $3 OR anc.date_of_visit BETWEEN $2 AND $3)
+          AND m.id IS NOT NULL
+      `,
+      values: [jorongId, startDate, endDate],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getOnProcessRecapJorong(month, year) {
+    const query = {
+      text: `SELECT id, jorong_id FROM reports WHERE month = $1 AND year = $2 AND status != $3 AND report_type = $4`,
+      values: [month, year, "draft", "jorong_monthly"],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async getReportObjectiveByYear(year) {
+    const query = {
+      text: `SELECT * FROM report_objectives WHERE report_year = $1`,
+      values: [year],
+    };
+
+    const result = await this._pool.query(query);
+    return this._snakeToCamelCase(result.rows);
   }
 }
 

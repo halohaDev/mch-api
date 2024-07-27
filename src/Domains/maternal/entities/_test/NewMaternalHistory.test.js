@@ -1,3 +1,4 @@
+const UnprocessableError = require("../../../../Commons/exceptions/UnprocessableError");
 const MaternalHistory = require("../NewMaternalHistory");
 
 describe("MaternalHistory entity", () => {
@@ -46,7 +47,7 @@ describe("MaternalHistory entity", () => {
           hpht: "1",
           weightBeforePregnancy: "1",
         })
-    ).toThrowError("Unprocessable Entity");
+    ).toThrowError(UnprocessableError);
   });
 
   it("should throw error when payload did not meet data type specification", () => {
@@ -65,6 +66,6 @@ describe("MaternalHistory entity", () => {
           weightBeforePregnancy: "1",
           maternalStatus: 1,
         })
-    ).toThrowError("Unprocessable Entity");
+    ).toThrowError(UnprocessableError);
   });
 });

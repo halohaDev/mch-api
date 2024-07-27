@@ -36,6 +36,10 @@ class UserRepository {
   async updateUserPetugas(id, updatedUser) {
     throw new Error("USER_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
+
+  async getUserByIds(userIds) {
+    throw new Error("USER_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
 }
 
 module.exports = UserRepository;

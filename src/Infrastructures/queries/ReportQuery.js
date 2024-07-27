@@ -3,8 +3,6 @@ const BaseQuery = require("./BaseQuery");
 class ReportQuery extends BaseQuery {
   constructor({ pool }) {
     super({ pool });
-
-    this.tableName = "agg_report_data";
   }
 
   getByJorongId(jorongId) {
@@ -28,7 +26,15 @@ class ReportQuery extends BaseQuery {
   }
 
   getByReportType(type) {
+    if (type === "pws") {
+      return ["report_type = ? OR report_type = ?", "pws_ibu", "pws_anak"];
+    }
+
     return ["report_type = ?", type];
+  }
+
+  orderByCreatedAt(direction) {
+    return ["created_at", direction];
   }
 }
 

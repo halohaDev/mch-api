@@ -18,6 +18,7 @@ describe("UpdateReportStatusUseCase", () => {
 
     const mockReportRepository = {
       updateReportStatusAndNote: jest.fn(),
+      findReportById: jest.fn(() => Promise.resolve({})),
     };
 
     const updateReportStatusUseCase = new UpdateReportStatusUseCase({
@@ -28,8 +29,6 @@ describe("UpdateReportStatusUseCase", () => {
     await updateReportStatusUseCase.execute(reportId, useCasePayload);
 
     // Assert
-    expect(mockReportRepository.updateReportStatusAndNote).toBeCalledWith(
-      expectedPayload
-    );
+    expect(mockReportRepository.updateReportStatusAndNote).toBeCalledWith(expectedPayload);
   });
 });

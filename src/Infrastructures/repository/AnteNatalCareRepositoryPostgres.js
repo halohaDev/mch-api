@@ -2,12 +2,13 @@ const AnteNatalCareRepository = require("../../Domains/ante_natal/AnteNatalCareR
 const AnteNatalCareQuery = require("../queries/AnteNatalCareQuery");
 
 class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
-  constructor(pool, idGenerator, moment) {
+  constructor(pool, idGenerator, moment, snakeToCamelCase) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
     this._moment = moment;
     this._anteNatalCareQuery = new AnteNatalCareQuery({ pool });
+    this._snakeToCamelCase = snakeToCamelCase;
   }
 
   async addAnteNatalCare(payload) {
@@ -67,16 +68,15 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
 
     const { rows } = await this._pool.query(query);
 
-    return rows[0];
+    return this._snakeToCamelCase(rows[0]);
   }
 
   async showAnteNatalCares(queryParams) {
     const params = this._buildQueryParams(queryParams);
 
-    const queryResult = await this._anteNatalCareQuery
-      .wheres(params)
-      .paginate();
+    const queryResult = await this._anteNatalCareQuery.wheres(params).paginate();
 
+    queryResult.data = this._snakeToCamelCase(queryResult.data);
     return queryResult;
   }
 
@@ -85,10 +85,7 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
       return {};
     }
 
-    const dateRanges = this._getStartDateEndEndDate(
-      queryParams.month,
-      queryParams.year
-    );
+    const dateRanges = this._getStartDateEndEndDate(queryParams.month, queryParams.year);
 
     if (dateRanges) {
       const { startDate, endDate } = dateRanges;
@@ -107,18 +104,14 @@ class AnteNatalCareRepositoryPostgres extends AnteNatalCareRepository {
     }
 
     if (!month && year) {
-      const startDate = this._moment(`${year}-01-01`, "YYYY-MM-DD")
-        .startOf("year")
-        .toDate();
+      const startDate = this._moment(`${year}-01-01`, "YYYY-MM-DD").startOf("year").toDate();
 
       const endDate = this._moment(startDate).endOf("year").toDate();
 
       return { startDate, endDate };
     }
 
-    const startDate = this._moment(`${year}-${month}-01`, "YYYY-MM-DD")
-      .startOf("month")
-      .toDate();
+    const startDate = this._moment(`${year}-${month}-01`, "YYYY-MM-DD").startOf("month").toDate();
 
     const endDate = this._moment(startDate).endOf("month").toDate();
 

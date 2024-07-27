@@ -15,15 +15,43 @@ class ReportRepository {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateAnteNatalCarePuskesmasMonthlyReport() {
+  async approveReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateAnteNatalCareJorongMonthlyReport() {
+  async reviseReport() {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 
-  async calculateLbJorongMonthlyReport() {
+  async calculateMonthlyJorongRecap(jorongId) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getAnteNatalAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getPostNatalAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getMaternalComplicationAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getRiskFactorAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getDeliveryAggregateReport(jorongId, start, end) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getOnProcessRecapJorong(month, year) {
+    throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+  }
+
+  async getReportObjectiveByYear(year) {
     throw new Error("REPORT_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }

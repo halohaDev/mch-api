@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { nanoid } = require("nanoid");
 const jwt = require("@hapi/jwt");
 const pool = require("./database/postgres/pool");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 // service
 const UserRepositoryPostgres = require("./repository/UserRepositoryPostgres");
@@ -23,6 +23,7 @@ const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceR
 const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
 const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
 const MaternalComplicationRepositoryPostgres = require("./repository/MaternalComplicationRepositoryPostgres");
+const Moment = require("./utils/Moment");
 
 // external
 const BcryptPasswordHash = require("./security/BcryptPasswordHash");
@@ -70,6 +71,11 @@ const MaternalServiceUseCase = require("../Applications/use_case/MaternalService
 const AddPostNatalCareUseCase = require("../Applications/use_case/post_natal/AddPostNatalCareUseCase");
 const AddMaternalComplicationUseCase = require("../Applications/use_case/AddMaternalComplicationUseCase");
 const MaternalHistoryUseCase = require("../Applications/use_case/MaternalHistoryUseCase");
+const DateHelper = require("../Applications/utils/DateHelper");
+const CalculateMonthlyJorongReport = require("../Applications/use_case/report/CalculateMonthlyJorongReport");
+const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/CalculateAllRecapJorongUseCase");
+const ShowReportByIdUseCase = require("../Applications/use_case/report/ShowReportByIdUseCase");
+const CalculatePwsReportUseCase = require("../Applications/use_case/report/CalculatePwsReportUseCase");
 
 const container = createContainer();
 
@@ -127,6 +133,9 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
         },
       ],
     },
@@ -257,6 +266,9 @@ container.register([
         {
           concrete: moment,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
       ],
     },
   },
@@ -289,6 +301,9 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          concrete: snakeToCamelObject,
+        },
       ],
     },
   },
@@ -307,10 +322,43 @@ container.register([
       ],
     },
   },
+
+  {
+    key: DateHelper.name,
+    Class: Moment,
+    parameter: {
+      dependencies: [
+        {
+          concrete: moment,
+        },
+      ],
+    },
+  },
 ]);
 
 // use case
 container.register([
+  {
+    key: ShowReportByIdUseCase.name,
+    Class: ShowReportByIdUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: MaternalHistoryUseCase.name,
     Class: MaternalHistoryUseCase,
@@ -381,6 +429,10 @@ container.register([
           name: "reportRepository",
           internal: ReportRepository.name,
         },
+        {
+          name: "calculatePwsReportUseCase",
+          internal: CalculatePwsReportUseCase.name,
+        },
       ],
     },
   },
@@ -419,6 +471,14 @@ container.register([
         {
           name: "reportRepository",
           internal: ReportRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
         },
       ],
     },
@@ -608,6 +668,22 @@ container.register([
           name: "databaseManager",
           internal: DatabaseManager.name,
         },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
+        },
       ],
     },
   },
@@ -646,6 +722,81 @@ container.register([
         {
           name: "maternalHistoryRepository",
           internal: MaternalHistoryRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateMonthlyJorongReport.name,
+    Class: CalculateMonthlyJorongReport,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+        {
+          name: "anteNatalCareRepository",
+          internal: AnteNatalCareRepository.name,
+        },
+        {
+          name: "postNatalCareRepository",
+          internal: PostNatalCareRepository.name,
+        },
+        {
+          name: "maternalComplicationRepository",
+          internal: MaternalComplicationRepository.name,
+        },
+        {
+          name: "maternalHistoryRepository",
+          internal: MaternalHistoryRepository.name,
+        },
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculateAllRecapJorongUseCase.name,
+    Class: CalculateAllRecapJorongUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "placementRepository",
+          internal: PlacementRepository.name,
+        },
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
+        },
+        {
+          name: "calculateMonthlyJorongReport",
+          internal: CalculateMonthlyJorongReport.name,
+        },
+        {
+          name: "dateHelper",
+          internal: DateHelper.name,
+        },
+      ],
+    },
+  },
+  {
+    key: CalculatePwsReportUseCase.name,
+    Class: CalculatePwsReportUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "reportRepository",
+          internal: ReportRepository.name,
         },
       ],
     },

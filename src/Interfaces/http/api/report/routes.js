@@ -20,6 +20,16 @@ const routes = (handler) => [
     },
   },
   {
+    method: "GET",
+    path: "/api/v1/reports/{id}",
+    handler: handler.getReportByIdHandler,
+    options: {
+      app: {
+        access: ["admin", "midwife", "coordinator", "chairperson"],
+      },
+    },
+  },
+  {
     method: "POST",
     path: "/api/v1/reports",
     handler: handler.addReportHandler,
@@ -33,6 +43,16 @@ const routes = (handler) => [
     method: "PATCH",
     path: "/api/v1/reports/{id}/status",
     handler: handler.updateReportHandler,
+    options: {
+      app: {
+        access: ["admin", "midwife", "coordinator", "chairperson"],
+      },
+    },
+  },
+  {
+    method: "POST",
+    path: "/api/v1/reports/calculate/jorong/{jorongId}",
+    handler: handler.calculateReportJorongMonthly,
     options: {
       app: {
         access: ["admin", "midwife", "coordinator", "chairperson"],

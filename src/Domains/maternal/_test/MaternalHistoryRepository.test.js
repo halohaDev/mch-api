@@ -6,19 +6,13 @@ describe("MaternalHistoryRepository interface", () => {
     const maternalHistoryRepository = new MaternalHistoryRepository();
 
     // Action and Assert
-    await expect(
-      maternalHistoryRepository.addMaternalHistory({})
-    ).rejects.toThrowError(
+    await expect(maternalHistoryRepository.addMaternalHistory({})).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
-    await expect(
-      maternalHistoryRepository.getMaternalHistoryByMaternalId("")
-    ).rejects.toThrowError(
+    await expect(maternalHistoryRepository.getMaternalHistoryByMaternalId("")).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
-    await expect(
-      maternalHistoryRepository.updateMaternalHistoryById("", {})
-    ).rejects.toThrowError(
+    await expect(maternalHistoryRepository.updateMaternalHistoryById("", {})).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
     await expect(maternalHistoryRepository.getMaternalHistories()).rejects.toThrowError(
@@ -27,8 +21,12 @@ describe("MaternalHistoryRepository interface", () => {
     await expect(maternalHistoryRepository.getMaternalHistoryById("")).rejects.toThrowError(
       "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
     );
-    await expect(
-      maternalHistoryRepository.getLatestMaternalHistoryByMaternalId("")
-    ).rejects.toThrowError("MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED");
+    await expect(maternalHistoryRepository.getLatestMaternalHistoryByMaternalId("")).rejects.toThrowError(
+      "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
+    );
+
+    await expect(maternalHistoryRepository.updateRiskStatus("", "")).rejects.toThrowError(
+      "MATERNAL_HISTORY_REPOSITORY.METHOD_NOT_IMPLEMENTED"
+    );
   });
 });
