@@ -79,6 +79,7 @@ const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/
 const ShowReportByIdUseCase = require("../Applications/use_case/report/ShowReportByIdUseCase");
 const CalculatePwsReportUseCase = require("../Applications/use_case/report/CalculatePwsReportUseCase");
 const ChildCareUseCase = require("../Applications/use_case/ChildCareUseCase");
+const ChildUseCase = require("../Applications/use_case/ChildUseCase");
 
 const container = createContainer();
 
@@ -844,6 +845,20 @@ container.register([
         {
           name: "jorongRepository",
           internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
+
+  {
+    key: ChildUseCase.name,
+    Class: ChildUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
         },
       ],
     },
