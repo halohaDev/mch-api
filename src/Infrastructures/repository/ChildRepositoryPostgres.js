@@ -26,12 +26,13 @@ class ChildRepositoryPostgres extends ChildRepository {
       helper,
       maternalId,
       maternalHistoryId,
+      birthStatus,
     } = newChild;
 
     const id = `child-${this._idGenerator()}`;
 
     const query = {
-      text: `INSERT INTO children (name, nik, birth_datetime, birth_weight, gender, father_name, pregnancy_age, delivery_place, delivery_method, helper, maternal_id, maternal_history_id, id, birth_height) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id`,
+      text: `INSERT INTO children (name, nik, birth_datetime, birth_weight, gender, father_name, pregnancy_age, delivery_place, delivery_method, helper, maternal_id, maternal_history_id, id, birth_height, birth_status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id`,
       values: [
         name,
         nik,
@@ -47,6 +48,7 @@ class ChildRepositoryPostgres extends ChildRepository {
         maternalHistoryId,
         id,
         birthHeight,
+        birthStatus,
       ],
     };
 

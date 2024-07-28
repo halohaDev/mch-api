@@ -31,6 +31,14 @@ class ChildCare extends BaseQuery {
     return [`maternal_history_id = ?`, maternalHistoryId];
   }
 
+  getById(id) {
+    return [`children.id = ?`, id];
+  }
+
+  getByMaternalId(maternalId) {
+    return [`maternal_id = ?`, maternalId];
+  }
+
   orderByBirthDatetime(direction) {
     return [`birth_datetime`, direction];
   }

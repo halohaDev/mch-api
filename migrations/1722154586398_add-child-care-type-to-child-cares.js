@@ -10,6 +10,7 @@ exports.up = (pgm) => {
     child_care_type: {
       type: "child_care_types",
       notNull: true,
+      default: "bayi",
     },
   });
 };

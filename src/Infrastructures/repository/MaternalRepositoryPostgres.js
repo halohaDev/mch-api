@@ -12,26 +12,11 @@ class MaternalRepositoryPostgres extends MaternalRepository {
   }
 
   async addMaternal(addMaternal) {
-    const {
-      userId,
-      menarcheDate,
-      maritalDate,
-      numberOfMarriage,
-      maritalStatus,
-      jorongId,
-    } = addMaternal;
+    const { userId, menarcheDate, maritalDate, numberOfMarriage, maritalStatus, jorongId } = addMaternal;
     const id = `maternal-${this._idGenerator()}`;
     const query = {
       text: "INSERT INTO maternals(id, user_id, menarche_date, marital_date, number_of_marriage, marital_status, jorong_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-      values: [
-        id,
-        userId,
-        menarcheDate,
-        maritalDate,
-        numberOfMarriage,
-        maritalStatus,
-        jorongId,
-      ],
+      values: [id, userId, menarcheDate, maritalDate, numberOfMarriage, maritalStatus, jorongId],
     };
 
     const result = await this._pool.query(query);
@@ -55,18 +40,11 @@ class MaternalRepositoryPostgres extends MaternalRepository {
   }
 
   async updateMaternalByUserId(userId, updateMaternal) {
-    const { menarcheDate, maritalDate, numberOfMarriage, maritalStatus } =
-      updateMaternal;
+    const { menarcheDate, maritalDate, numberOfMarriage, maritalStatus } = updateMaternal;
 
     const query = {
       text: "UPDATE maternals SET menarche_date = $1, marital_date = $2, number_of_marriage = $3, marital_status = $4 WHERE user_id = $5 RETURNING id",
-      values: [
-        menarcheDate,
-        maritalDate,
-        numberOfMarriage,
-        maritalStatus,
-        userId,
-      ],
+      values: [menarcheDate, maritalDate, numberOfMarriage, maritalStatus, userId],
     };
 
     const result = await this._pool.query(query);
@@ -117,6 +95,17 @@ class MaternalRepositoryPostgres extends MaternalRepository {
     }
 
     return this._snakeToCamelCaseObject(result.rows[0]);
+  }
+
+  async getMaternalByIds(ids) {
+    const query = {
+      text: "SELECT * FROM maternals WHERE id = ANY($1)",
+      values: [ids],
+    };
+
+    const result = await this._pool.query(query);
+
+    return this._snakeToCamelCaseObject(result.rows);
   }
 }
 

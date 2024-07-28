@@ -860,6 +860,10 @@ container.register([
           name: "childRepository",
           internal: ChildRepository.name,
         },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
+        },
       ],
     },
   },

@@ -23,6 +23,7 @@ const ChildrenTableTestHelper = {
     helper = "bidan",
     maternalId = "maternal-123",
     maternalHistoryId = null,
+    birthStatus = "alive",
   }) {
     const query = {
       text: "INSERT INTO children(id, name, nik, birth_datetime, birth_weight, birth_height, gender, father_name, pregnancy_age, delivery_place, delivery_method, helper, maternal_id, maternal_history_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)",
