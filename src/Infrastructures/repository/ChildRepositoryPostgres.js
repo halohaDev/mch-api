@@ -1,3 +1,4 @@
+const NotFoundError = require("../../Commons/exceptions/NotFoundError");
 const ChildRepository = require("../../Domains/child/ChildRepository");
 
 class ChildRepositoryPostgres extends ChildRepository {
@@ -60,6 +61,33 @@ class ChildRepositoryPostgres extends ChildRepository {
     const result = await this._pool.query(query);
     return this._snakeToCamelCase(result.rows);
   }
+
+  async findChildById(childId) {
+    const query = {
+      text: `SELECT * FROM children WHERE id = $1`,
+      values: [childId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("Child not found");
+    }
+
+    return this._snakeToCamelCase(result.rows[0]);
+  }
+
+  async getChildByIds(childIds) {
+    const query = {
+      text: `SELECT * FROM children WHERE id = ANY($1)`,
+      values: [childIds],
+    };
+
+    const result = await this._pool.query(query);
+    return this._snakeToCamelCase(result.rows);
+  }
+
+  async showChilds(queryParams) {}
 }
 
 module.exports = ChildRepositoryPostgres;

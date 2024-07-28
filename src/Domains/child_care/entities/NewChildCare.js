@@ -17,14 +17,14 @@ class NewChildCare extends DomainBase {
   }
 
   _verifyPayload() {
-    this.isRequired("childId");
-    this.isRequired("jorongId");
-    this.isRequired("midwifeId");
-    this.isRequired("weight");
-    this.isRequired("height");
-    this.isOptional("headCircumference");
-    this.isOptional("notes");
-    this.isRequired("dateOfVisit");
+    this.isRequired("childId", "string");
+    this.isRequired("jorongId", "string");
+    this.isRequired("midwifeId", "string");
+    this.isRequired("weight", "number");
+    this.isRequired("height", "number");
+    this.isRequired("headCircumference", "number");
+    this.isOptional("notes", "string");
+    this.isRequired("dateOfVisit", "string");
   }
 }
 

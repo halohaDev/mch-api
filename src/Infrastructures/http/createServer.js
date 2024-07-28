@@ -13,6 +13,7 @@ const maternal = require("../../Interfaces/http/api/maternal");
 const anteNatalCares = require("../../Interfaces/http/api/ante_natal");
 const report = require("../../Interfaces/http/api/report");
 const maternalService = require("../../Interfaces/http/api/maternal_service");
+const childCare = require("../../Interfaces/http/api/child_care");
 
 const createServer = async (container, tracker = null) => {
   const server = Hapi.server({
@@ -118,6 +119,10 @@ const createServer = async (container, tracker = null) => {
     },
     {
       plugin: maternalService,
+      options: { container },
+    },
+    {
+      plugin: childCare,
       options: { container },
     },
   ]);
