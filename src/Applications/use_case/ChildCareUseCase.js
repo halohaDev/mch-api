@@ -30,18 +30,18 @@ class ChildCareUseCase {
 
       result.data = result.data.map((childCare) => {
         const child = children.find((child) => child.id === childCare.childId);
-        return { ...childCare, child };
+        return { ...childCare, child: child };
       });
     }
 
     // if query params has includeMidwife
     if (queryParams.includeMidwife) {
-      const userIds = result.data.map((childCare) => childCare.userId);
+      const userIds = result.data.map((childCare) => childCare.midwifeId);
       const users = await this.userRepository.getUserByIds(userIds);
 
       result.data = result.data.map((childCare) => {
-        const user = users.find((user) => user.id === childCare.userId);
-        return { ...childCare, user };
+        const user = users.find((user) => user.id === childCare.midwifeId);
+        return { ...childCare, midwife: user };
       });
     }
 
@@ -52,7 +52,7 @@ class ChildCareUseCase {
 
       result.data = result.data.map((childCare) => {
         const jorong = jorongs.find((jorong) => jorong.id === childCare.jorongId);
-        return { ...childCare, jorong };
+        return { ...childCare, jorong: jorong };
       });
     }
 

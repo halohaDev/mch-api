@@ -45,7 +45,7 @@ class ChildCareRepositoryPostgres extends ChildCareRepository {
   }
 
   async showChildCares(queryParams) {
-    const result = await this._childQuery.wheres(queryParams).paginate();
+    const result = await this._childQuery.joins(["childs"]).wheres(queryParams).selects(["child_cares.*"]).paginate();
 
     result.data = this._snakeToCamelCase(result.data);
 

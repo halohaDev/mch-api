@@ -20,6 +20,7 @@ const ChildCaresTableTestHelper = {
     headCircumference = 30,
     notes = "test",
     dateOfVisit = "2021-08-22",
+    childCareType = "balita",
   }) {
     const query = {
       text: "INSERT INTO child_cares(id, child_id, jorong_id, midwife_id, weight, height, head_circumference, notes, date_of_visit) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",

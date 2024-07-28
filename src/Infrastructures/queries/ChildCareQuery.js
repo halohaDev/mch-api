@@ -7,6 +7,10 @@ class ChildCare extends BaseQuery {
     this.tableName = "child_cares";
   }
 
+  joinByChilds() {
+    return `INNER JOIN children ON child_cares.child_id = children.id`;
+  }
+
   getByJorongId(jorongId) {
     return [`jorong_id = ?`, jorongId];
   }
@@ -21,6 +25,14 @@ class ChildCare extends BaseQuery {
 
   getByEndDate(endDate) {
     return [`date_of_visit <= ?`, endDate];
+  }
+
+  getByName(name) {
+    return [`children.name LIKE ?`, `%${name}%`];
+  }
+
+  orderByDateOfVisit(direction) {
+    return [`date_of_visit`, direction];
   }
 }
 
