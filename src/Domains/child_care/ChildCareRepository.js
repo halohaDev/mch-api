@@ -19,3 +19,5 @@ class ChildCareRepository {
     throw new Error("CHILD_CARE_REPOSITORY.METHOD_NOT_IMPLEMENTED");
   }
 }
+
+module.exports = ChildCareRepository;
