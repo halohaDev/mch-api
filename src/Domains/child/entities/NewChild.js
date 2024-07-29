@@ -18,6 +18,7 @@ class NewChild extends DomainBase {
       helper,
       maternalId,
       maternalHistoryId,
+      birthStatus,
     } = this.output();
 
     this.name = name;
@@ -33,6 +34,7 @@ class NewChild extends DomainBase {
     this.helper = helper;
     this.maternalId = maternalId;
     this.maternalHistoryId = maternalHistoryId;
+    this.birthStatus = birthStatus;
   }
 
   _verifyPayload() {
@@ -49,6 +51,7 @@ class NewChild extends DomainBase {
     this.isRequired("helper", "containOf", ["dokter", "bidan", "perawat", "dukun"]);
     this.isRequired("maternalId", "string");
     this.isOptional("maternalHistoryId", "string");
+    this.isOptional("birthStatus", "containOf", ["alive", "dead"]);
   }
 }
 

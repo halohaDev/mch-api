@@ -9,7 +9,6 @@ class MaternalServiceUseCase {
     maternalRepository,
     databaseManager,
     maternalServiceRepository,
-    snakeToCamelObject,
     childRepository,
   }) {
     this._anteNatalCareRepository = anteNatalCareRepository;
@@ -71,6 +70,20 @@ class MaternalServiceUseCase {
     } finally {
       await this._databaseManager.releaseClient();
     }
+  }
+
+  async getServiceByMaternalHistoryId(maternalHistoryId, currentAuth) {
+    const { id: authenticatedId, role: authenticatedRole } = currentAuth;
+    console.log(maternalHistoryId);
+    const maternalHistory = await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
+
+    const maternal = await this._maternalRepository.findMaternalById(maternalHistory.maternalId);
+    if (maternal.userId !== authenticatedId && authenticatedRole === "mother") {
+      throw new AuthorizationError();
+    }
+
+    const result = await this._maternalServiceRepository.getServiceByMaternalHistoryId(maternalHistoryId);
+    return result;
   }
 }
 

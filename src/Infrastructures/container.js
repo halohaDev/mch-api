@@ -23,6 +23,7 @@ const MaternalServiceRepositoryPostgres = require("./repository/MaternalServiceR
 const PostNatalCareRepositoryPostgres = require("./repository/PostNatalCareRepositoryPostgres");
 const ChildRepositoryPostgres = require("./repository/ChildRepositoryPostgres");
 const MaternalComplicationRepositoryPostgres = require("./repository/MaternalComplicationRepositoryPostgres");
+const ChildCareRepositoryPostgres = require("./repository/ChildCareRepositoryPostgres");
 const Moment = require("./utils/Moment");
 
 // external
@@ -46,6 +47,7 @@ const MaternalServiceRepository = require("../Domains/maternal/MaternalServiceRe
 const PostNatalCareRepository = require("../Domains/post_natal/PostNatalCareRepository");
 const ChildRepository = require("../Domains/child/ChildRepository");
 const MaternalComplicationRepository = require("../Domains/complication/MaternalComplicationRepository");
+const ChildCareRepository = require("../Domains/child_care/ChildCareRepository");
 
 // user case
 const AddUserUseCase = require("../Applications/use_case/AddUserUseCase");
@@ -76,6 +78,8 @@ const CalculateMonthlyJorongReport = require("../Applications/use_case/report/Ca
 const CalculateAllRecapJorongUseCase = require("../Applications/use_case/report/CalculateAllRecapJorongUseCase");
 const ShowReportByIdUseCase = require("../Applications/use_case/report/ShowReportByIdUseCase");
 const CalculatePwsReportUseCase = require("../Applications/use_case/report/CalculatePwsReportUseCase");
+const ChildCareUseCase = require("../Applications/use_case/ChildCareUseCase");
+const ChildUseCase = require("../Applications/use_case/ChildUseCase");
 
 const container = createContainer();
 
@@ -330,6 +334,24 @@ container.register([
       dependencies: [
         {
           concrete: moment,
+        },
+      ],
+    },
+  },
+
+  {
+    key: ChildCareRepository.name,
+    Class: ChildCareRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+        {
+          concrete: snakeToCamelObject,
         },
       ],
     },
@@ -797,6 +819,50 @@ container.register([
         {
           name: "reportRepository",
           internal: ReportRepository.name,
+        },
+      ],
+    },
+  },
+
+  {
+    key: ChildCareUseCase.name,
+    Class: ChildCareUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "childCareRepository",
+          internal: ChildCareRepository.name,
+        },
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
+        },
+        {
+          name: "userRepository",
+          internal: UserRepository.name,
+        },
+        {
+          name: "jorongRepository",
+          internal: JorongRepository.name,
+        },
+      ],
+    },
+  },
+
+  {
+    key: ChildUseCase.name,
+    Class: ChildUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "childRepository",
+          internal: ChildRepository.name,
+        },
+        {
+          name: "maternalRepository",
+          internal: MaternalRepository.name,
         },
       ],
     },

@@ -220,9 +220,10 @@ describe("HTTP server", () => {
           gender: "L",
           fatherName: "test",
           pregnancyAge: 9,
-          deliveryPlace: "PUSKESMAS",
-          deliveryMethod: "NORMAL",
-          helper: "DUKUN",
+          deliveryPlace: "puskesmas",
+          deliveryMethod: "normal",
+          helper: "dukun",
+          birthStatus: "dead",
         },
       });
 
@@ -232,6 +233,7 @@ describe("HTTP server", () => {
 
       const child = await ChildrenTableTestHelper.findChildById(responseJson.data.id);
       expect(child).toBeDefined();
+      expect(child.birth_status).toEqual("dead");
     });
 
     it("should update maternal_history to postpartum", async () => {
@@ -256,9 +258,10 @@ describe("HTTP server", () => {
           gender: "L",
           fatherName: "test",
           pregnancyAge: 9,
-          deliveryPlace: "PUSKESMAS",
-          deliveryMethod: "NORMAL",
-          helper: "DUKUN",
+          deliveryPlace: "puskesmas",
+          deliveryMethod: "normal",
+          birthStatus: "alive",
+          helper: "dukun",
         },
       });
 
