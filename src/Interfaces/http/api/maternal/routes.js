@@ -49,6 +49,16 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: "GET",
+    path: "/api/v1/maternals/{maternalId}/histories/{maternalHistoryId}",
+    handler: handler.getMaternalHistoryByIdHandler,
+    options: {
+      app: {
+        access: ["admin", "midwife", "coordinator", "chairperson", "mother"],
+      },
+    },
+  },
 ];
 
 module.exports = routes;

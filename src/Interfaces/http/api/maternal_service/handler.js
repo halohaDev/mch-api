@@ -13,6 +13,7 @@ class MaternalServiceHandler {
     this.postPostNatalCareHandler = this.postPostNatalCareHandler.bind(this);
     this.postDeliverChild = this.postDeliverChild.bind(this);
     this.postMaternalComplicationHandler = this.postMaternalComplicationHandler.bind(this);
+    this.getMaternalServiceByHistoryId = this.getMaternalServiceByHistoryId.bind(this);
   }
 
   async postAnteNatalCareHandler(request, h) {
@@ -117,6 +118,20 @@ class MaternalServiceHandler {
 
     response.code(201);
     return response;
+  }
+
+  async getMaternalServiceByHistoryId(request, h) {
+    const { maternalHistoryId } = request.params;
+
+    const authUser = request.auth.credentials;
+
+    const maternalServiceUseCase = this._container.getInstance(MaternalServiceUseCase.name);
+    const data = await maternalServiceUseCase.getServiceByMaternalHistoryId(maternalHistoryId, authUser);
+
+    return {
+      status: "success",
+      data,
+    };
   }
 }
 
