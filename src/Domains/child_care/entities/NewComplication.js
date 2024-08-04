@@ -1,0 +1,1 @@
+class NewComplication extends BaseDomain {}
