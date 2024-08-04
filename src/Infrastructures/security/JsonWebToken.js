@@ -1,5 +1,5 @@
-const AuthTokenManager = require('../../Applications/security/AuthTokenManager');
-const InvariantError = require('../../Commons/exceptions/InvariantError');
+const AuthTokenManager = require("../../Applications/security/AuthTokenManager");
+const InvariantError = require("../../Commons/exceptions/InvariantError");
 
 class JsonWebToken extends AuthTokenManager {
   constructor(token) {
@@ -20,7 +20,7 @@ class JsonWebToken extends AuthTokenManager {
       const artifacts = this._token.decode(refreshToken);
       this._token.verify(artifacts, process.env.REFRESH_TOKEN_KEY);
     } catch (error) {
-      throw new InvariantError('Refresh token tidak valid');
+      throw new InvariantError("Refresh token tidak valid");
     }
   }
 

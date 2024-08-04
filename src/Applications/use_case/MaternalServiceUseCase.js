@@ -74,7 +74,7 @@ class MaternalServiceUseCase {
 
   async getServiceByMaternalHistoryId(maternalHistoryId, currentAuth) {
     const { id: authenticatedId, role: authenticatedRole } = currentAuth;
-    console.log(maternalHistoryId);
+
     const maternalHistory = await this._maternalHistoryRepository.getMaternalHistoryById(maternalHistoryId);
 
     const maternal = await this._maternalRepository.findMaternalById(maternalHistory.maternalId);

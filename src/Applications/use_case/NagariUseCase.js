@@ -1,5 +1,5 @@
-const CreateNagari = require('../../Domains/nagari/entities/CreateNagari');
-const ShowNagari = require('../../Domains/nagari/entities/ShowNagari');
+const CreateNagari = require("../../Domains/nagari/entities/CreateNagari");
+const ShowNagari = require("../../Domains/nagari/entities/ShowNagari");
 
 class NagariUseCase {
   constructor({ nagariRepository }) {
@@ -21,6 +21,16 @@ class NagariUseCase {
     });
 
     return result;
+  }
+
+  async deleteNagari(useCasePayload) {
+    const { id } = useCasePayload;
+    return this._nagariRepository.deleteNagari(id);
+  }
+
+  async updateNagari(id, useCasePayload) {
+    const updateNagari = new CreateNagari(useCasePayload);
+    return this._nagariRepository.updateNagari(id, updateNagari);
   }
 }
 

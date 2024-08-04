@@ -9,7 +9,11 @@ class ShowReportByIdUseCase {
     const report = await this._reportRepository.findReportById(id);
 
     const requestedBy = await this._userRepository.getUserById(report.requestedBy);
-    const jorong = await this._jorongRepository.getJorongById(report.jorongId);
+
+    let jorong = { id: 0, name: "Puskesmas" };
+    if (report.jorongId) {
+      jorong = await this._jorongRepository.getJorongById(report.jorongId);
+    }
 
     if (report.approvedBy) {
       const approvedBy = await this._userRepository.getUserById(report.approvedBy);

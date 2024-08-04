@@ -18,7 +18,7 @@ class ShowReportUseCase {
     const reportObjectives = (await this._reportRepository.getReportObjectiveByYear(queryParams.year)) || [];
 
     result.data = result.data.map((report) => {
-      const jorong = jorongs.find((jorong) => jorong.id === report.jorongId);
+      const jorong = jorongs.find((jorong) => jorong.id === report.jorongId) || { id: 0, name: "Puskesmas" };
       const requestedby = users.find((user) => user.id === report.requestedBy);
       const approvedBy = users.find((user) => user.id === report.approvedBy);
       const reportObjective = reportObjectives.find((reportObjective) => reportObjective.jorongId === report.jorongId) || {};

@@ -17,9 +17,13 @@ class UserQuery extends BaseQuery {
     return ["role =  ?", role];
   }
 
+  getByNotRole(role) {
+    return ["role != ?", role];
+  }
+
   getBySearch(query) {
     const searchQuery = `%${query}%`;
-    return ["name ILIKE ? OR nik ILIKE ?",  , searchQuery];
+    return ["name ILIKE ? OR nik ILIKE ?", , searchQuery];
   }
 
   getById(id) {

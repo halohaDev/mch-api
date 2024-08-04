@@ -34,7 +34,7 @@ class NewChild extends DomainBase {
     this.helper = helper;
     this.maternalId = maternalId;
     this.maternalHistoryId = maternalHistoryId;
-    this.birthStatus = birthStatus;
+    this.birthStatus = birthStatus || "alive";
   }
 
   _verifyPayload() {

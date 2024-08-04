@@ -22,10 +22,6 @@ class MaternalServiceRepositoryPostgres extends MaternalServiceRepository {
     return this._snakeToCamelObject(result.rows[0]);
   }
 
-  async getServices() {
-    // TODO: implement this method
-  }
-
   async getServiceByMaternalHistoryId(maternalHistoryId) {
     // union table ante_natal_cares, post_natal_cares
     const query = {

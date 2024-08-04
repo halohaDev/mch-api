@@ -5,14 +5,7 @@ class NewMaternal extends DomainBase {
   constructor(payload) {
     super(payload);
 
-    const {
-      userId,
-      menarcheDate,
-      maritalDate,
-      numberOfMarriage,
-      maritalStatus,
-      jorongId,
-    } = this.output();
+    const { userId, menarcheDate, maritalDate, numberOfMarriage, maritalStatus, jorongId, nik } = this.output();
 
     this.userId = userId;
     this.menarcheDate = menarcheDate;
