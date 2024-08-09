@@ -31,7 +31,7 @@ class UpdateReportStatusUseCase {
 
       result = await this._reportRepository.reviseReport(newPayload);
     } else {
-      result = await this._reportRepository.updateReportStatus(newPayload);
+      result = await this._reportRepository.updateReportStatusAndNote(newPayload);
     }
 
     if (updateStatusReport.status === "approved" && report.reportType === "jorong_monthly") {

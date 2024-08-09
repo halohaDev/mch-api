@@ -9,7 +9,7 @@ class FanOutCalculateReportJorong extends SchedulerBase {
   async perform() {
     try {
       const calculateAllRecapJorongUseCase = this._container.getInstance(CalculateAllRecapJorongUseCase.name);
-      console.log("test");
+      console.log("calculated");
       await calculateAllRecapJorongUseCase.execute({});
     } catch (error) {
       console.log(error);

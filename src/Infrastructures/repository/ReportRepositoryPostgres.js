@@ -82,8 +82,8 @@ class ReportRepositoryPostgres extends ReportRepository {
     await this.findReportById(payload.id);
 
     const query = {
-      text: "UPDATE reports SET note = $1, status = $2, status = $4 WHERE id = $3 RETURNING id",
-      values: [payload.note, payload.status, payload.id, payload.approvedBy],
+      text: "UPDATE reports SET note = $1, status = $2 WHERE id = $3 RETURNING id",
+      values: [payload.note, payload.status, payload.id],
     };
 
     await this._pool.query(query);

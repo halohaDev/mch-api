@@ -1,12 +1,12 @@
-const CreatePlacement = require('../../Domains/placements/entities/CreatePlacement');
-const ShowedPlacement = require('../../Domains/placements/entities/ShowedPlacement');
+const CreatePlacement = require("../../Domains/placements/entities/CreatePlacement");
+const ShowedPlacement = require("../../Domains/placements/entities/ShowedPlacement");
 
 class PlacementUseCase {
   constructor({ placementRepository, userRepository, jorongRepository, snakeToCamelObject }) {
     this._placementRepository = placementRepository;
     this._userRepository = userRepository;
     this._jorongRepository = jorongRepository;
-    this._snakeToCamelObject = snakeToCamelObject
+    this._snakeToCamelObject = snakeToCamelObject;
   }
 
   async addPlacement(useCasePayload) {
@@ -22,6 +22,13 @@ class PlacementUseCase {
     await this._userRepository.getUserById(midwifeId);
 
     return await this._placementRepository.getPlacementByMidwifeId(midwifeId);
+  }
+
+  async deletePlacement(jorongId, midwifeId) {
+    await this._jorongRepository.getJorongById(jorongId);
+    await this._userRepository.getUserById(midwifeId);
+
+    return await this._placementRepository.deletePlacement(jorongId, midwifeId);
   }
 }
 
